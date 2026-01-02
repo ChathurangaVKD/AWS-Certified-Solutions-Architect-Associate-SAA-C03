@@ -1,0 +1,133 @@
+# .gitignore
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor/IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Personal Notes (users' private study notes)
+personal-notes/
+my-notes.md
+private/
+
+# Backup Files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# AWS Specific (if users test scripts)
+.aws/
+credentials
+config
+*.pem
+*.key
+
+# Python (if adding Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Node.js (if adding Node scripts)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build/Distribution
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Test Output
+test-results/
+coverage/
+.pytest_cache/
+
+# Documentation Build
+_build/
+docs/_build/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Package Files
+*.zip
+*.tar.gz
+*.rar
+
+# Images (except those in docs)
+# Uncomment if you don't want to track images
+# *.png
+# *.jpg
+# *.jpeg
+# !docs/**/*.png
+# !docs/**/*.jpg
+
+# User-specific practice files
+practice/
+labs/output/
+scratch/
+
+# CloudFormation outputs (if users run templates)
+cfn-outputs/
+stack-outputs/
+
+# Terraform (if users create Terraform examples)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Local test environments
+docker-compose.override.yml
+.docker/
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+[Tt]humbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
