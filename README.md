@@ -9,12 +9,12 @@
 
 **A comprehensive, free, and open-source study guide for the AWS Certified Solutions Architect - Associate (SAA-C03) certification exam.**
 
-[⚡ FAST-LEARN (11-14 hrs)](QUICK-START.md) • [📚 Get Started](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](CONTRIBUTING.md)
+[⚡ FAST-LEARN (11-14 hrs)](QUICK-START.md) • [📊 Visual Diagrams](DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](CONTRIBUTING.md)
 
 ---
 
-> **🔥 NEW: FAST-LEARN Materials!** Learn 75% faster with our condensed study guides.  
-> **[→ Start Fast-Learning Now](QUICK-START.md)** | Study Time: 11-14 hours instead of 40-60 hours!
+> **🔥 NEW: FAST-LEARN Materials & 100+ Interactive Diagrams!** Learn 75% faster with our condensed study guides and visual Mermaid diagrams.  
+> **[→ Start Fast-Learning Now](QUICK-START.md)** | **[→ Browse Diagrams](DIAGRAMS-INDEX.md)** | Study Time: 11-14 hours instead of 40-60 hours!
 
 </div>
 
@@ -25,6 +25,7 @@
 This repository contains a **complete, exam-focused study guide** for the AWS Certified Solutions Architect - Associate certification. Created to help aspiring cloud architects pass the exam with confidence, this guide covers exam topics with:
 
 - ✅ **14 comprehensive modules** covering all SAA-C03 exam domains
+- ✅ **100+ interactive diagrams** with Mermaid visualizations
 - ✅ **4 quick learning guides** with mnemonics and visual aids
 - ✅ **50+ practice questions** with detailed explanations
 - ✅ **40+ hands-on labs** suggestions
@@ -36,6 +37,7 @@ This repository contains a **complete, exam-focused study guide** for the AWS Ce
 - **📚 Comprehensive** - All exam topics covered in depth
 - **🎓 Exam-Focused** - Real scenarios, exam tips, common pitfalls
 - **🎨 Multiple Learning Styles** - Text, visual diagrams, flashcards, mnemonics
+- **📊 100+ Interactive Diagrams** - Mermaid diagrams for visual learners
 - **🔄 Actively Maintained** - Updated for the latest SAA-C03 exam
 - **🌟 Community-Driven** - Contributions welcome!
 
@@ -136,28 +138,47 @@ Each module now includes a condensed **FAST-LEARN.md** file with:
 **Each module now includes:**
 - 📄 **README.md** - Comprehensive detailed content
 - ⚡ **FAST-LEARN.md** - Condensed essentials (30-90 min per module)
+- 📊 **DIAGRAMS.md** - Interactive visual diagrams
 - ❓ **PRACTICE-QUESTIONS.md** - Exam-style questions
 
 ### 📚 Core Study Modules
 
-| Module | Topic | Detailed Guide | ⚡ Fast-Learn | Practice | Time |
-|--------|-------|----------------|--------------|----------|------|
-| [01](01-AWS-Fundamentals/README.md) | AWS Fundamentals | [README](01-AWS-Fundamentals/README.md) | [⚡ FAST](01-AWS-Fundamentals/FAST-LEARN.md) | [Questions](01-AWS-Fundamentals/PRACTICE-QUESTIONS.md) | 30-45m |
-| [02](02-IAM/README.md) | IAM | [README](02-IAM/README.md) | [⚡ FAST](02-IAM/FAST-LEARN.md) | [Questions](02-IAM/PRACTICE-QUESTIONS.md) | 45-60m |
-| [03](03-Compute/README.md) | Compute | [README](03-Compute/README.md) | [⚡ FAST](03-Compute/FAST-LEARN.md) | [Questions](03-Compute/PRACTICE-QUESTIONS.md) | 60-90m |
-| [04](04-Storage/README.md) | Storage | [README](04-Storage/README.md) | [⚡ FAST](04-Storage/FAST-LEARN.md) | [Questions](04-Storage/PRACTICE-QUESTIONS.md) | 60-75m |
-| [05](05-Database/README.md) | Database | [README](05-Database/README.md) | [⚡ FAST](05-Database/FAST-LEARN.md) | [Questions](05-Database/PRACTICE-QUESTIONS.md) | 60-75m |
-| [06](06-Networking/README.md) | Networking | [README](06-Networking/README.md) | [⚡ FAST](06-Networking/FAST-LEARN.md) | [Questions](06-Networking/PRACTICE-QUESTIONS.md) | 75-90m |
-| [07](07-Security/README.md) | Security | [README](07-Security/README.md) | [⚡ FAST](07-Security/FAST-LEARN.md) | [Questions](07-Security/PRACTICE-QUESTIONS.md) | 60-75m |
-| [08](08-Application-Integration/README.md) | Integration | [README](08-Application-Integration/README.md) | [⚡ FAST](08-Application-Integration/FAST-LEARN.md) | [Questions](08-Application-Integration/PRACTICE-QUESTIONS.md) | 45-60m |
-| [09](09-Monitoring/README.md) | Monitoring | [README](09-Monitoring/README.md) | [⚡ FAST](09-Monitoring/FAST-LEARN.md) | [Questions](09-Monitoring/PRACTICE-QUESTIONS.md) | 45-60m |
-| [10](10-Migration/README.md) | Migration | [README](10-Migration/README.md) | [⚡ FAST](10-Migration/FAST-LEARN.md) | [Questions](10-Migration/PRACTICE-QUESTIONS.md) | 40-50m |
-| [11](11-Analytics/README.md) | Analytics | [README](11-Analytics/README.md) | [⚡ FAST](11-Analytics/FAST-LEARN.md) | [Questions](11-Analytics/PRACTICE-QUESTIONS.md) | 45-60m |
-| [12](12-Architecture-Patterns/README.md) | Architecture | [README](12-Architecture-Patterns/README.md) | [⚡ FAST](12-Architecture-Patterns/FAST-LEARN.md) | [Questions](12-Architecture-Patterns/PRACTICE-QUESTIONS.md) | 60-75m |
-| [13](13-Cost-Optimization/README.md) | Cost Optimization | [README](13-Cost-Optimization/README.md) | [⚡ FAST](13-Cost-Optimization/FAST-LEARN.md) | [Questions](13-Cost-Optimization/PRACTICE-QUESTIONS.md) | 40-50m |
-| [14](14-Practice/README.md) | Exam Prep | [README](14-Practice/README.md) | [⚡ FAST](14-Practice/FAST-LEARN.md) | [Questions](14-Practice/COMPREHENSIVE-PRACTICE-QUESTIONS.md) | 30-45m |
+| Module | Topic | Detailed Guide | ⚡ Fast-Learn | 📊 Diagrams | Practice | Time |
+|--------|-------|----------------|--------------|-------------|----------|------|
+| [01](01-AWS-Fundamentals/README.md) | AWS Fundamentals | [README](01-AWS-Fundamentals/README.md) | [⚡ FAST](01-AWS-Fundamentals/FAST-LEARN.md) | [📊 Visual](01-AWS-Fundamentals/DIAGRAMS.md) | [Questions](01-AWS-Fundamentals/PRACTICE-QUESTIONS.md) | 30-45m |
+| [02](02-IAM/README.md) | IAM | [README](02-IAM/README.md) | [⚡ FAST](02-IAM/FAST-LEARN.md) | [📊 Visual](02-IAM/DIAGRAMS.md) | [Questions](02-IAM/PRACTICE-QUESTIONS.md) | 45-60m |
+| [03](03-Compute/README.md) | Compute | [README](03-Compute/README.md) | [⚡ FAST](03-Compute/FAST-LEARN.md) | [📊 Visual](03-Compute/DIAGRAMS.md) | [Questions](03-Compute/PRACTICE-QUESTIONS.md) | 60-90m |
+| [04](04-Storage/README.md) | Storage | [README](04-Storage/README.md) | [⚡ FAST](04-Storage/FAST-LEARN.md) | [📊 Visual](04-Storage/DIAGRAMS.md) | [Questions](04-Storage/PRACTICE-QUESTIONS.md) | 60-75m |
+| [05](05-Database/README.md) | Database | [README](05-Database/README.md) | [⚡ FAST](05-Database/FAST-LEARN.md) | [📊 Visual](05-Database/DIAGRAMS.md) | [Questions](05-Database/PRACTICE-QUESTIONS.md) | 60-75m |
+| [06](06-Networking/README.md) | Networking | [README](06-Networking/README.md) | [⚡ FAST](06-Networking/FAST-LEARN.md) | [📊 Visual](06-Networking/DIAGRAMS.md) | [Questions](06-Networking/PRACTICE-QUESTIONS.md) | 75-90m |
+| [07](07-Security/README.md) | Security | [README](07-Security/README.md) | [⚡ FAST](07-Security/FAST-LEARN.md) | [📊 Visual](07-Security/DIAGRAMS.md) | [Questions](07-Security/PRACTICE-QUESTIONS.md) | 60-75m |
+| [08](08-Application-Integration/README.md) | Integration | [README](08-Application-Integration/README.md) | [⚡ FAST](08-Application-Integration/FAST-LEARN.md) | [📊 Visual](08-Application-Integration/DIAGRAMS.md) | [Questions](08-Application-Integration/PRACTICE-QUESTIONS.md) | 45-60m |
+| [09](09-Monitoring/README.md) | Monitoring | [README](09-Monitoring/README.md) | [⚡ FAST](09-Monitoring/FAST-LEARN.md) | [📊 Visual](09-Monitoring/DIAGRAMS.md) | [Questions](09-Monitoring/PRACTICE-QUESTIONS.md) | 45-60m |
+| [10](10-Migration/README.md) | Migration | [README](10-Migration/README.md) | [⚡ FAST](10-Migration/FAST-LEARN.md) | [📊 Visual](10-Migration/DIAGRAMS.md) | [Questions](10-Migration/PRACTICE-QUESTIONS.md) | 40-50m |
+| [11](11-Analytics/README.md) | Analytics | [README](11-Analytics/README.md) | [⚡ FAST](11-Analytics/FAST-LEARN.md) | [📊 Visual](11-Analytics/DIAGRAMS.md) | [Questions](11-Analytics/PRACTICE-QUESTIONS.md) | 45-60m |
+| [12](12-Architecture-Patterns/README.md) | Architecture | [README](12-Architecture-Patterns/README.md) | [⚡ FAST](12-Architecture-Patterns/FAST-LEARN.md) | [📊 Visual](12-Architecture-Patterns/DIAGRAMS.md) | [Questions](12-Architecture-Patterns/PRACTICE-QUESTIONS.md) | 60-75m |
+| [13](13-Cost-Optimization/README.md) | Cost Optimization | [README](13-Cost-Optimization/README.md) | [⚡ FAST](13-Cost-Optimization/FAST-LEARN.md) | [📊 Visual](13-Cost-Optimization/DIAGRAMS.md) | [Questions](13-Cost-Optimization/PRACTICE-QUESTIONS.md) | 40-50m |
+| [14](14-Practice/README.md) | Exam Prep | [README](14-Practice/README.md) | [⚡ FAST](14-Practice/FAST-LEARN.md) | - | [Questions](14-Practice/COMPREHENSIVE-PRACTICE-QUESTIONS.md) | 30-45m |
 
 **All 14 modules complete with FAST-LEARN materials!** 🎉
+
+### 🎨 Interactive Visual Diagrams (NEW!)
+
+**All modules now include interactive Mermaid diagrams!**
+
+| Resource | Description | What's Inside |
+|----------|-------------|---------------|
+| **[📊 Diagrams Index](DIAGRAMS-INDEX.md)** | Central hub for all diagrams | Complete catalog of 100+ diagrams |
+| **Module DIAGRAMS.md** | Visual architecture diagrams per module | Service flows, architectures, decision trees |
+
+**Each module includes:**
+- 🏗️ **Architecture Diagrams** - Visual service architectures
+- 🔄 **Flow Diagrams** - Data and process flows
+- 🌳 **Decision Trees** - When to use which service
+- 🔗 **Integration Patterns** - How services connect
+- 📈 **Scaling Patterns** - High availability designs
+
+👉 **[Browse All Diagrams →](DIAGRAMS-INDEX.md)**
 
 ### 🎯 Quick Learning Resources
 
