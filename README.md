@@ -9,7 +9,12 @@
 
 **A comprehensive, free, and open-source study guide for the AWS Certified Solutions Architect - Associate (SAA-C03) certification exam.**
 
-[📚 Get Started](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](CONTRIBUTING.md)
+[⚡ FAST-LEARN (11-14 hrs)](QUICK-START.md) • [📚 Get Started](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](CONTRIBUTING.md)
+
+---
+
+> **🔥 NEW: FAST-LEARN Materials!** Learn 75% faster with our condensed study guides.  
+> **[→ Start Fast-Learning Now](QUICK-START.md)** | Study Time: 11-14 hours instead of 40-60 hours!
 
 </div>
 
@@ -74,51 +79,85 @@ This repository contains a **complete, exam-focused study guide** for the AWS Ce
 
 ## 🚀 Quick Start
 
+### ⚡ NEW: Fast-Track Learning Path (11-14 hours)
+
+**Want to learn 75% faster?** Check out our new **[FAST-LEARN Guide](FAST-LEARN-GUIDE.md)**!
+
+Each module now includes a condensed **FAST-LEARN.md** file with:
+- Essential concepts only (no fluff)
+- Visual tables and decision trees
+- Memory aids and mnemonics
+- Common exam scenarios
+- Quick reference facts
+
+**Perfect for:**
+- ⏰ Limited study time (exam in 2-7 days)
+- 🔄 Quick review before exam
+- 📚 Supplement to detailed modules
+- 🎯 Focused exam preparation
+
+👉 **[Start Fast-Learning Now](FAST-LEARN-GUIDE.md)**
+
+---
+
 ### For Complete Beginners
 
-1. **Start Here**: Read the [Study Roadmap](STUDY-ROADMAP.md) for the complete 8-week plan
+1. **Choose Your Path**: 
+   - **Fast Track**: [FAST-LEARN Guide](FAST-LEARN-GUIDE.md) (11-14 hours)
+   - **Comprehensive**: [Study Roadmap](STUDY-ROADMAP.md) (8-week plan)
 2. **Begin Learning**: Start with [Module 01: AWS Fundamentals](01-AWS-Fundamentals/README.md)
 3. **Hands-On Practice**: Create a [free AWS account](https://aws.amazon.com/free/)
 4. **Memory Aids**: Use [Quick Study Notes](QUICK-STUDY-NOTES.md) for mnemonics
 
 ### For Experienced AWS Users
 
-1. **Assess Knowledge**: Review [Quick Reference](QUICK-REFERENCE.md) to identify gaps
-2. **Rapid Review**: Use [Flashcards](FLASHCARDS.md) for quick revision
-3. **Fill Gaps**: Jump to specific modules for weak areas
+1. **Quick Review**: Use [FAST-LEARN materials](FAST-LEARN-GUIDE.md) for rapid review
+2. **Assess Knowledge**: Review [Quick Reference](QUICK-REFERENCE.md) to identify gaps
+3. **Fill Gaps**: Jump to specific module FAST-LEARN.md files
 4. **Practice**: Complete questions in [Module 14](14-Practice/README.md)
 
 ### Final Week Before Exam
 
-1. **Mnemonics**: Review [Quick Study Notes](QUICK-STUDY-NOTES.md)
-2. **Visual Patterns**: Study [Visual Guide](VISUAL-GUIDE.md) diagrams
-3. **Rapid Review**: Use [Flashcards](FLASHCARDS.md)
+1. **Speed Review**: All [FAST-LEARN.md](FAST-LEARN-GUIDE.md) files (11-14 hours)
+2. **Mnemonics**: Review [Quick Study Notes](QUICK-STUDY-NOTES.md)
+3. **Visual Patterns**: Study [Visual Guide](VISUAL-GUIDE.md) diagrams
 4. **Mock Exams**: Practice in [Module 14](14-Practice/README.md)
 
 ---
 
 ## 📖 Documentation
 
+### ⚡ Fast-Track Learning (NEW!)
+
+| Resource | Time | Description | Link |
+|----------|------|-------------|------|
+| **FAST-LEARN Guide** | 11-14 hrs | Complete fast-track curriculum | [View Guide](FAST-LEARN-GUIDE.md) |
+
+**Each module now includes:**
+- 📄 **README.md** - Comprehensive detailed content
+- ⚡ **FAST-LEARN.md** - Condensed essentials (30-90 min per module)
+- ❓ **PRACTICE-QUESTIONS.md** - Exam-style questions
+
 ### 📚 Core Study Modules
 
-| Module | Topic | Content | Status |
-|--------|-------|---------|--------|
-| [01](01-AWS-Fundamentals/README.md) | AWS Fundamentals | Regions, AZs, Well-Architected Framework | ✅ |
-| [02](02-IAM/README.md) | Identity & Access Management | Users, Roles, Policies, MFA | ✅ |
-| [03](03-Compute/README.md) | Compute Services | EC2, Lambda, ECS, Auto Scaling | ✅ |
-| [04](04-Storage/README.md) | Storage Services | S3, EBS, EFS, Snow Family | ✅ |
-| [05](05-Database/README.md) | Database Services | RDS, Aurora, DynamoDB, Caching | ✅ |
-| [06](06-Networking/README.md) | Networking | VPC, Route 53, CloudFront | ✅ |
-| [07](07-Security/README.md) | Security & Compliance | KMS, WAF, GuardDuty, Encryption | ✅ |
-| [08](08-Application-Integration/README.md) | Application Integration | SQS, SNS, EventBridge, Step Functions | ✅ |
-| [09](09-Monitoring/README.md) | Monitoring & Management | CloudWatch, CloudTrail, Config | ✅ |
-| [10](10-Migration/README.md) | Migration & Transfer | DataSync, DMS, Migration Hub | ✅ |
-| [11](11-Analytics/README.md) | Analytics Services | Athena, Kinesis, EMR, Glue, QuickSight | ✅ |
-| [12](12-Architecture-Patterns/README.md) | Architecture Patterns | Multi-tier, Serverless, HA, DR | ✅ |
-| [13](13-Cost-Optimization/README.md) | Cost Optimization | Pricing, Budgets, Cost Explorer | ✅ |
-| [14](14-Practice/README.md) | Practice & Mock Exams | 50+ Questions, Scenarios | ✅ |
+| Module | Topic | Detailed Guide | ⚡ Fast-Learn | Practice | Time |
+|--------|-------|----------------|--------------|----------|------|
+| [01](01-AWS-Fundamentals/README.md) | AWS Fundamentals | [README](01-AWS-Fundamentals/README.md) | [⚡ FAST](01-AWS-Fundamentals/FAST-LEARN.md) | [Questions](01-AWS-Fundamentals/PRACTICE-QUESTIONS.md) | 30-45m |
+| [02](02-IAM/README.md) | IAM | [README](02-IAM/README.md) | [⚡ FAST](02-IAM/FAST-LEARN.md) | [Questions](02-IAM/PRACTICE-QUESTIONS.md) | 45-60m |
+| [03](03-Compute/README.md) | Compute | [README](03-Compute/README.md) | [⚡ FAST](03-Compute/FAST-LEARN.md) | [Questions](03-Compute/PRACTICE-QUESTIONS.md) | 60-90m |
+| [04](04-Storage/README.md) | Storage | [README](04-Storage/README.md) | [⚡ FAST](04-Storage/FAST-LEARN.md) | [Questions](04-Storage/PRACTICE-QUESTIONS.md) | 60-75m |
+| [05](05-Database/README.md) | Database | [README](05-Database/README.md) | [⚡ FAST](05-Database/FAST-LEARN.md) | [Questions](05-Database/PRACTICE-QUESTIONS.md) | 60-75m |
+| [06](06-Networking/README.md) | Networking | [README](06-Networking/README.md) | [⚡ FAST](06-Networking/FAST-LEARN.md) | [Questions](06-Networking/PRACTICE-QUESTIONS.md) | 75-90m |
+| [07](07-Security/README.md) | Security | [README](07-Security/README.md) | [⚡ FAST](07-Security/FAST-LEARN.md) | [Questions](07-Security/PRACTICE-QUESTIONS.md) | 60-75m |
+| [08](08-Application-Integration/README.md) | Integration | [README](08-Application-Integration/README.md) | [⚡ FAST](08-Application-Integration/FAST-LEARN.md) | [Questions](08-Application-Integration/PRACTICE-QUESTIONS.md) | 45-60m |
+| [09](09-Monitoring/README.md) | Monitoring | [README](09-Monitoring/README.md) | [⚡ FAST](09-Monitoring/FAST-LEARN.md) | [Questions](09-Monitoring/PRACTICE-QUESTIONS.md) | 45-60m |
+| [10](10-Migration/README.md) | Migration | [README](10-Migration/README.md) | [⚡ FAST](10-Migration/FAST-LEARN.md) | [Questions](10-Migration/PRACTICE-QUESTIONS.md) | 40-50m |
+| [11](11-Analytics/README.md) | Analytics | [README](11-Analytics/README.md) | [⚡ FAST](11-Analytics/FAST-LEARN.md) | [Questions](11-Analytics/PRACTICE-QUESTIONS.md) | 45-60m |
+| [12](12-Architecture-Patterns/README.md) | Architecture | [README](12-Architecture-Patterns/README.md) | [⚡ FAST](12-Architecture-Patterns/FAST-LEARN.md) | [Questions](12-Architecture-Patterns/PRACTICE-QUESTIONS.md) | 60-75m |
+| [13](13-Cost-Optimization/README.md) | Cost Optimization | [README](13-Cost-Optimization/README.md) | [⚡ FAST](13-Cost-Optimization/FAST-LEARN.md) | [Questions](13-Cost-Optimization/PRACTICE-QUESTIONS.md) | 40-50m |
+| [14](14-Practice/README.md) | Exam Prep | [README](14-Practice/README.md) | [⚡ FAST](14-Practice/FAST-LEARN.md) | [Questions](14-Practice/COMPREHENSIVE-PRACTICE-QUESTIONS.md) | 30-45m |
 
-**All 14 modules complete!** 🎉
+**All 14 modules complete with FAST-LEARN materials!** 🎉
 
 ### 🎯 Quick Learning Resources
 
