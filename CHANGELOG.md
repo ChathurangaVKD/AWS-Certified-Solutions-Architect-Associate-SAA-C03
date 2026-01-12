@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **FLASHCARDS.md** - Enhanced Core Services Overview section (2.1):
+  - Added Security & Identity category (IAM, Cognito, Secrets Manager, KMS, WAF, Shield, GuardDuty, Macie)
+  - Added Application Integration category (SQS, SNS, EventBridge, Step Functions, AppSync, MQ)
+  - Added Monitoring & Management category (CloudWatch, CloudTrail, Config, Systems Manager, Trusted Advisor, Health Dashboard)
+  - Added Analytics category (Athena, EMR, Kinesis, Glue, QuickSight, Data Pipeline)
+  - Added Migration & Transfer category (DMS, SMS, Snow Family, DataSync, Transfer Family, Migration Hub)
+  - Expanded Quick Service Selection Guide (2.2) with 14 additional service recommendations
+  - Complete alignment with all 14 module categories in the workspace
 - Repository organization with `scripts/` and `docs/` folders
 - Enhanced Mermaid diagram validation script with new checks:
   - Quoted subgraph syntax detection

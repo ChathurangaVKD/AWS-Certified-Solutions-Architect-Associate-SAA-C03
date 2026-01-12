@@ -131,6 +131,68 @@
 └─────────────────────────────────────────┘
 ```
 
+#### Security & Identity
+```
+┌─────────────────────────────────────────┐
+│ IAM         → Users, Groups, Roles      │
+│ Cognito     → User Authentication       │
+│ Secrets Mgr → Credentials Management    │
+│ KMS         → Encryption Key Management │
+│ WAF         → Web Application Firewall  │
+│ Shield      → DDoS Protection           │
+│ GuardDuty   → Threat Detection          │
+│ Macie       → Data Privacy (PII)        │
+└─────────────────────────────────────────┘
+```
+
+#### Application Integration
+```
+┌─────────────────────────────────────────┐
+│ SQS         → Message Queue             │
+│ SNS         → Pub/Sub Messaging         │
+│ EventBridge → Event Bus                 │
+│ Step Func   → Workflow Orchestration    │
+│ AppSync     → GraphQL API               │
+│ MQ          → Managed Message Broker    │
+└─────────────────────────────────────────┘
+```
+
+#### Monitoring & Management
+```
+┌─────────────────────────────────────────┐
+│ CloudWatch  → Metrics & Logs            │
+│ CloudTrail  → API Activity Audit        │
+│ Config      → Resource Configuration    │
+│ Systems Mgr → Operational Insights      │
+│ Trusted Adv → Best Practice Checks      │
+│ Health Dash → Service Health Status     │
+└─────────────────────────────────────────┘
+```
+
+#### Analytics
+```
+┌─────────────────────────────────────────┐
+│ Athena      → Query S3 with SQL         │
+│ EMR         → Big Data (Hadoop/Spark)   │
+│ Kinesis     → Real-time Streaming       │
+│ Glue        → ETL Service               │
+│ QuickSight  → Business Intelligence     │
+│ Data Pipeline → Data Workflow          │
+└─────────────────────────────────────────┘
+```
+
+#### Migration & Transfer
+```
+┌─────────────────────────────────────────┐
+│ DMS         → Database Migration        │
+│ SMS         → Server Migration          │
+│ Snow Family → Physical Data Transfer    │
+│ DataSync    → Online Data Transfer      │
+│ Transfer    → SFTP/FTPS File Transfer   │
+│ Migration Hub → Migration Tracking      │
+└─────────────────────────────────────────┘
+```
+
 ### 2.2 Quick Service Selection Guide
 
 **When you need to...**
@@ -148,6 +210,20 @@
 | Queue messages | **SQS** |
 | Monitor resources | **CloudWatch** |
 | Manage user permissions | **IAM** |
+| Encrypt data at rest | **KMS** |
+| Protect against DDoS attacks | **Shield** |
+| Detect threats and anomalies | **GuardDuty** |
+| Audit API calls | **CloudTrail** |
+| Orchestrate workflows | **Step Functions** |
+| Stream real-time data | **Kinesis** |
+| Query data in S3 with SQL | **Athena** |
+| Migrate databases | **DMS** |
+| Transfer large datasets | **Snow Family** or **DataSync** |
+| Run big data analytics | **EMR** |
+| Create business dashboards | **QuickSight** |
+| Manage secrets and credentials | **Secrets Manager** |
+| Web application firewall | **WAF** |
+| Event-driven architecture | **EventBridge** |
 
 ---
 
