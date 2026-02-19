@@ -541,6 +541,110 @@ D. The user receives a warning but query proceeds
 
 ---
 
+### Question 21
+A financial services company needs to securely share curated, third-party financial datasets with its data analysts on AWS. The solution must support subscription-based access and automate dataset updates. Which AWS service should be used?
+
+A. AWS Data Exchange  
+B. Amazon S3  
+C. AWS Glue Data Catalog  
+D. Amazon Redshift Data Sharing  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Data Exchange enables secure, subscription-based access to third-party datasets
+- Automates dataset updates and notifications
+- Integrates with S3, Redshift, and Lake Formation
+- S3 is storage, not a data marketplace
+- Glue Data Catalog is for metadata, not data sharing
+- Redshift Data Sharing is for sharing data between Redshift clusters
+
+**References:** AWS Data Exchange, Data Sharing
+</details>
+
+---
+
+### Question 22
+A healthcare company wants to build a secure data lake on AWS to store and analyze sensitive patient data. They need fine-grained access control, data cataloging, and integration with analytics services. Which service should be used to manage permissions and data cataloging?
+
+A. AWS Lake Formation  
+B. Amazon S3  
+C. AWS Glue  
+D. Amazon Athena  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Lake Formation provides fine-grained access control for data lakes
+- Manages permissions at table, column, and row level
+- Integrates with Glue Data Catalog and analytics services (Athena, Redshift, EMR)
+- S3 is storage, not access management
+- Glue is for ETL and cataloging, but Lake Formation extends Glue with security
+- Athena is for querying, not access management
+
+**References:** AWS Lake Formation, Data Lake Security
+</details>
+
+---
+
+### Question 23
+A media company needs to search, visualize, and analyze large volumes of log and event data in near real-time. Which AWS service is best suited for this use case?
+
+A. Amazon OpenSearch Service  
+B. Amazon Athena  
+C. Amazon Redshift  
+D. AWS Glue  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- OpenSearch Service (formerly Elasticsearch) is designed for log analytics, search, and visualization
+- Provides near real-time indexing and querying
+- Integrates with Kibana for dashboards
+- Athena is for ad-hoc SQL queries, not real-time search
+- Redshift is for data warehousing
+- Glue is for ETL, not search/visualization
+
+**References:** Amazon OpenSearch Service, Log Analytics
+</details>
+
+---
+
+### Question 24
+A data engineering team needs to ingest streaming data from Apache Kafka into AWS for analytics and storage. Which AWS service provides a fully managed, highly available Kafka environment?
+
+A. Amazon MSK  
+B. Amazon Kinesis Data Streams  
+C. Amazon SQS  
+D. AWS Glue Streaming  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon MSK (Managed Streaming for Apache Kafka) provides a fully managed Kafka service
+- Handles provisioning, patching, and scaling
+- Integrates with Kinesis, Lambda, S3, Redshift
+- Kinesis is a separate streaming service, not Kafka-compatible
+- SQS is for message queuing, not streaming
+- Glue Streaming is for ETL, not Kafka management
+
+**References:** Amazon MSK, Streaming Data
+</details>
+
+---
+
 ## Summary
 
 ### Key Concepts Tested:
@@ -551,6 +655,10 @@ D. The user receives a warning but query proceeds
 5. **Amazon EMR**: Managed big data processing, Spark/Hadoop
 6. **AWS Glue**: ETL, Data Catalog, Crawlers
 7. **Amazon QuickSight**: Business intelligence and visualization
+8. **AWS Data Exchange**: Secure data sharing, subscription-based access
+9. **AWS Lake Formation**: Data lake security, access control, data cataloging
+10. **Amazon OpenSearch Service**: Log analytics, search, and visualization
+11. **Amazon MSK**: Managed Apache Kafka service
 
 ### Exam Tips:
 - ✅ Athena charges $5 per TB scanned - optimize with Parquet and partitions
