@@ -833,9 +833,209 @@ D. Use NLB instead of ALB
 
 ---
 
+### Question 21
+A company needs to run AWS services in its own data center to meet strict data residency requirements, while maintaining a consistent hybrid cloud experience. Which AWS service should they use?
+
+A. AWS Outposts  
+B. Amazon EC2 Dedicated Hosts  
+C. AWS Snowball Edge  
+D. AWS Direct Connect  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Outposts brings native AWS services, infrastructure, and operating models to on-premises data centers
+- Provides a consistent hybrid experience
+- Supports EC2, EBS, RDS, ECS, EKS, S3, and more
+- Dedicated Hosts are for compliance, not hybrid cloud
+- Snowball Edge is for edge computing and data transfer, not full AWS services
+- Direct Connect is for network connectivity, not running AWS services on-premises
+
+**References:** AWS Outposts, Hybrid Cloud
+</details>
+
+---
+
+### Question 22
+A research organization needs to run large-scale, high-throughput batch jobs on AWS with automatic job scheduling and resource provisioning. Which service should they use?
+
+A. AWS Batch  
+B. Amazon EC2 Auto Scaling  
+C. AWS Lambda  
+D. Amazon EMR  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Batch is a fully managed batch computing service
+- Automatically provisions compute resources and schedules jobs
+- Supports Docker containers and EC2/Spot/Fargate
+- EC2 Auto Scaling is for scaling instances, not job scheduling
+- Lambda is for short-lived, event-driven compute
+- EMR is for big data processing, not general batch jobs
+
+**References:** AWS Batch, Batch Computing
+</details>
+
+---
+
+### Question 23
+A development team wants to share and deploy serverless applications published by AWS and third parties. Which AWS service should they use?
+
+A. AWS Serverless Application Repository  
+B. AWS Marketplace  
+C. AWS Lambda Layers  
+D. AWS CloudFormation StackSets  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Serverless Application Repository is a managed repository for serverless apps
+- Allows sharing and deployment of Lambda-based applications
+- Marketplace is for commercial software, not serverless apps
+- Lambda Layers are for code sharing, not full applications
+- CloudFormation StackSets is for multi-account deployments
+
+**References:** AWS Serverless Application Repository, Serverless Deployment
+</details>
+
+---
+
+### Question 24
+A company wants to run VMware workloads on AWS with seamless integration and management using familiar VMware tools. Which solution should they use?
+
+A. VMware Cloud on AWS  
+B. AWS Outposts  
+C. Amazon EC2 Dedicated Hosts  
+D. AWS Snowball Edge  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- VMware Cloud on AWS integrates VMware vSphere, NSX, and vSAN with AWS infrastructure
+- Enables seamless migration and hybrid operations
+- Managed by both AWS and VMware
+- Outposts is for running AWS services on-premises
+- Dedicated Hosts are for compliance
+- Snowball Edge is for edge computing
+
+**References:** VMware Cloud on AWS, Hybrid VMware
+</details>
+
+---
+
+### Question 25
+A global enterprise needs to deploy AWS compute and storage services at the edge of mobile networks to deliver ultra-low latency applications. Which AWS service should they use?
+
+A. AWS Wavelength  
+B. AWS Outposts  
+C. Amazon CloudFront  
+D. AWS Direct Connect  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Wavelength brings AWS services to the edge of 5G networks
+- Enables ultra-low latency applications for mobile and edge devices
+- Outposts is for on-premises data centers
+- CloudFront is a CDN, not edge compute
+- Direct Connect is for network connectivity
+
+**References:** AWS Wavelength, Edge Computing
+</details>
+
+---
+
+### Question 26
+A company wants to run Amazon ECS and EKS workloads on its own infrastructure outside AWS, managed from the AWS Console. Which services should they use?
+
+A. Amazon ECS Anywhere and Amazon EKS Anywhere  
+B. AWS Outposts  
+C. AWS Fargate  
+D. Amazon EC2 Dedicated Hosts  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- ECS Anywhere and EKS Anywhere extend container orchestration to on-premises infrastructure
+- Managed from AWS Console
+- Outposts is for running AWS infrastructure on-premises
+- Fargate is for serverless containers in AWS
+- Dedicated Hosts are for compliance
+
+**References:** ECS Anywhere, EKS Anywhere, Hybrid Containers
+</details>
+
+---
+
+### Question 27
+A team needs a managed, scalable Apache Cassandra-compatible database for their application. Which AWS service should they use?
+
+A. Amazon Keyspaces  
+B. Amazon DynamoDB  
+C. Amazon RDS for PostgreSQL  
+D. Amazon Aurora  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon Keyspaces is a managed Cassandra-compatible database
+- Supports Cassandra Query Language (CQL)
+- DynamoDB is NoSQL but not Cassandra-compatible
+- RDS and Aurora are relational databases
+
+**References:** Amazon Keyspaces, Managed Cassandra
+</details>
+
+---
+
+### Question 28
+A financial institution needs a fully managed, immutable, cryptographically verifiable ledger database. Which AWS service should they use?
+
+A. Amazon QLDB  
+B. Amazon Aurora  
+C. Amazon RDS  
+D. Amazon DynamoDB  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon QLDB (Quantum Ledger Database) is a fully managed ledger database
+- Provides immutable, cryptographically verifiable transaction log
+- Aurora, RDS, and DynamoDB are not ledger databases
+
+**References:** Amazon QLDB, Ledger Database
+</details>
+
+---
+
 ## Summary
 
-**Total Questions**: 20  
+**Total Questions**: 28  
 **Topics Covered**:
 - EC2 Instance Types and Pricing (On-Demand, Reserved, Spot, Dedicated)
 - Auto Scaling (Policies, Health Checks, Lifecycle)
@@ -845,6 +1045,15 @@ D. Use NLB instead of ALB
 - Elastic Beanstalk (PaaS)
 - Placement Groups
 - Session Management
+- AWS Outposts
+- AWS Batch
+- AWS Serverless Application Repository
+- VMware Cloud on AWS
+- AWS Wavelength
+- ECS Anywhere
+- EKS Anywhere
+- Amazon Keyspaces
+- Amazon QLDB
 
 **Exam Tips**:
 
@@ -896,4 +1105,3 @@ D. Use NLB instead of ALB
 - Understand when to use each load balancer type
 - Know Lambda limitations and when to use alternatives
 - Compare ECS vs EKS, Fargate vs EC2 launch types
-

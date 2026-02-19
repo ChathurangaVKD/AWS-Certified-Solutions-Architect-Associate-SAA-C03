@@ -796,9 +796,56 @@ Both are suitable for serverless applications:
 
 ---
 
+### Question 21
+A development team needs a fully managed, scalable, and highly available Apache Cassandra-compatible database for their application. Which AWS service should they use?
+
+A. Amazon Keyspaces  
+B. Amazon DynamoDB  
+C. Amazon RDS for PostgreSQL  
+D. Amazon Aurora  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon Keyspaces is a managed Cassandra-compatible database
+- Supports Cassandra Query Language (CQL)
+- DynamoDB is NoSQL but not Cassandra-compatible
+- RDS and Aurora are relational databases
+
+**References:** Amazon Keyspaces, Managed Cassandra
+</details>
+
+---
+
+### Question 22
+A financial institution needs a fully managed, immutable, cryptographically verifiable ledger database for recording transactions. Which AWS service should they use?
+
+A. Amazon QLDB  
+B. Amazon Aurora  
+C. Amazon RDS  
+D. Amazon DynamoDB  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon QLDB (Quantum Ledger Database) is a fully managed ledger database
+- Provides immutable, cryptographically verifiable transaction log
+- Aurora, RDS, and DynamoDB are not ledger databases
+
+**References:** Amazon QLDB, Ledger Database
+</details>
+
+---
+
 ## Summary
 
-**Total Questions**: 20  
+**Total Questions**: 22  
 **Topics Covered**:
 - Amazon RDS (Multi-AZ, Read Replicas, Backups, Encryption)
 - Amazon Aurora (Features, Read Replicas, Serverless)
@@ -809,6 +856,8 @@ Both are suitable for serverless applications:
 - Amazon Neptune (Graph Database)
 - Amazon Timestream (Time-Series)
 - AWS Database Migration Service (DMS)
+- Amazon Keyspaces (Cassandra-compatible)
+- Amazon QLDB (Ledger Database)
 
 **Exam Tips**:
 
@@ -855,4 +904,3 @@ Both are suitable for serverless applications:
 - Know when to use Multi-AZ vs Read Replicas
 - Memorize DynamoDB features and when to use them
 - Practice database selection based on requirements
-

@@ -153,7 +153,7 @@ D. VPC Flow Logs
         {"Days": 90, "StorageClass": "GLACIER"},
         {"Days": 180, "StorageClass": "DEEP_ARCHIVE"}
       ],
-      "Expiration": {"Days": 2555}  // 7 years
+      "Expiration": {"Days": 2555}
     }
   ]
 }
@@ -455,7 +455,7 @@ D. AWS Config
   "FindingType": "ExternalAccess",
   "Resource": "arn:aws:s3:::my-bucket",
   "Principal": {
-    "AWS": "123456789012"  // External account
+    "AWS": "123456789012"
   },
   "Condition": {},
   "Action": ["s3:GetObject"]
@@ -1080,16 +1080,6 @@ D. IAM Server Certificates
 - **DNS Validation**: Add CNAME record (recommended)
 - **Email Validation**: Email to domain contacts
 
-**ACM vs IAM Certificates**:
-
-| Feature | ACM | IAM Server Certificates |
-|---------|-----|-------------------------|
-| **Cost** | Free | Manual management |
-| **Renewal** | Automatic | Manual |
-| **Regions** | Regional (us-east-1 for CloudFront) | Global |
-| **Integration** | Native AWS services | Limited |
-| **Management** | AWS managed | Self-managed |
-
 **ACM Certificate Request**:
 ```bash
 aws acm request-certificate \
@@ -1184,7 +1174,7 @@ D. AWS WAF
     "PolicyName": "EnforceWAFOnAllALBs",
     "ResourceType": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     "IncludeMap": {
-      "ACCOUNT": ["*"]  // All accounts
+      "ACCOUNT": ["*"]
     },
     "RemediationEnabled": true,
     "SecurityServicePolicyData": {
@@ -1219,7 +1209,10 @@ D. AWS WAF
 **1. Common WAF Rules**:
 - SQL injection protection
 - XSS protection
-- Rate limiting
+- Rate limiting (prevent abuse)
+- Geographic restrictions
+- IP blacklist/whitelist
+- String/pattern matching
 
 **2. Security Group Rules**:
 - Restrict SSH (port 22) to corporate IPs
@@ -1470,7 +1463,7 @@ D. AWS PrivateLink
 A company wants to ensure EC2 instances can only launch in approved VPCs and subnets. How can this be enforced at the organization level?
 
 A. IAM policy condition checking VPC ID  
-B. Service Control Policy (SCP) with VPC condition  
+B. Service Control Policy (SCP) in AWS Organizations  
 C. AWS Config rule  
 D. Security Group rules  
 
@@ -1546,7 +1539,6 @@ D. Security Group rules
 
 **Layer 1 - SCP (Preventive)**:
 ```json
-// Organization-wide restriction
 {
   "Effect": "Deny",
   "Action": "ec2:RunInstances",
@@ -1561,7 +1553,6 @@ D. Security Group rules
 
 **Layer 2 - IAM Policy (Preventive)**:
 ```json
-// Account-level additional restrictions
 {
   "Effect": "Allow",
   "Action": "ec2:RunInstances",
@@ -1579,7 +1570,6 @@ D. Security Group rules
 
 **Layer 3 - Config (Detective)**:
 ```json
-// Detect non-compliant instances
 {
   "ConfigRuleName": "instances-in-approved-subnets",
   "Source": {
@@ -1691,7 +1681,7 @@ Automated Response:
   "source": ["aws.guardduty"],
   "detail-type": ["GuardDuty Finding"],
   "detail": {
-    "severity": [7, 8, 9],  // High and Critical only
+    "severity": [7, 8, 9],
     "type": [
       "UnauthorizedAccess:IAMUser/MaliciousIPCaller",
       "UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration",
@@ -1753,7 +1743,7 @@ def lambda_handler(event, context):
             # Isolate instance (change to quarantine SG)
             ec2.modify_instance_attribute(
                 InstanceId=instance_id,
-                Groups=['sg-quarantine']  # Denies all traffic
+                Groups=['sg-quarantine']
             )
             
             # Optionally stop instance
@@ -1773,6 +1763,7 @@ def lambda_handler(event, context):
         - Instance isolated
         - Forensic snapshots created
         - Security team notified
+        - Create support ticket
         """
     )
     
@@ -1782,7 +1773,7 @@ def lambda_handler(event, context):
     }
 ```
 
-**Common GuardDuty Finding Types for API Activity**:
+**Common GuardDuty Finding Types**:
 
 | Finding Type | Description | Response |
 |--------------|-------------|----------|
@@ -1848,9 +1839,134 @@ def lambda_handler(event, context):
 
 ---
 
+### Question 21
+A company needs to provide auditors with access to compliance reports and agreements for various AWS services. Which AWS service should they use?
+
+A. AWS Artifact  
+B. AWS Audit Manager  
+C. AWS Config  
+D. AWS Security Hub  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Artifact provides on-demand access to AWS compliance reports and agreements
+- Used for audit, compliance, and regulatory requirements
+- Audit Manager is for automating evidence collection, not report access
+- Config is for resource compliance, not reports
+- Security Hub is for security findings, not compliance documents
+
+**References:** AWS Artifact, Compliance Reports
+</details>
+
+---
+
+### Question 22
+A security team wants to automate evidence collection for compliance frameworks such as PCI DSS and HIPAA. Which AWS service should they use?
+
+A. AWS Audit Manager  
+B. AWS Artifact  
+C. AWS Config  
+D. AWS Security Hub  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Audit Manager automates evidence collection for audits
+- Maps AWS resources to control requirements
+- Artifact is for downloading compliance reports
+- Config is for resource compliance, not evidence collection
+- Security Hub is for security findings
+
+**References:** AWS Audit Manager, Compliance Automation
+</details>
+
+---
+
+### Question 23
+A company needs to manage and use dedicated hardware security modules (HSMs) for cryptographic operations in the AWS Cloud. Which service should they use?
+
+A. AWS CloudHSM  
+B. AWS KMS  
+C. AWS Secrets Manager  
+D. Amazon Macie  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS CloudHSM provides dedicated HSM appliances in the AWS Cloud
+- Used for FIPS 140-2 Level 3 compliance, custom key management
+- KMS is managed, shared HSMs
+- Secrets Manager is for secrets, not HSM
+- Macie is for PII detection
+
+**References:** AWS CloudHSM, Hardware Security Modules
+</details>
+
+---
+
+### Question 24
+A security analyst needs to investigate and visualize relationships between AWS resources and suspicious activity for a security incident. Which AWS service should they use?
+
+A. Amazon Detective  
+B. AWS Security Hub  
+C. Amazon GuardDuty  
+D. AWS Config  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon Detective helps analyze, investigate, and visualize security incidents
+- Integrates with GuardDuty, Security Hub, CloudTrail
+- Security Hub aggregates findings, not investigation
+- GuardDuty detects threats, not investigation
+- Config tracks resource changes, not relationships
+
+**References:** Amazon Detective, Security Investigation
+</details>
+
+---
+
+### Question 25
+A company needs to provide Microsoft Active Directory authentication for AWS applications and resources. Which AWS service should they use?
+
+A. AWS Directory Service  
+B. AWS IAM  
+C. AWS SSO  
+D. Amazon Cognito  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Directory Service provides managed Microsoft AD in AWS
+- Supports AD authentication for EC2, RDS, WorkSpaces, and more
+- IAM is for AWS-native identities
+- SSO is for SAML/OIDC-based SSO
+- Cognito is for app user authentication, not AD
+
+**References:** AWS Directory Service, Managed Microsoft AD
+</details>
+
+---
+
 ## Summary
 
-**Total Questions**: 20  
+**Total Questions**: 25  
 **Topics Covered**:
 - AWS KMS (SSE-S3, SSE-KMS, CMK, Key Rotation)
 - AWS Secrets Manager (Automatic Rotation)
@@ -1871,6 +1987,11 @@ def lambda_handler(event, context):
 - Incident Response (Credential Exposure)
 - Site-to-Site VPN (Encryption in Transit)
 - Automated Threat Response
+- AWS Artifact (Compliance Reports)
+- AWS Audit Manager (Evidence Collection)
+- AWS CloudHSM (Dedicated HSMs)
+- Amazon Detective (Security Investigation)
+- AWS Directory Service (AD Authentication)
 
 **Exam Tips**:
 
@@ -1892,7 +2013,7 @@ def lambda_handler(event, context):
 **Threat Detection**:
 - **GuardDuty**: Intelligent threat detection
 - **Inspector**: Vulnerability scanning
-- **Macie**: PII/sensitive data in S3
+- **Macie**: Data protection (PII in S3)
 - **Access Analyzer**: External access, policy validation
 
 **DDoS Protection**:
@@ -1939,4 +2060,3 @@ def lambda_handler(event, context):
 - Learn incident response procedures
 - Review AWS security best practices
 - Practice automated response patterns
-

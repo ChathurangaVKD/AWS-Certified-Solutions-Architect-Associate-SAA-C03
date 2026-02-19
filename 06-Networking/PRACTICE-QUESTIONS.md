@@ -759,9 +759,35 @@ D. NACLs don't support rate limiting, use WAF
 
 ---
 
+### Question 21
+A mobile gaming company needs to deliver ultra-low latency multiplayer experiences to users on 5G networks in major cities. The solution must run AWS compute and storage services at the edge of telecom networks. Which AWS service should they use?
+
+A. AWS Wavelength  
+B. Amazon CloudFront  
+C. AWS Outposts  
+D. AWS Direct Connect  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Wavelength brings AWS compute and storage to the edge of 5G networks
+- Minimizes latency by running workloads at telecom provider locations
+- Ideal for mobile apps, gaming, AR/VR, IoT requiring <10ms latency
+- CloudFront is a CDN for static/dynamic content, not edge compute
+- Outposts is for on-premises data centers, not telecom edge
+- Direct Connect is for dedicated network connectivity
+
+**References:** AWS Wavelength, Edge Computing
+</details>
+
+---
+
 ## Summary
 
-**Total Questions**: 20  
+**Total Questions**: 21  
 **Topics Covered**:
 - Amazon VPC (CIDR, Subnets, Route Tables)
 - NAT Gateway vs NAT Instance
@@ -818,4 +844,3 @@ D. NACLs don't support rate limiting, use WAF
 - Know difference between Security Groups and NACLs
 - Memorize Route 53 routing policies and use cases
 - Practice VPC design scenarios
-

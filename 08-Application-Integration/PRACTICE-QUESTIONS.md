@@ -1077,25 +1077,24 @@ Centralized Monitoring/Alerting
 ```
 
 **Common Use Cases**:
-
-**1. Security Automation**:
+1. **Security Automation**:
 - GuardDuty findings → Lambda → Isolate instance
 - Config non-compliance → SNS → Alert
 
-**2. Application Integration**:
+2. **Application Integration**:
 - Custom app events → EventBridge → Trigger workflows
 - SaaS webhooks → EventBridge → Process data
 
-**3. Scheduled Tasks**:
+3. **Scheduled Tasks**:
 - Daily reports
 - Periodic cleanup
 - Health checks
 
-**4. Cross-Account Event Aggregation**:
+4. **Cross-Account Event Aggregation**:
 - Multiple accounts → Central event bus
 - Centralized monitoring
 
-**5. Event Replay**:
+5. **Event Replay**:
 - Archive production events
 - Replay for testing
 - Disaster recovery
@@ -1622,9 +1621,163 @@ aws apigateway create-deployment \
 
 ---
 
+### Question 41
+A SaaS company needs to automate the transfer of customer data from Salesforce to Amazon S3 for analytics. The solution must be fully managed and require minimal code. Which AWS service should be used?
+
+A. Amazon AppFlow  
+B. AWS Glue  
+C. Amazon Kinesis Data Firehose  
+D. AWS DataSync  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon AppFlow is a fully managed integration service
+- Automates data transfer between SaaS apps (e.g., Salesforce) and AWS
+- No code required, supports scheduling and transformation
+- Glue is for ETL, not direct SaaS integration
+- Firehose is for streaming, not SaaS connectors
+- DataSync is for file transfers, not SaaS data
+
+**References:** Amazon AppFlow, SaaS Integration
+</details>
+
+---
+
+### Question 42
+A development team is building a GraphQL API for a mobile app and wants to minimize backend management. Which AWS service should they use?
+
+A. AWS AppSync  
+B. Amazon API Gateway  
+C. AWS Lambda  
+D. Amazon Cognito  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS AppSync is a managed GraphQL API service
+- Handles real-time data sync, subscriptions, and offline access
+- API Gateway is for REST/HTTP APIs
+- Lambda is compute, not API management
+- Cognito is for authentication, not APIs
+
+**References:** AWS AppSync, GraphQL APIs
+</details>
+
+---
+
+### Question 43
+A company needs to deploy containerized workloads to on-premises servers and manage them using AWS services. Which solution should they use?
+
+A. Amazon ECS Anywhere  
+B. Amazon EKS Anywhere  
+C. AWS Outposts  
+D. AWS Fargate  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- ECS Anywhere extends ECS to on-premises servers
+- Centralized management from AWS Console
+- EKS Anywhere is for Kubernetes, not ECS
+- Outposts is for running AWS infrastructure on-premises
+- Fargate is serverless containers in AWS only
+
+**References:** Amazon ECS Anywhere, Hybrid Deployments
+</details>
+
+---
+
+### Question 44
+A mobile development team wants to test their app on a wide range of real devices in the cloud. Which AWS service should they use?
+
+A. AWS Device Farm  
+B. AWS Amplify  
+C. Amazon Pinpoint  
+D. Amazon API Gateway  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- AWS Device Farm provides cloud-based testing on real mobile devices
+- Supports Android and iOS
+- Automates testing and provides detailed reports
+- Amplify is for app development and hosting
+- Pinpoint is for user engagement, not testing
+- API Gateway is for APIs, not device testing
+
+**References:** AWS Device Farm, Mobile Testing
+</details>
+
+---
+
+### Question 45
+A marketing team wants to send targeted push notifications, emails, and SMS messages to users based on their behavior in a mobile app. Which AWS service should be used?
+
+A. Amazon Pinpoint  
+B. Amazon SNS  
+C. AWS Amplify  
+D. Amazon SQS  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon Pinpoint is a multi-channel marketing and analytics service
+- Supports push, email, SMS, and in-app messaging
+- Provides segmentation, analytics, and campaign management
+- SNS is for basic notifications, not targeted campaigns
+- Amplify is for app development, not marketing
+- SQS is for queuing, not messaging users
+
+**References:** Amazon Pinpoint, User Engagement
+</details>
+
+---
+
+### Question 46
+A company needs to integrate its on-premises Apache Kafka workloads with AWS analytics and storage services. Which AWS service provides a fully managed, highly available Kafka environment?
+
+A. Amazon MSK  
+B. Amazon Kinesis Data Streams  
+C. Amazon SQS  
+D. AWS Glue Streaming  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- Amazon MSK (Managed Streaming for Apache Kafka) provides a fully managed Kafka service
+- Handles provisioning, patching, and scaling
+- Integrates with Kinesis, Lambda, S3, Redshift
+- Kinesis is a separate streaming service, not Kafka-compatible
+- SQS is for message queuing, not streaming
+- Glue Streaming is for ETL, not Kafka management
+
+**References:** Amazon MSK, Streaming Data
+</details>
+
+---
+
 ## Summary
 
-**Total Questions**: 10  
+**Total Questions**: 46  
 **Topics Covered**:
 - Amazon SNS (Pub/Sub, Fan-out)
 - Amazon SQS (Standard vs FIFO Queues)
@@ -1635,6 +1788,12 @@ aws apigateway create-deployment \
 - Amazon MQ (Message Broker Migration)
 - CloudWatch Alarms (Metric-Based Triggers)
 - API Gateway (Lambda Integration)
+- Amazon AppFlow (SaaS Integration)
+- AWS AppSync (GraphQL APIs)
+- Amazon ECS Anywhere (Hybrid Container Deployment)
+- AWS Device Farm (Mobile Testing)
+- Amazon Pinpoint (User Engagement)
+- Amazon MSK (Managed Kafka)
 
 **Exam Tips**:
 
@@ -1684,6 +1843,30 @@ aws apigateway create-deployment \
 - Stages for environments
 - Built-in authentication, throttling, caching
 
+**AppFlow**:
+- SaaS data integration (e.g., Salesforce to S3)
+- Fully managed, no code
+
+**AppSync**:
+- Managed GraphQL APIs
+- Real-time data sync, subscriptions
+
+**ECS Anywhere**:
+- Deploy containers to on-premises
+- Manage with AWS services
+
+**Device Farm**:
+- Test mobile apps on real devices
+- Cloud-based, wide range of devices
+
+**Pinpoint**:
+- Targeted push notifications, emails, SMS
+- User behavior analytics
+
+**MSK**:
+- Managed Kafka service
+- Integrates with AWS analytics and storage
+
 **Service Selection**:
 ```
 Need                          → Use
@@ -1698,6 +1881,12 @@ Event routing (AWS services)           → EventBridge
 JMS/AMQP migration                    → Amazon MQ
 Metric-based automation               → CloudWatch Alarms
 REST API for Lambda                   → API Gateway
+SaaS data integration                  → AppFlow
+GraphQL API                           → AppSync
+Hybrid container deployment            → ECS Anywhere
+Mobile app testing                    → Device Farm
+Targeted user messaging                → Pinpoint
+Managed Kafka                          → MSK
 ```
 
 **Next Steps**:
