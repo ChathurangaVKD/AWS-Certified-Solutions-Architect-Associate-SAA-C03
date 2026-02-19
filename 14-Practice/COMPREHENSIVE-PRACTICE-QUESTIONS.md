@@ -719,70 +719,441 @@ D. VPC Flow Logs
 
 ---
 
-## Summary
+## Advanced/In-Scope Services (2026 Update)
 
-**Modules Covered**: Security, Application Integration, Monitoring, Architecture Patterns, Cost Optimization, and Cross-Domain Scenarios
+### Amazon RDS Proxy
 
-**Key Takeaways**:
+**Question 1**
+A company’s application experiences unpredictable surges in database connections, causing connection exhaustion. Which AWS service can help manage and pool these connections for Amazon RDS?
 
-**Security**:
-- **Secrets Manager**: Auto-rotation
-- **KMS CMK**: Full key control
-- **CloudTrail**: API auditing
-- **GuardDuty**: Threat detection
+A. Amazon RDS Proxy  
+B. Amazon Aurora Global Database  
+C. Amazon ElastiCache  
+D. Amazon Redshift Spectrum  
 
-**Application Integration**:
-- **SNS**: Pub/Sub (1-to-many)
-- **SQS**: Queue, decoupling
-- **SQS FIFO**: Exactly-once, ordered
-- **Kinesis**: Real-time streaming
-- **EventBridge**: Event routing
+<details>
+<summary>Show Answer</summary>
 
-**Monitoring**:
-- **CloudWatch**: Metrics, logs, alarms
-- **CloudTrail**: API calls
-- **Config**: Compliance, configuration
-- **X-Ray**: Application tracing
+**Answer: A**
 
-**Cost Optimization**:
-- **Reserved/Savings Plans**: Steady workloads
-- **Spot**: Flexible workloads
-- **Budgets**: Cost alerts
-- **Compute Optimizer**: Right-sizing
+**Explanation:**
+- **Amazon RDS Proxy** manages and pools database connections, reducing connection overhead and improving application scalability.
+- Supports failover and connection reuse.
+- Integrates with IAM and Secrets Manager for authentication.
 
-**Architecture**:
-- **DR Strategies**: Backup, Pilot Light, Warm Standby, Multi-Site
-- **Multi-Region**: Route 53 Failover, Global Accelerator
-
-**Exam Tips**:
-1. Know when to use each messaging service
-2. Understand DR strategy trade-offs
-3. Remember cost optimization tools and their purposes
-4. Know monitoring services and what they track
-5. Understand security services and their use cases
+**References:** Amazon RDS Proxy, Database Connection Management
+</details>
 
 ---
 
-## Complete Module Coverage Checklist
+### AWS X-Ray
 
-✅ **Module 01**: AWS Fundamentals (20 questions)  
-✅ **Module 02**: IAM (20 questions)  
-✅ **Module 03**: Compute (20 questions)  
-✅ **Module 04**: Storage (20 questions)  
-✅ **Module 05**: Database (20 questions)  
-✅ **Module 06**: Networking (20 questions)  
-✅ **Module 07**: Security (included above)  
-✅ **Module 08**: Application Integration (included above)  
-✅ **Module 09**: Monitoring (included above)  
-✅ **Module 12**: Architecture Patterns (included above)  
-✅ **Module 13**: Cost Optimization (included above)  
+**Question 2**
+A developer needs to trace requests through a distributed microservices application to identify performance bottlenecks and errors. Which AWS service provides this capability?
 
-**Total Practice Questions Created**: 140+ Questions
+A. AWS CloudTrail  
+B. Amazon CloudWatch  
+C. AWS X-Ray  
+D. AWS Config  
 
-**Next Steps**:
-1. Review all module questions
-2. Take full-length mock exams
-3. Focus on weak areas
-4. Practice scenario-based questions
-5. Review AWS whitepapers and FAQs
+<details>
+<summary>Show Answer</summary>
 
+**Answer: C**
+
+**Explanation:**
+- **AWS X-Ray** provides end-to-end distributed tracing for applications.
+- Visualizes service maps, traces requests, and identifies latency or errors.
+- Integrates with Lambda, ECS, API Gateway, and more.
+
+**References:** AWS X-Ray, Distributed Tracing
+</details>
+
+---
+
+### AWS Cloud Development Kit (CDK)
+
+**Question 3**
+A team wants to define AWS infrastructure as code using familiar programming languages such as Python or TypeScript. Which tool should they use?
+
+A. AWS CloudFormation  
+B. AWS CDK  
+C. AWS Elastic Beanstalk  
+D. AWS OpsWorks  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS CDK** (Cloud Development Kit) allows defining cloud infrastructure using code (Python, TypeScript, Java, etc.).
+- Synthesizes to CloudFormation templates.
+- Enables code reuse, testing, and version control.
+
+**References:** AWS CDK, Infrastructure as Code
+</details>
+
+---
+
+### AWS CloudFormation
+
+**Question 4**
+A company wants to automate the deployment of multi-tier applications and ensure consistent resource provisioning. Which AWS service should be used?
+
+A. AWS CloudFormation  
+B. AWS CodeDeploy  
+C. AWS Elastic Beanstalk  
+D. AWS OpsWorks  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- **AWS CloudFormation** automates resource provisioning using templates.
+- Supports versioning, rollback, and drift detection.
+- Enables infrastructure as code for repeatable deployments.
+
+**References:** AWS CloudFormation, Infrastructure Automation
+</details>
+
+---
+
+### AWS Compute Optimizer
+
+**Question 5**
+A company wants to reduce EC2 costs and improve performance by receiving right-sizing recommendations based on actual usage. Which AWS service provides this?
+
+A. AWS Trusted Advisor  
+B. AWS Compute Optimizer  
+C. AWS Budgets  
+D. AWS Cost Explorer  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Compute Optimizer** uses machine learning to analyze resource utilization and recommend optimal instance types.
+- Supports EC2, EBS, Lambda, and Auto Scaling Groups.
+
+**References:** AWS Compute Optimizer, Cost Optimization
+</details>
+
+---
+
+### AWS Control Tower
+
+**Question 6**
+A large enterprise wants to automate landing zone setup, enforce guardrails, and manage multiple AWS accounts at scale. Which service should they use?
+
+A. AWS Organizations  
+B. AWS Control Tower  
+C. AWS Service Catalog  
+D. AWS Config  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Control Tower** automates landing zone setup and applies guardrails for multi-account environments.
+- Integrates with AWS Organizations, Config, and Service Catalog.
+
+**References:** AWS Control Tower, Multi-Account Management
+</details>
+
+---
+
+### Amazon Managed Grafana
+
+**Question 7**
+A DevOps team wants to create interactive dashboards and visualize metrics from multiple AWS accounts and regions. Which managed service should they use?
+
+A. Amazon CloudWatch Dashboards  
+B. Amazon Managed Grafana  
+C. AWS Glue DataBrew  
+D. Amazon QuickSight  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **Amazon Managed Grafana** provides fully managed, scalable Grafana workspaces.
+- Integrates with CloudWatch, X-Ray, Prometheus, and more.
+- Supports cross-account and cross-region data sources.
+
+**References:** Amazon Managed Grafana, Observability
+</details>
+
+---
+
+### AWS Managed Service for Prometheus
+
+**Question 8**
+A company needs to collect and query container metrics at scale using open-source standards. Which AWS service should they use?
+
+A. Amazon CloudWatch Logs  
+B. AWS Managed Service for Prometheus  
+C. Amazon Managed Grafana  
+D. AWS X-Ray  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Managed Service for Prometheus** is a fully managed, scalable Prometheus-compatible monitoring service.
+- Collects, stores, and queries metrics from EKS, ECS, and EC2.
+
+**References:** AWS Managed Service for Prometheus, Container Monitoring
+</details>
+
+---
+
+### AWS Service Catalog
+
+**Question 9**
+A company wants to centrally manage and distribute approved AWS resources and products to different teams. Which service should they use?
+
+A. AWS Marketplace  
+B. AWS Service Catalog  
+C. AWS Control Tower  
+D. AWS Resource Access Manager  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Service Catalog** enables central management and distribution of approved products.
+- Controls access, enforces compliance, and tracks usage.
+
+**References:** AWS Service Catalog, Resource Governance
+</details>
+
+---
+
+### Amazon VPC IP Address Manager (IPAM)
+
+**Question 10**
+A network engineer needs to automate IP address tracking and avoid overlaps across multiple VPCs and accounts. Which AWS service should be used?
+
+A. Amazon Route 53 Resolver  
+B. Amazon VPC IP Address Manager (IPAM)  
+C. AWS Network Firewall  
+D. AWS Transit Gateway  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **Amazon VPC IPAM** automates IP address management, tracking, and auditing.
+- Prevents IP conflicts and supports multi-account, multi-region environments.
+
+**References:** Amazon VPC IPAM, Network Management
+</details>
+
+---
+
+### Amazon Application Recovery Controller
+
+**Question 11**
+A company needs to coordinate failover and recovery for critical applications across multiple AWS Regions. Which service provides readiness checks and routing controls for this scenario?
+
+A. AWS CloudFormation StackSets  
+B. Amazon Route 53 Application Recovery Controller  
+C. AWS Backup  
+D. AWS Elastic Disaster Recovery  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **Amazon Route 53 Application Recovery Controller** provides readiness checks, routing controls, and failover orchestration for multi-region applications.
+- Ensures application recovery readiness and automates failover.
+
+**References:** Application Recovery Controller, Disaster Recovery
+</details>
+
+---
+
+### AWS Backup
+
+**Question 12**
+A company wants to centrally automate backup scheduling, retention, and compliance for EC2, RDS, DynamoDB, and EFS. Which AWS service should be used?
+
+A. AWS Backup  
+B. Amazon S3 Lifecycle Policies  
+C. AWS DataSync  
+D. AWS Storage Gateway  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: A**
+
+**Explanation:**
+- **AWS Backup** automates backup scheduling, retention, and compliance across AWS services.
+- Centralized backup management and reporting.
+
+**References:** AWS Backup, Data Protection
+</details>
+
+---
+
+### AWS Client VPN
+
+**Question 13**
+A remote workforce needs secure access to AWS resources from any location using OpenVPN-based clients. Which service should be used?
+
+A. AWS Site-to-Site VPN  
+B. AWS Client VPN  
+C. AWS Direct Connect  
+D. Amazon VPC Peering  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Client VPN** provides secure, scalable remote access using OpenVPN.
+- Supports federated authentication and split-tunnel access.
+
+**References:** AWS Client VPN, Remote Access
+</details>
+
+---
+
+### VPC Reachability Analyzer
+
+**Question 14**
+A network engineer needs to troubleshoot connectivity between two resources in a VPC. Which AWS tool provides path analysis and identifies network misconfigurations?
+
+A. VPC Flow Logs  
+B. VPC Reachability Analyzer  
+C. AWS Network Firewall  
+D. AWS Config  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **VPC Reachability Analyzer** simulates and analyzes network paths between resources.
+- Identifies security group, NACL, and route table issues.
+
+**References:** VPC Reachability Analyzer, Network Troubleshooting
+</details>
+
+---
+
+### Egress-Only Internet Gateways
+
+**Question 15**
+A company needs to allow outbound-only IPv6 internet access from instances in a VPC. Which feature should be used?
+
+A. NAT Gateway  
+B. Egress-Only Internet Gateway  
+C. Internet Gateway  
+D. VPC Peering  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **Egress-Only Internet Gateway** allows outbound-only IPv6 traffic from VPC instances.
+- Prevents unsolicited inbound connections.
+
+**References:** Egress-Only Internet Gateway, IPv6 Networking
+</details>
+
+---
+
+### AWS Storage Gateway
+
+**Question 16**
+A company wants to integrate on-premises applications with cloud storage using standard file protocols. Which AWS service should be used?
+
+A. AWS DataSync  
+B. AWS Storage Gateway  
+C. Amazon S3 Transfer Acceleration  
+D. Amazon FSx  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Storage Gateway** provides hybrid cloud storage with file, volume, and tape interfaces.
+- Integrates on-premises environments with S3, Glacier, and EBS.
+
+**References:** AWS Storage Gateway, Hybrid Storage
+</details>
+
+---
+
+### AWS Global Accelerator
+
+**Question 17**
+A global application needs to improve availability and performance by routing users to the nearest healthy AWS endpoint using a static IP. Which service should be used?
+
+A. Amazon CloudFront  
+B. AWS Global Accelerator  
+C. Amazon Route 53  
+D. AWS Transit Gateway  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Global Accelerator** provides static anycast IPs and routes traffic to the nearest healthy endpoint.
+- Improves global application performance and failover.
+
+**References:** AWS Global Accelerator, Global Networking
+</details>
+
+---
+
+### AWS Resource Access Manager (RAM)
+
+**Question 18**
+A company wants to share VPC subnets and Route 53 Resolver rules across multiple AWS accounts. Which service should be used?
+
+A. AWS Organizations  
+B. AWS Resource Access Manager (RAM)  
+C. AWS Control Tower  
+D. AWS Service Catalog  
+
+<details>
+<summary>Show Answer</summary>
+
+**Answer: B**
+
+**Explanation:**
+- **AWS Resource Access Manager (RAM)** enables resource sharing across AWS accounts and organizations.
+- Supports VPC subnets, Route 53 Resolver rules, Transit Gateways, and more.
+
+**References:** AWS RAM, Resource Sharing
+</details>
+
+---
