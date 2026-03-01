@@ -2,6 +2,8 @@
 
 > Focused practice questions for weak areas and common exam scenarios
 
+> **⚠️ DISCLAIMER:** These are **original practice questions** created for educational purposes. They are **NOT actual exam questions** and do not represent questions from the AWS certification exam. All content is based on publicly available AWS documentation.
+
 ## 📋 Categories
 - [Auto Scaling & High Availability](#auto-scaling--high-availability)
 - [Storage & Data Management](#storage--data-management)

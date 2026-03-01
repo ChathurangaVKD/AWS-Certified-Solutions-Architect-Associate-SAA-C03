@@ -22,7 +22,8 @@ Quick lookup guides and visual aids:
 - **[DIAGRAMS-INDEX.md](reference/DIAGRAMS-INDEX.md)** - 100+ visual diagrams
 - **[VISUAL-GUIDE.md](reference/VISUAL-GUIDE.md)** - Visual learning materials
 - **[SAA-ARCHITECTURE-PATTERN-MASTER-SHEET.md](reference/SAA-ARCHITECTURE-PATTERN-MASTER-SHEET.md)** - Architecture patterns
-- **[aws-certification-exam-guides.pdf](reference/aws-certification-exam-guides.pdf)** - Official exam guide
+
+> **Note:** For official AWS exam guides, please visit [AWS Certification](https://aws.amazon.com/certification/certified-solutions-architect-associate/).
 
 ### 📋 Project Documentation (`project-docs/`)
 Repository and contribution information:

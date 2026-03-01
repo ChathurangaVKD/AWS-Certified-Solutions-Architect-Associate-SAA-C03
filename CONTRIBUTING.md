@@ -485,8 +485,8 @@ Contributors will be:
 Need help contributing?
 
 - 💬 [Start a Discussion](../../discussions)
-- 📧 [Email Maintainers](mailto:your-email@example.com)
 - 📖 [Read the Documentation](README.md)
+- 🐛 [Report an Issue](../../issues)
 
 ---
 

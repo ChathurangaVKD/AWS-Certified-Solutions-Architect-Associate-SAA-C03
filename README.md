@@ -6,10 +6,11 @@
 ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
 ![Contributions](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg?style=for-the-badge)
 ![Last Updated](https://img.shields.io/badge/Last_Updated-January_2026-blue.svg?style=for-the-badge)
+![Content Policy](https://img.shields.io/badge/Content-100%25_Original-success.svg?style=for-the-badge)
 
 **A comprehensive, free, and open-source study guide for the AWS Certified Solutions Architect - Associate (SAA-C03) certification exam.**
 
-[🚀 ULTRA-FAST (3-4 hrs)](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) • [⚡ FAST-LEARN (11-14 hrs)](docs/reference/QUICK-START.md) • [📊 Visual Diagrams](docs/reference/DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](docs/project-docs/CONTRIBUTING.md)
+[🚀 ULTRA-FAST (3-4 hrs)](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) • [⚡ FAST-LEARN (11-14 hrs)](docs/reference/QUICK-START.md) • [📊 Visual Diagrams](docs/reference/DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](docs/project-docs/CONTRIBUTING.md) • [📜 Content Policy](CONTENT-POLICY.md)
 
 ---
 
@@ -288,11 +289,30 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) for 
 
 ---
 
-## ⚠️ Disclaimer
+## ⚠️ Important Disclaimers
 
-This is a **community-created study guide** and is not officially affiliated with Amazon Web Services (AWS). AWS and related trademarks are property of Amazon.com, Inc.
+### 📜 Legal & Compliance
 
-Always refer to [official AWS documentation](https://docs.aws.amazon.com/) for the most current information.
+This is a **community-created study guide** and is **not officially affiliated with Amazon Web Services (AWS)**. AWS and related trademarks are property of Amazon.com, Inc. or its affiliates.
+
+**Content Policy:**
+- ✅ All content is **original** or based on publicly available AWS documentation
+- ✅ **No exam dumps** or actual exam questions included
+- ✅ **No copyrighted materials** from paid courses or books
+- ✅ Complies with [AWS Certification Program Agreement](https://aws.amazon.com/certification/certification-agreement/)
+- ✅ See our full [Content Policy](CONTENT-POLICY.md) for details
+
+**Ethical Exam Preparation:**
+- This guide promotes **legitimate exam preparation** through studying AWS documentation and building hands-on experience
+- We **do not support** or include exam dumps, brain dumps, or any violation of exam NDAs
+- Always follow AWS's exam policies and maintain the integrity of the certification program
+
+### 🎓 Educational Purpose
+
+- This guide is for **educational purposes only**
+- We make **no guarantees** about exam success or certification outcomes
+- Always refer to [official AWS documentation](https://docs.aws.amazon.com/) for the most current information
+- Official exam guide: [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/certification/certified-solutions-architect-associate/)
 
 ---
 
