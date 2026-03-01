@@ -37,12 +37,6 @@ Detailed reviews for each practice test with domain-specific analysis:
 | Test 4 | Mar 1, 2026 | 49/65 (75.38%) | ⚠️ BORDERLINE | [Full Review](2026-03-01-Practice-Test-4-Review.md) |
 | Test 5 | Mar 2, 2026 | 42/65 (64.62%) | ❌ FAIL | [Full Review](2026-03-02-Practice-Test-5-Review.md) |
 
-**Quick Review Format Available:**
-- [Test 1 Quick Review](./Practice-Test-1-Quick-Review.md) (⏱️ 10 min)
-- [Test 2 Quick Review](./Practice-Test-2-Quick-Review.md) (⏱️ 8 min)
-- [Test 3 Quick Review](./Practice-Test-3-Quick-Review.md) (⏱️ 10 min)
-- [Test 4 Quick Review](./Practice-Test-4-Quick-Review.md) (⏱️ 12 min)
-- [Test 5 Quick Review](./Practice-Test-5-Quick-Review.md) (⏱️ 15 min)
 
 ---
 
