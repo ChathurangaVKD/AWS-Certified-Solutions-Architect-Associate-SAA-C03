@@ -2,6 +2,32 @@
 
 > **Learning Strategy**: Start from Section 1 (Fundamentals) and progress sequentially. Review Section 7 (Quick Reference) daily.
 
+---
+
+## 🎯 **NEW: Focused Review Resources for Weak Areas**
+
+Having trouble with practice tests? Check out these targeted resources:
+
+### 📊 **Track Your Progress**
+- **[Test Results Tracker](14-Practice/TEST-RESULTS-TRACKER.md)** - Log practice test scores and identify weak areas
+
+### 🎴 **Focused Flashcards**
+- **[Focused Review Flashcards](14-Practice/FOCUSED-REVIEW-FLASHCARDS.md)** - 35 cards covering the most commonly missed topics
+
+### 📚 **Deep Dive Study Notes**
+- **[Weak Areas Study Notes](14-Practice/WEAK-AREAS-STUDY-NOTES.md)** - Comprehensive explanations of difficult concepts
+
+### 📝 **Targeted Practice**
+- **[Targeted Weak Area Questions](14-Practice/TARGETED-WEAK-AREA-QUESTIONS.md)** - 30+ practice questions on commonly missed topics
+
+**Use these resources when you:**
+- Score below 70% on practice tests
+- Consistently miss questions on specific topics
+- Need deeper understanding of complex concepts
+- Want focused review before exam day
+
+---
+
 ## 📋 Table of Contents
 1. [AWS Fundamentals](#1-aws-fundamentals)
 2. [Core Services Overview](#2-core-services-overview)

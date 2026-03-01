@@ -443,3 +443,7 @@ COMPARE TO:
 **You're now equipped with fast-learning materials for ALL modules!**
 **Go crush that exam! 🎯**
 
+---
+
+For AWS Machine Learning service notes and exam questions, see:
+[AWS-ML-SERVICES-NOTES.md](AWS-ML-SERVICES-NOTES.md)
