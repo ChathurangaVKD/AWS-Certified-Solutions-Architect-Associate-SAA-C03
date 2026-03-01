@@ -28,6 +28,12 @@ private/
 
 # Cleanup and internal reports
 CLEANUP-REPORT.md
+CLEANUP-SUMMARY.md
+CLEANUP-*.md
+*-CLEANUP.md
+*-INTERNAL*.md
+*-DRAFT*.md
+REVIEW-NOTES-*.md
 
 # Backup Files
 *.bak
