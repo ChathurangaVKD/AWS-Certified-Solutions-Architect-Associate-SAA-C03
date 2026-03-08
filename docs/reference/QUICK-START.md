@@ -73,7 +73,7 @@ Complete practice questions after each module. Review weak areas before moving f
 - ☐ Quick review of all modules
 - ☐ Practice questions
 
-**→ [Start Day 1: Module 01](01-AWS-Fundamentals/FAST-LEARN.md)**
+**→ [Start Day 1: Module 01](../../01-AWS-Fundamentals/FAST-LEARN.md)**
 
 ---
 
@@ -110,7 +110,7 @@ Complete practice questions after each module. Review weak areas before moving f
 - ☐ Full practice exam
 - ☐ Review weak areas
 
-**→ [Start Week 1: Module 01](01-AWS-Fundamentals/FAST-LEARN.md)**
+**→ [Start Week 1: Module 01](../../01-AWS-Fundamentals/FAST-LEARN.md)**
 
 ---
 
@@ -133,7 +133,7 @@ Complete practice questions after each module. Review weak areas before moving f
 - **Day 13**: Module 14 + Weak areas
 - **Day 14**: Final review + Rest
 
-**→ [Start Week 1: Module 01](01-AWS-Fundamentals/FAST-LEARN.md)**
+**→ [Start Week 1: Module 01](../../01-AWS-Fundamentals/FAST-LEARN.md)**
 
 ---
 
@@ -142,28 +142,28 @@ Complete practice questions after each module. Review weak areas before moving f
 Click to jump directly to any module:
 
 ### Core Foundation (Critical!)
-1. [AWS Fundamentals](01-AWS-Fundamentals/FAST-LEARN.md) - 30-45 min
-2. [IAM](02-IAM/FAST-LEARN.md) - 45-60 min
-3. [Compute](03-Compute/FAST-LEARN.md) - 60-90 min
+1. [AWS Fundamentals](../../01-AWS-Fundamentals/FAST-LEARN.md) - 30-45 min
+2. [IAM](../../02-IAM/FAST-LEARN.md) - 45-60 min
+3. [Compute](../../03-Compute/FAST-LEARN.md) - 60-90 min
 
 ### Core Services (Critical!)
-4. [Storage](04-Storage/FAST-LEARN.md) - 60-75 min
-5. [Database](05-Database/FAST-LEARN.md) - 60-75 min
-6. [Networking](06-Networking/FAST-LEARN.md) - 75-90 min
+4. [Storage](../../04-Storage/FAST-LEARN.md) - 60-75 min
+5. [Database](../../05-Database/FAST-LEARN.md) - 60-75 min
+6. [Networking](../../06-Networking/FAST-LEARN.md) - 75-90 min
 
 ### Security & Integration
-7. [Security](07-Security/FAST-LEARN.md) - 60-75 min
-8. [Application Integration](08-Application-Integration/FAST-LEARN.md) - 45-60 min
-9. [Monitoring](09-Monitoring/FAST-LEARN.md) - 45-60 min
+7. [Security](../../07-Security/FAST-LEARN.md) - 60-75 min
+8. [Application Integration](../../08-Application-Integration/FAST-LEARN.md) - 45-60 min
+9. [Monitoring](../../09-Monitoring/FAST-LEARN.md) - 45-60 min
 
 ### Advanced Topics
-10. [Migration](10-Migration/FAST-LEARN.md) - 40-50 min
-11. [Analytics](11-Analytics/FAST-LEARN.md) - 45-60 min
-12. [Architecture Patterns](12-Architecture-Patterns/FAST-LEARN.md) - 60-75 min ⭐
-13. [Cost Optimization](13-Cost-Optimization/FAST-LEARN.md) - 40-50 min
+10. [Migration](../../10-Migration/FAST-LEARN.md) - 40-50 min
+11. [Analytics](../../11-Analytics/FAST-LEARN.md) - 45-60 min
+12. [Architecture Patterns](../../12-Architecture-Patterns/FAST-LEARN.md) - 60-75 min ⭐
+13. [Cost Optimization](../../13-Cost-Optimization/FAST-LEARN.md) - 40-50 min
 
 ### Exam Prep
-14. [Practice & Exam Strategies](14-Practice/FAST-LEARN.md) - 30-45 min
+14. [Practice & Exam Strategies](../../14-Practice/FAST-LEARN.md) - 30-45 min
 
 ---
 
@@ -248,22 +248,22 @@ Practice Exam Scores:
 
 ### Pick your path and begin:
 
-**→ [Speed Run (2-3 days): Start Module 01](01-AWS-Fundamentals/FAST-LEARN.md)**
+**→ [Speed Run (2-3 days): Start Module 01](../../01-AWS-Fundamentals/FAST-LEARN.md)**
 
-**→ [Balanced (1 week): Start Module 01](01-AWS-Fundamentals/FAST-LEARN.md)**
+**→ [Balanced (1 week): Start Module 01](../../01-AWS-Fundamentals/FAST-LEARN.md)**
 
-**→ [Comprehensive (2 weeks): Start Module 01](01-AWS-Fundamentals/FAST-LEARN.md)**
+**→ [Comprehensive (2 weeks): Start Module 01](../../01-AWS-Fundamentals/FAST-LEARN.md)**
 
-**→ [Not sure? Read the Full FAST-LEARN Guide](FAST-LEARN-GUIDE.md)**
+**→ [Not sure? Read the Full FAST-LEARN Guide](../study-guides/FAST-LEARN-GUIDE.md)**
 
 ---
 
 ## 📖 Additional Resources
 
-- **[FAST-LEARN-GUIDE.md](FAST-LEARN-GUIDE.md)** - Complete guide with all study paths
-- **[README.md](README.md)** - Main repository overview
-- **[FLASHCARDS.md](FLASHCARDS.md)** - Quick review flashcards
-- **[QUICK-STUDY-NOTES.md](QUICK-STUDY-NOTES.md)** - Mnemonics and shortcuts
+- **[FAST-LEARN-GUIDE.md](../study-guides/FAST-LEARN-GUIDE.md)** - Complete guide with all study paths
+- **[README.md](../../README.md)** - Main repository overview
+- **[FLASHCARDS.md](../study-guides/FLASHCARDS.md)** - Quick review flashcards
+- **[QUICK-STUDY-NOTES.md](../study-guides/QUICK-STUDY-NOTES.md)** - Mnemonics and shortcuts
 - **[VISUAL-GUIDE.md](VISUAL-GUIDE.md)** - Architecture diagrams
 
 ---

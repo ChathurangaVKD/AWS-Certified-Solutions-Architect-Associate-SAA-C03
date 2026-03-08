@@ -20,7 +20,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ## 📖 Ultra Fast Learning Documents
 
 ### Module 01: AWS Fundamentals
-**File**: [01-AWS-Fundamentals/ULTRA-FAST-LEARN.md](01-AWS-Fundamentals/ULTRA-FAST-LEARN.md)
+**File**: [01-AWS-Fundamentals/ULTRA-FAST-LEARN.md](../../01-AWS-Fundamentals/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ AWS Global Infrastructure (Regions, AZs, Edge Locations)
@@ -35,7 +35,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 02: IAM
-**File**: [02-IAM/ULTRA-FAST-LEARN.md](02-IAM/ULTRA-FAST-LEARN.md)
+**File**: [02-IAM/ULTRA-FAST-LEARN.md](../../02-IAM/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ IAM Users, Groups, Roles
@@ -50,7 +50,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 03: Compute Services
-**File**: [03-Compute/ULTRA-FAST-LEARN.md](03-Compute/ULTRA-FAST-LEARN.md)
+**File**: [03-Compute/ULTRA-FAST-LEARN.md](../../03-Compute/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ EC2 Instance Types (CRAMFGPDI mnemonic)
@@ -67,7 +67,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 04: Storage Services
-**File**: [04-Storage/ULTRA-FAST-LEARN.md](04-Storage/ULTRA-FAST-LEARN.md)
+**File**: [04-Storage/ULTRA-FAST-LEARN.md](../../04-Storage/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ S3 Storage Classes (S-I-S-O-G³ mnemonic)
@@ -84,7 +84,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 05: Database Services
-**File**: [05-Database/ULTRA-FAST-LEARN.md](05-Database/ULTRA-FAST-LEARN.md)
+**File**: [05-Database/ULTRA-FAST-LEARN.md](../../05-Database/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ RDS (Multi-AZ, Read Replicas, Backups)
@@ -99,7 +99,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 06: Networking & Content Delivery
-**File**: [06-Networking/ULTRA-FAST-LEARN.md](06-Networking/ULTRA-FAST-LEARN.md)
+**File**: [06-Networking/ULTRA-FAST-LEARN.md](../../06-Networking/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ VPC Basics (CIDR, Subnets, Route Tables)
@@ -114,7 +114,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 07: Security & Compliance
-**File**: [07-Security/ULTRA-FAST-LEARN.md](07-Security/ULTRA-FAST-LEARN.md)
+**File**: [07-Security/ULTRA-FAST-LEARN.md](../../07-Security/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ KMS (Key Management, Envelope Encryption)
@@ -132,7 +132,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 08: Application Integration
-**File**: [08-Application-Integration/ULTRA-FAST-LEARN.md](08-Application-Integration/ULTRA-FAST-LEARN.md)
+**File**: [08-Application-Integration/ULTRA-FAST-LEARN.md](../../08-Application-Integration/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ SQS (Standard vs FIFO, Visibility Timeout)
@@ -147,7 +147,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 09: Monitoring & Management
-**File**: [09-Monitoring/ULTRA-FAST-LEARN.md](09-Monitoring/ULTRA-FAST-LEARN.md)
+**File**: [09-Monitoring/ULTRA-FAST-LEARN.md](../../09-Monitoring/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ CloudWatch (Metrics, Alarms, Logs, Dashboards)
@@ -163,7 +163,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 10: Migration & Transfer
-**File**: [10-Migration/ULTRA-FAST-LEARN.md](10-Migration/ULTRA-FAST-LEARN.md)
+**File**: [10-Migration/ULTRA-FAST-LEARN.md](../../10-Migration/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ 6 R's Migration Strategies (RRRRRT mnemonic)
@@ -180,7 +180,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 11: Analytics Services
-**File**: [11-Analytics/ULTRA-FAST-LEARN.md](11-Analytics/ULTRA-FAST-LEARN.md)
+**File**: [11-Analytics/ULTRA-FAST-LEARN.md](../../11-Analytics/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ Athena (Serverless SQL on S3)
@@ -197,7 +197,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 12: Architecture Patterns
-**File**: [12-Architecture-Patterns/ULTRA-FAST-LEARN.md](12-Architecture-Patterns/ULTRA-FAST-LEARN.md)
+**File**: [12-Architecture-Patterns/ULTRA-FAST-LEARN.md](../../12-Architecture-Patterns/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ Well-Architected Framework (6 Pillars Deep Dive)
@@ -216,7 +216,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 13: Cost Optimization
-**File**: [13-Cost-Optimization/ULTRA-FAST-LEARN.md](13-Cost-Optimization/ULTRA-FAST-LEARN.md)
+**File**: [13-Cost-Optimization/ULTRA-FAST-LEARN.md](../../13-Cost-Optimization/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ AWS Pricing Fundamentals
@@ -234,7 +234,7 @@ This guide provides condensed, bullet-point summaries for **ultra-fast learning*
 ---
 
 ### Module 14: Practice & Exam Prep
-**File**: [14-Practice/ULTRA-FAST-LEARN.md](14-Practice/ULTRA-FAST-LEARN.md)
+**File**: [14-Practice/ULTRA-FAST-LEARN.md](../../14-Practice/ULTRA-FAST-LEARN.md)
 
 **Topics Covered**:
 - ✅ Exam Format & Details
