@@ -2,9 +2,9 @@
 
 > **完了時間**: 60-90 分 | **試験配点**: ~20-25%
 
-## 🎯 必須理解コンセプト (5 Minutes)
+## 🎯 必須理解コンセプト（5分）
 
-### Compute Service Selector
+### Computeサービス選定ガイド
 ```
 NEED VMS? → EC2
 NEED SERVERLESS? → Lambda
@@ -18,42 +18,42 @@ NEED LOAD BALANCE? → ALB/NLB/GWLB
 
 ## 📊 クイックリファレンステーブル
 
-### EC2 Instance Types (CRAM-FACTS-PIG)
-| Family | Name | Use Case | Example |
+### EC2インスタンスタイプ (CRAM-FACTS-PIG)
+| Family | Name | 用途 | Example |
 |--------|------|----------|---------|
-| **C** | Compute | CPU-intensive | Batch processing, gaming |
-| **R** | RAM | Memory-intensive | Databases, caching |
-| **M** | Medium | General purpose | Web servers, apps |
+| **C** | Compute | CPU重視 | バッチ処理, gaming |
+| **R** | RAM | メモリ重視 | Databases, caching |
+| **M** | Medium | 汎用 | Web servers, apps |
 | **T** | Tiny/Turbo | Burstable | Dev/test, low traffic |
-| **P/G** | GPU | Graphics/ML | Machine learning, rendering |
-| **I/D/H** | I/O | Storage-intensive | Databases, data warehousing |
+| **P/G** | GPU | Graphics/ML | 機械学習, rendering |
+| **I/D/H** | I/O | ストレージ重視 | Databases, data warehousing |
 
 **Format**: `t3.medium` = Family(t) + Generation(3) + Size(medium)
 
-### EC2 Pricing Models (OSRSD)
-| Model | Discount | Commitment | Use Case | Interruption |
+### EC2料金モデル (OSRSD)
+| Model | Discount | Commitment | 用途 | Interruption |
 |-------|----------|------------|----------|--------------|
-| **O**n-Demand | 0% | None | Short-term, unpredictable | No |
-| **S**pot | Up to 90% | None | Fault-tolerant | YES (2 min notice) |
-| **R**eserved | Up to 72% | 1-3 years | Steady state | No |
-| **S**avings Plans | Up to 66% | 1-3 years | Flexible | No |
-| **D**edicated | 0% | None/1-3 yr | Compliance, licensing | No |
+| **O**n-Demand | 0% | なしne | 短期・予測困難 | なし |
+| **S**pot | Up to 90% | なしne | 耐障害性あり | あり (2分 notice) |
+| **R**eserved | Up to 72% | 1-3 years | 常時稼働 | なし |
+| **S**avings Plans | Up to 66% | 1-3 years | 柔軟 | なし |
+| **D**edicated | 0% | なしne/1-3 yr | Compliance, licensing | なし |
 
 ## 🔥 試験頻出トピック
 
-### 1. Load Balancer Selection (Critical!)
-| Type | Layer | Protocol | Use Case | Key Features |
+### 1. Load Balancer選定（最重要）
+| Type | レイヤー | Protocol | 用途 | 主要機能 |
 |------|-------|----------|----------|--------------|
 | **ALB** | 7 | HTTP/HTTPS | Microservices, containers | Path/host routing, Lambda targets |
 | **NLB** | 4 | TCP/UDP/TLS | Extreme performance | Static IP, millions req/s |
 | **GWLB** | 3 | IP | Security appliances | Firewalls, IDS/IPS |
-| **CLB** | 4 & 7 | HTTP/TCP | Legacy (avoid) | Deprecated |
+| **CLB** | 4 & 7 | HTTP/TCP | 旧世代 (避ける) | Deprecated |
 
 **記憶法**: "ALN your Goals" = ALB (apps), NLB (network), GWLB (gateway)
 
-### 2. Auto Scaling Policies
+### 2. Auto Scalingポリシー
 ```
-1. TARGET TRACKING (Most Common)
+1. TARGET TRACKING (最も一般的)
    └── "Keep CPU at 50%"
    
 2. STEP SCALING
@@ -67,10 +67,10 @@ NEED LOAD BALANCE? → ALB/NLB/GWLB
    └── ML-based forecasting
 ```
 
-**Exam Tip**: Target Tracking = Set it and forget it (easiest)
+**試験のコツ**: Target Tracking = Set it and forget it (easiest)
 
 ### 3. Placement Groups
-| Type | Placement | AZ | Use Case | Max Performance |
+| Type | Placement | AZ | 用途 | 最大 Performance |
 |------|-----------|-----|----------|-----------------|
 | **Cluster** | Same rack | Single | HPC, low latency | 10 Gbps |
 | **Spread** | Different racks | Multi | Critical instances | 7/AZ max |
@@ -78,7 +78,7 @@ NEED LOAD BALANCE? → ALB/NLB/GWLB
 
 **記憶法**: "CSP" = Cluster (Speed), Spread (Safety), Partition (Parts)
 
-### 4. Lambda Essentials
+### 4. Lambda 基本事項
 ```
 MAX TIMEOUT: 15 分
 MAX MEMORY: 10,240 MB (10 GB)
@@ -91,33 +91,33 @@ CONCURRENT EXECUTIONS: 1,000 (デフォルト, can increase)
 
 ## 💡 よくある試験シナリオ
 
-### シナリオ 1: Cost Optimization
-**Q**: Database runs 24/7, how to reduce cost?
-**✅ ANSWER**: Reserved Instances (1-3 year commitment)
+### Scenario 1: コスト最適化
+**質問**: Database runs 24/7, how to reduce cost?
+**✅ 正解**: Reserved Instances (1-3 year commitment)
 
-### シナリオ 2: Handle Variable Traffic
-**Q**: Traffic spikes unpredictably, need to scale
-**✅ ANSWER**: Auto Scaling Group with Target Tracking policy
+### Scenario 2: 変動トラフィック対応
+**質問**: Traffic spikes unpredictably, need to scale
+**✅ 正解**: Auto Scaling Group with Target Tracking policy
 
-### シナリオ 3: Extreme Performance Required
-**Q**: Need millions of requests/sec, static IP
-**✅ ANSWER**: Network Load Balancer (NLB)
+### Scenario 3: 極限パフォーマンスが必要
+**質問**: Need millions of requests/sec, static IP
+**✅ 正解**: Network Load Balancer (NLB)
 
-### シナリオ 4: Microservices Routing
-**Q**: Route /api to API servers, /images to image servers
-**✅ ANSWER**: Application Load Balancer with path-based routing
+### Scenario 4: マイクロサービスのルーティング
+**質問**: Route /api to API servers, /images to image servers
+**✅ 正解**: Application Load Balancer with path-based routing
 
-### シナリオ 5: Short Tasks, No Servers
-**Q**: Process images when uploaded, run < 5 min
-**✅ ANSWER**: Lambda triggered by S3 event
+### Scenario 5: 短時間処理・サーバーレス
+**質問**: Process images when uploaded, run < 5分
+**✅ 正解**: Lambda triggered by S3 event
 
-### シナリオ 6: Batch Job Interruption OK
-**Q**: Batch processing, can restart if interrupted
-**✅ ANSWER**: Spot Instances (up to 90% cheaper)
+### Scenario 6: 中断許容のバッチジョブ
+**質問**: バッチ処理, can restart if interrupted
+**✅ 正解**: Spot Instances (up to 90% cheaper)
 
-### シナリオ 7: Low Latency HPC Cluster
-**Q**: High-performance computing, need lowest latency
-**✅ ANSWER**: Cluster Placement Group
+### Scenario 7: 低遅延HPCクラスター
+**質問**: High-performance computing, need lowest latency
+**✅ 正解**: Cluster Placement Group
 
 ## 🎓 速習のコツ
 
@@ -132,14 +132,14 @@ METADATA (Instance info)
 └── http://169.254.169.254/latest/meta-data
 ```
 
-### Auto Scaling Key Concepts
+### Auto Scalingの重要概念
 - **Min**: Minimum instances (always running)
 - **Desired**: Current target
-- **Max**: Maximum instances (cost limit)
+- **最大**: 最大imum instances (cost limit)
 - **Cooldown**: Wait period (デフォルト 300s)
 - **Health Check**: EC2 status or ELB health
 
-### Load Balancer Features Matrix
+### Load Balancer機能マトリクス
 | Feature | ALB | NLB | GWLB |
 |---------|-----|-----|------|
 | Path routing | ✅ | ❌ | ❌ |
@@ -151,26 +151,26 @@ METADATA (Instance info)
 
 ## 📝 ラピッドファイア事実集
 
-### Reserved Instance Types
+### Reserved Instanceの種類
 1. **Standard**: 72% discount, can't change instance family
 2. **Convertible**: 66% discount, can change instance family
 3. **Scheduled**: For predictable schedules
 
-### Savings Plans Types
-1. **Compute**: Most flexible (EC2, Lambda, Fargate)
-2. **EC2**: Less flexible (specific instance family)
-3. **SageMaker**: ML workloads only
+### Savings Plansの種類
+1. **Compute**: 最も柔軟 (EC2, Lambda, Fargate)
+2. **EC2**: 柔軟性は低め (specific instance family)
+3. **SageMaker**: ML workloads のみ
 
-### Container Services Quick Pick
-| Service | Management | Use Case |
+### Container Services 使い分け
+| Service | Management | 用途 |
 |---------|------------|----------|
-| **ECS** | AWS-native | AWS-only containers |
+| **ECS** | AWS-native | AWS-のみ containers |
 | **EKS** | Kubernetes | K8s compatibility |
-| **Fargate** | Serverless | No server management |
+| **Fargate** | Serverless | サーバー管理不要 |
 
 **記憶法**: ECS = Easy, EKS = Kubernetes, Fargate = Forget servers
 
-### Lambda Triggers (Common)
+### Lambdaトリガー（主要）
 - API Gateway (REST APIs)
 - S3 Events (upload/delete)
 - DynamoDB Streams
@@ -181,28 +181,28 @@ METADATA (Instance info)
 
 ## 🚀 5分マスターレビュー
 
-### Compute Decision Tree
+### Compute意思決定ツリー
 ```
-1. Need servers? 
-   NO → Lambda (if < 15 min) or Fargate
-   YES → Continue
+1. サーバーが必要か？ 
+   NO → Lambda (if < 15分) or Fargate
+   あり → Continue
    
-2. Steady state 24/7?
-   YES → Reserved Instances
+2. 24/7で常時稼働か？
+   あり → Reserved Instances
    NO → Continue
    
-3. Can tolerate interruption?
-   YES → Spot Instances
+3. 中断を許容できるか？
+   あり → Spot Instances
    NO → On-Demand
    
-4. Need load balancing?
+4. ロードバランサーが必要か？
    HTTP/HTTPS → ALB
    TCP/extreme performance → NLB
    Security appliances → GWLB
 ```
 
-### Auto Scaling ベストプラクティス
-✅ Use Target Tracking (simplest)
+### Auto Scalingベストプラクティス
+✅ Use Target Tracking (最もシンプル)
 ✅ Multi-AZ for high availability
 ✅ Use ELB health checks (better than EC2)
 ✅ Set appropriate cooldown period
@@ -210,24 +210,24 @@ METADATA (Instance info)
 
 ### 避けるべきよくあるミス
 ❌ Using On-Demand for steady workloads (use Reserved)
-❌ Not using Auto Scaling for variable loads
+❌ なしt using Auto Scaling for variable loads
 ❌ Single AZ deployment (no HA)
 ❌ ALB for TCP/UDP (use NLB)
 ❌ Forgetting Spot can be interrupted
-❌ Lambda for long-running tasks (15 min max)
+❌ Lambda for long-running tasks (15分 max)
 
 ## 🎯 試験練習スピードラン
 
-**Quick Questions** (Answers at bottom)
+**Quick 質問s**（答えは下）
 
-1. Max Lambda timeout? __
-2. Best load balancer for microservices? __
-3. Cheapest pricing for fault-tolerant workloads? __
-4. Max instances per AZ in Spread placement group? __
-5. Which LB has static IP? __
+1. Lambdaの最大タイムアウトは？ __
+2. マイクロサービスに最適なLBは？ __
+3. 耐障害性ワークロードで最安の料金モデルは？ __
+4. Spread placement groupでAZあたり最大インスタンス数は？ __
+5. Static IPを持つLBは？ __
 6. Auto Scaling cooldown デフォルト? __
-7. What layer is ALB? __
-8. Can Reserved Instances be interrupted? __
+7. ALBは何層？ __
+8. Reserved Instancesは中断される？ __
 
 ---
 
@@ -246,29 +246,29 @@ EBS (Persistent)
 └── Use: Database, OS, permanent data
 ```
 
-### EBS Volume Types Quick Reference
-| Type | IOPS | Throughput | Use Case |
+### EBSボリュームタイプ早見表
+| Type | IOPS | Throughput | 用途 |
 |------|------|------------|----------|
-| gp3/gp2 | 16,000 | 1,000 MB/s | General purpose (boot) |
+| gp3/gp2 | 16,000 | 1,000 MB/s | 汎用 (boot) |
 | io2/io1 | 64,000+ | 1,000 MB/s | Databases, critical |
 | st1 | 500 | 500 MB/s | Big data, logs |
 | sc1 | 250 | 250 MB/s | Cold data |
 
 ## ⏱️ 次のステップ
-- 学習時間: ~60-90 min
+- 学習時間: ~60-90分
 - 演習: Launch EC2, create ASG, configure ALB
 - 準備完了: Compute practice questions
 - 次へ: Module 04 - Storage
 
 ---
 
-**Quick Answers**: 
+**Quick 答えs**: 
 1) 15 分
 2) ALB (Application Load Balancer)
 3) Spot Instances (up to 90% off)
 4) 7 instances
 5) NLB (Network Load Balancer)
 6) 300 seconds
-7) Layer 7 (Application)
-8) No
+7) レイヤー 7 (Application)
+8) なし
 

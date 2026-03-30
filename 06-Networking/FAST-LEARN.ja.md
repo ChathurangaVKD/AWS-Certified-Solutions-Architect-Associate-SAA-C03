@@ -2,7 +2,7 @@
 
 > **完了時間**: 75-90 分 | **試験配点**: ~20-25%
 
-## 🎯 必須理解コンセプト (5 Minutes)
+## 🎯 必須理解コンセプト（5分）
 
 ### Networking Foundation (VPC-SING)
 ```
@@ -19,26 +19,26 @@ NACLs → Subnet-level firewall (stateless)
 
 ## 📊 クイックリファレンステーブル
 
-### VPC Components Quick Matrix
-| Component | Level | State | Default | Allow/Deny |
+### VPC Components 早見表
+| Component | Level | State | デフォルト | Allow/Deny |
 |-----------|-------|-------|---------|------------|
-| **Security Group** | Instance | Stateful | Deny all inbound | Allow only |
+| **Security Group** | Instance | Stateful | Deny all inbound | Allow のみ |
 | **NACL** | Subnet | Stateless | Allow all | Allow & Deny |
-| **Route Table** | Subnet | N/A | Local routes | Routes only |
-| **Internet Gateway** | VPC | N/A | None | All traffic |
-| **NAT Gateway** | AZ | N/A | None | Outbound only |
+| **Route Table** | Subnet | N/A | Local routes | Routes のみ |
+| **Internet Gateway** | VPC | N/A | なしne | All traffic |
+| **NAT Gateway** | AZ | N/A | なしne | Outbound のみ |
 
 ### Security Group vs NACL (Critical!)
 | Feature | Security Group | NACL |
 |---------|----------------|------|
 | **Level** | Instance (ENI) | Subnet |
-| **Rules** | Allow only | Allow & Deny |
+| **Rules** | Allow のみ | Allow & Deny |
 | **State** | Stateful (return auto) | Stateless (need both) |
 | **Order** | All evaluated | Numbered order |
-| **Default** | Deny inbound, allow outbound | Allow all |
+| **デフォルト** | Deny inbound, allow outbound | Allow all |
 | **Association** | Multiple per instance | One per subnet |
 
-**記憶法**: "SG = Stateful Good guy (allow only), NACL = Stateless Number rules (allow/deny)"
+**記憶法**: "SG = Stateful Good guy (allow のみ), NACL = Stateless Number rules (allow/deny)"
 
 ## 🔥 試験頻出トピック
 
@@ -72,27 +72,27 @@ PUBLIC SUBNET
 └── Internet accessible
 
 PRIVATE SUBNET
-├── No direct route to Internet Gateway
+├── なし direct route to Internet Gateway
 ├── Uses NAT Gateway for outbound internet
 ├── Use: Databases, app servers
-└── Not directly accessible from internet
+└── なしt directly accessible from internet
 ```
 
 **Key**: Route table determines public vs private!
 
 ### 3. VPC Connectivity Options
-| Option | Use Case | Bandwidth | Cost |
+| Option | 用途 | Bandwidth | Cost |
 |--------|----------|-----------|------|
 | **Internet Gateway** | Public internet access | Unlimited | Free |
 | **NAT Gateway** | Private → Internet (outbound) | 45 Gbps | $$$ |
-| **VPC Peering** | Connect 2 VPCs | No bandwidth limit | $ |
+| **VPC Peering** | Connect 2 VPCs | なし bandwidth limit | $ |
 | **Transit Gateway** | Hub for multiple VPCs | 50 Gbps/attachment | $$ |
 | **VPN** | On-prem to AWS (encrypted) | Up to 1.25 Gbps | $ |
 | **Direct Connect** | Dedicated on-prem to AWS | 1-100 Gbps | $$$ |
 | **PrivateLink** | Private access to services | 10 Gbps | $$ |
 
 ### 4. Route 53 Routing Policies
-| Policy | Use Case | How It Works |
+| Policy | 用途 | How It Works |
 |--------|----------|--------------|
 | **Simple** | Single resource | Returns one value |
 | **Weighted** | A/B testing, gradual migration | % to each resource |
@@ -104,7 +104,7 @@ PRIVATE SUBNET
 
 ## 💡 よくある試験シナリオ
 
-### シナリオ 1: EC2 Can't Access Internet
+### Scenario 1: EC2 Can't Access Internet
 **Checklist**:
 1. ✅ Is subnet public? (route to IGW)
 2. ✅ Does instance have public IP?
@@ -112,33 +112,33 @@ PRIVATE SUBNET
 4. ✅ NACL allows outbound + inbound return?
 5. ✅ Route table has 0.0.0.0/0 → IGW?
 
-### シナリオ 2: Private Subnet Needs Internet Access
-**Q**: Database in private subnet needs to download patches
-**✅ ANSWER**: Deploy NAT Gateway in public subnet + route 0.0.0.0/0 → NAT
+### Scenario 2: Private Subnet Needs Internet Access
+**質問**: Database in private subnet needs to download patches
+**✅ 正解**: Deploy NAT Gateway in public subnet + route 0.0.0.0/0 → NAT
 
-### シナリオ 3: Connect Multiple VPCs
-**Q**: 3 VPCs need to communicate
+### Scenario 3: Connect Multiple VPCs
+**質問**: 3 VPCs need to communicate
 **❌ 誤り**: 3 separate VPC peering (doesn't scale)
 **✅ 正解**: AWS Transit Gateway (hub and spoke)
 
-### シナリオ 4: On-Premises to AWS
-**Q**: Need secure connection from data center to VPC
+### Scenario 4: On-Premises to AWS
+**質問**: Need secure connection from data center to VPC
 - **Fast setup, encrypted**: Site-to-Site VPN
 - **Dedicated, high bandwidth**: Direct Connect
 - **Both (redundancy)**: Direct Connect + VPN backup
 
-### シナリオ 5: Block Specific IP Address
-**Q**: Need to block malicious IP from accessing resources
+### Scenario 5: Block Specific IP Address
+**質問**: Need to block malicious IP from accessing resources
 **❌ 誤り**: Security Group (can't deny)
 **✅ 正解**: NACL (supports deny rules) or AWS WAF
 
-### シナリオ 6: Route Based on User Location
-**Q**: EU users → EU resources, US users → US resources
-**✅ ANSWER**: Route 53 Geolocation routing policy
+### Scenario 6: Route Based on User Location
+**質問**: EU users → EU resources, US users → US resources
+**✅ 正解**: Route 53 Geolocation routing policy
 
-### シナリオ 7: Expose Service to Other AWS Accounts
-**Q**: Provide private access to your service for customers
-**✅ ANSWER**: AWS PrivateLink (VPC Endpoint Service)
+### Scenario 7: Expose Service to Other AWS アカウントs
+**質問**: Provide private access to your service for customers
+**✅ 正解**: AWS PrivateLink (VPC Endpoint Service)
 
 ## 🎓 速習のコツ
 
@@ -159,12 +159,12 @@ Does NOT capture:
 ### VPC Peering Rules
 ✅ Can peer across regions
 ✅ Can peer across accounts
-✅ No transitive peering (A-B-C: A can't reach C)
+✅ なし transitive peering (A-B-C: A can't reach C)
 ✅ CIDR blocks can't overlap
-❌ No overlapping CIDR
-❌ No edge-to-edge routing
+❌ なし overlapping CIDR
+❌ なし edge-to-edge routing
 
-### CloudFront Key Concepts
+### CloudFront 主要コンセプト
 ```
 WHAT: Content Delivery Network (CDN)
 WHERE: 400+ edge locations globally
@@ -182,7 +182,7 @@ ORIGINS:
 └── MediaPackage
 
 SECURITY:
-├── OAI (Origin Access Identity) - S3 only via CloudFront
+├── OAI (Origin Access Identity) - S3 のみ via CloudFront
 ├── Signed URLs/Cookies - Restrict access
 ├── Geo-restriction - Block countries
 └── WAF - Web application firewall
@@ -199,7 +199,7 @@ SECURITY:
 | /25 | 128 | 123 | Medium subnet |
 | /24 | 256 | 251 | **最も一般的** |
 | /20 | 4,096 | 4,091 | Large subnet |
-| /16 | 65,536 | 65,531 | **Max VPC size** |
+| /16 | 65,536 | 65,531 | **最大 VPC size** |
 
 ### NAT Instance vs NAT Gateway
 | Feature | NAT Gateway | NAT Instance |
@@ -209,8 +209,8 @@ SECURITY:
 | **Bandwidth** | 45 Gbps | Instance type dependent |
 | **Cost** | Higher | Lower |
 | **Security Group** | N/A | Yes (manage yourself) |
-| **Bastion** | No | Can use as bastion |
-| **Preferred** | ✅ Yes | ❌ Legacy |
+| **Bastion** | なし | Can use as bastion |
+| **Preferred** | ✅ Yes | ❌ 旧世代 |
 
 ### VPC Endpoint Types
 ```
@@ -222,7 +222,7 @@ INTERFACE ENDPOINT (PrivateLink)
 
 GATEWAY ENDPOINT
 ├── Route table target
-├── S3 and DynamoDB only
+├── S3 and DynamoDB のみ
 ├── FREE!
 └── Preferred for S3/DynamoDB
 ```
@@ -232,8 +232,8 @@ GATEWAY ENDPOINT
 ### Direct Connect
 - **Speed**: 1 Gbps, 10 Gbps, 100 Gbps
 - **Setup Time**: Weeks to months
-- **Encryption**: Not encrypted (use VPN over DX)
-- **Use Case**: Consistent, high-throughput
+- **Encryption**: なしt encrypted (use VPN over DX)
+- **用途**: Consistent, high-throughput
 - **Virtual Interfaces**: Public VIF, Private VIF, Transit VIF
 
 ## 🚀 5分マスターレビュー
@@ -281,16 +281,16 @@ GATEWAY ENDPOINT
 ❌ Overlapping CIDR blocks for peering
 ❌ Only outbound rules in NACL (it's stateless!)
 ❌ Using Security Groups to deny (use NACL)
-❌ Not using VPC endpoints for S3/DynamoDB (costs!)
+❌ なしt using VPC endpoints for S3/DynamoDB (costs!)
 
 ## 🎯 試験練習スピードラン
 
-**Quick Questions** (Answers at bottom)
+**Quick 質問s**（答えは下）
 
 1. How many IPs reserved per subnet? __
 2. Security Groups are stateful or stateless? __
 3. Can Security Groups deny traffic? __
-4. Max VPC CIDR size? __
+4. 最大 VPC CIDR size? __
 5. Which is free: Interface or Gateway VPC endpoint? __
 6. VPC peering is transitive? __
 7. What provides HA NAT? __
@@ -301,9 +301,9 @@ GATEWAY ENDPOINT
 ### グローバル Accelerator vs CloudFront
 | Feature | CloudFront | グローバル Accelerator |
 |---------|------------|-------------------|
-| **Purpose** | Cache content | Route to optimal endpoint |
-| **Use Case** | Static/dynamic content | Non-HTTP (TCP/UDP) |
-| **Caching** | Yes | No |
+| **目的** | Cache content | Route to optimal endpoint |
+| **用途** | Static/dynamic content | なしn-HTTP (TCP/UDP) |
+| **Caching** | Yes | なし |
 | **IPs** | Changes | Static (2 Anycast) |
 | **Protocols** | HTTP/HTTPS | Any (TCP/UDP) |
 
@@ -311,25 +311,25 @@ GATEWAY ENDPOINT
 - Static public IPv4 address
 - Persists when instance stopped
 - Can remap to another instance
-- Max 5 per region (soft limit)
+- 最大 5 per region (soft limit)
 - Charged if not attached to running instance
 - Free if attached to running instance
 
 ## ⏱️ 次のステップ
-- 学習時間: ~75-90 min
+- 学習時間: ~75-90分
 - 演習: Create VPC, subnets, route tables, security groups
 - 準備完了: Networking practice questions
 - 次へ: Module 07 - Security
 
 ---
 
-**Quick Answers**: 
+**Quick 答えs**: 
 1) 5 (first 4 + last 1)
 2) Stateful
-3) No (only allow)
+3) なし (のみ allow)
 4) /16 (65,536 IPs)
 5) Gateway endpoint (S3/DynamoDB)
-6) No
+6) なし
 7) NAT Gateway
 8) Failover routing policy
 
