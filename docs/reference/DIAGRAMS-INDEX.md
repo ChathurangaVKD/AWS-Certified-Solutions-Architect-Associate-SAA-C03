@@ -7,7 +7,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ## 📁 Diagram Files by Module
 
 ### 01. AWS Fundamentals
-**File:** [01-AWS-Fundamentals/DIAGRAMS.md](01-AWS-Fundamentals/DIAGRAMS.md)
+**File:** [01-AWS-Fundamentals/DIAGRAMS.md](../../01-AWS-Fundamentals/DIAGRAMS.md)
 
 **Contents:**
 - AWS Global Infrastructure (Regions, AZs, Edge Locations)
@@ -23,7 +23,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 02. Identity and Access Management (IAM)
-**File:** [02-IAM/DIAGRAMS.md](02-IAM/DIAGRAMS.md)
+**File:** [02-IAM/DIAGRAMS.md](../../02-IAM/DIAGRAMS.md)
 
 **Contents:**
 - IAM Components (Users, Groups, Roles, Policies)
@@ -39,7 +39,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 03. Compute Services
-**File:** [03-Compute/DIAGRAMS.md](03-Compute/DIAGRAMS.md)
+**File:** [03-Compute/DIAGRAMS.md](../../03-Compute/DIAGRAMS.md)
 
 **Contents:**
 - EC2 Instance Lifecycle and Types (CRAM FACTS)
@@ -56,7 +56,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 04. Storage Services
-**File:** [04-Storage/DIAGRAMS.md](04-Storage/DIAGRAMS.md)
+**File:** [04-Storage/DIAGRAMS.md](../../04-Storage/DIAGRAMS.md)
 
 **Contents:**
 - S3 Storage Classes Hierarchy
@@ -75,7 +75,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 05. Database Services
-**File:** [05-Database/DIAGRAMS.md](05-Database/DIAGRAMS.md)
+**File:** [05-Database/DIAGRAMS.md](../../05-Database/DIAGRAMS.md)
 
 **Contents:**
 - Database Services Map
@@ -95,7 +95,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 06. Networking & Content Delivery
-**File:** [06-Networking/DIAGRAMS.md](06-Networking/DIAGRAMS.md)
+**File:** [06-Networking/DIAGRAMS.md](../../06-Networking/DIAGRAMS.md)
 
 **Contents:**
 - VPC Complete Architecture
@@ -113,7 +113,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 07. Security & Compliance
-**File:** [07-Security/DIAGRAMS.md](07-Security/DIAGRAMS.md)
+**File:** [07-Security/DIAGRAMS.md](../../07-Security/DIAGRAMS.md)
 
 **Contents:**
 - KMS Architecture and Envelope Encryption
@@ -131,7 +131,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 08. Application Integration
-**File:** [08-Application-Integration/DIAGRAMS.md](08-Application-Integration/DIAGRAMS.md)
+**File:** [08-Application-Integration/DIAGRAMS.md](../../08-Application-Integration/DIAGRAMS.md)
 
 **Contents:**
 - SQS (Standard vs FIFO, Message Lifecycle)
@@ -149,7 +149,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 09. Monitoring & Management
-**File:** [09-Monitoring/DIAGRAMS.md](09-Monitoring/DIAGRAMS.md)
+**File:** [09-Monitoring/DIAGRAMS.md](../../09-Monitoring/DIAGRAMS.md)
 
 **Contents:**
 - CloudWatch Architecture (Metrics, Logs, Alarms)
@@ -167,7 +167,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 10. Migration & Transfer
-**File:** [10-Migration/DIAGRAMS.md](10-Migration/DIAGRAMS.md)
+**File:** [10-Migration/DIAGRAMS.md](../../10-Migration/DIAGRAMS.md)
 
 **Contents:**
 - 7 Rs of Migration Strategy
@@ -185,7 +185,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 11. Analytics
-**File:** [11-Analytics/DIAGRAMS.md](11-Analytics/DIAGRAMS.md)
+**File:** [11-Analytics/DIAGRAMS.md](../../11-Analytics/DIAGRAMS.md)
 
 **Contents:**
 - Amazon Athena Architecture
@@ -202,7 +202,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 12. Architecture Patterns
-**File:** [12-Architecture-Patterns/DIAGRAMS.md](12-Architecture-Patterns/DIAGRAMS.md)
+**File:** [12-Architecture-Patterns/DIAGRAMS.md](../../12-Architecture-Patterns/DIAGRAMS.md)
 
 **Contents:**
 - Well-Architected Framework Pillars
@@ -222,7 +222,7 @@ This directory contains comprehensive Mermaid diagram documentation for the AWS 
 ---
 
 ### 13. Cost Optimization
-**File:** [13-Cost-Optimization/DIAGRAMS.md](13-Cost-Optimization/DIAGRAMS.md)
+**File:** [13-Cost-Optimization/DIAGRAMS.md](../../13-Cost-Optimization/DIAGRAMS.md)
 
 **Contents:**
 - Cost Optimization Strategies
@@ -341,7 +341,7 @@ To improve these diagrams:
 
 ---
 
-**Last Updated:** January 2026
+**Last Updated:** April 2026
 
 **Exam Version:** AWS Certified Solutions Architect - Associate (SAA-C03)
 
