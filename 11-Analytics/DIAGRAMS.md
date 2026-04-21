@@ -58,7 +58,7 @@ graph TB
 graph TB
     Original["Original S3 Data<br/>CSV format<br/>1 TB data<br/>$5 per query"]
     
-    Optimizations{"Performance<br/>Optimizations{"
+    Optimizations{"Performance<br/>Optimizations"}
     
     Original --> Optimizations
     
@@ -411,11 +411,11 @@ graph TB
     ETL --> Redshift_Target
     ETL --> RDS_Target
     
-    Athena[Amazon Athena[ -.Query.-> Catalog
-    EMR[Amazon EMR[ -.Use.-> Catalog
+    Athena[Amazon Athena] -.Query.-> Catalog
+    EMR[Amazon EMR] -.Use.-> Catalog
     Redshift2[Redshift Spectrum] -.Use.-> Catalog
     
-    Features]"Features:<br/>✅ Serverless<br/>✅ Pay per second for ETL<br/>✅ Python or Scala<br/>✅ Built-in transformations<br/>✅ Job bookmarks<br/>✅ Development endpoints"]
+    Features["Features:<br/>✅ Serverless<br/>✅ Pay per second for ETL<br/>✅ Python or Scala<br/>✅ Built-in transformations<br/>✅ Job bookmarks<br/>✅ Development endpoints"]
     
     classDef style1 fill:#FF9900
     class Catalog style1

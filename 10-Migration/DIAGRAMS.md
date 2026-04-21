@@ -6,7 +6,7 @@
 
 ```mermaid
 mindmap
-    root([(7 Rs of Migration()
+    root((7 Rs of Migration))
         Retire
             Decommission
             Turn off unused
@@ -50,16 +50,16 @@ mindmap
 
 ```mermaid
 flowchart TD
-    Start]Application to Migrate()
+    Start([Application to Migrate])
     
-    Start --> Q1{Still needed?{
+    Start --> Q1{Still needed?}
     Q1 -->|No| Retire["Retire: Decommission"]
-    Q1 -->|Yes| Q2{Ready to migrate?{
+    Q1 -->|Yes| Q2{Ready to migrate?}
     
     Q2 -->|No| Retain["Retain: Keep on-premises"]
-    Q2 -->|Yes| Q3{Migration urgency?{
+    Q2 -->|Yes| Q3{Migration urgency?}
     
-    Q3 -->|Very Urgent| Q4{VMware workload?{
+    Q3 -->|Very Urgent| Q4{VMware workload?}
     Q3 -->|Not Urgent| Q5{Willing to redesign?}
     
     Q4 -->|Yes| Relocate["Relocate: VMware Cloud on AWS"]

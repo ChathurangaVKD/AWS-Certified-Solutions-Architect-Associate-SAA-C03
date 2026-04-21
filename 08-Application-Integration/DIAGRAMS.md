@@ -388,14 +388,14 @@ graph TB
 
 ```mermaid
 graph TB
-    Start]Start(( --> ValidateOrder["Validate Order<br/>Lambda Task"]
+    Start((Start)) --> ValidateOrder["Validate Order<br/>Lambda Task"]
     
-    ValidateOrder --> CheckInventory{"Check Inventory<br/>Choice State{"
+    ValidateOrder --> CheckInventory{"Check Inventory<br/>Choice State"}
     
     CheckInventory -->|In Stock| ProcessPayment["Process Payment<br/>Lambda Task"]
     CheckInventory -->|Out of Stock| NotifyOutOfStock["Notify Customer<br/>SNS"]
     
-    ProcessPayment --> PaymentSuccess{"Payment Success?<br/>Choice State{"
+    ProcessPayment --> PaymentSuccess{"Payment Success?<br/>Choice State"}
     
     PaymentSuccess -->|Success| FulfillOrder["Fulfill Order<br/>Lambda Task"]
     PaymentSuccess -->|Failed| RefundCustomer["Refund Customer<br/>Lambda Task"]
@@ -413,9 +413,9 @@ graph TB
     Wait --> FollowUp["Send Follow-up<br/>Lambda Task"]
     
     RefundCustomer --> NotifyFailed["Notify Failed Order<br/>SNS"]
-    NotifyOutOfStock --> End1]End))
-    NotifyFailed --> End2([[End()
-    FollowUp --> End3]End: Success()
+    NotifyOutOfStock --> End1((End))
+    NotifyFailed --> End2((End))
+    FollowUp --> End3((End: Success))
     
     classDef style1 fill:#569A31
     class Start style1
@@ -570,11 +570,11 @@ graph TB
     end
     
     subgraph DataSources_Group["Data Sources"]
-        DynamoDB[(DynamoDB]"]
+        DynamoDB[(DynamoDB)]
         Lambda[Lambda Functions]
-        RDS[(RDS via Lambda]]
+        RDS[(RDS via Lambda)]
         HTTP[HTTP Endpoints]
-        ElasticSearch[(OpenSearch]]
+        ElasticSearch[(OpenSearch)]
     end
     
     subgraph Features_Group["Key Features"]

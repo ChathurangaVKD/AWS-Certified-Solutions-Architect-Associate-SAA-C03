@@ -457,9 +457,9 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    Start]Monthly Cost Review(( --> Analyze["Analyze Costs<br/>Cost Explorer<br/>CUR reports"]
+    Start((Monthly Cost Review)) --> Analyze["Analyze Costs<br/>Cost Explorer<br/>CUR reports"]
     
-    Analyze --> Identify{"Identify<br/>Optimization<br/>Opportunities{"
+    Analyze --> Identify{"Identify<br/>Optimization<br/>Opportunities"}
     
     Identify --> RightSize["Right-Size Resources<br/>Compute Optimizer<br/>CloudWatch metrics"]
     
@@ -482,7 +482,7 @@ flowchart TD
     
     SetBudgets --> Document["Document Savings<br/>Report to stakeholders<br/>Continuous improvement"]
     
-    Document --> End]Next Month Review))
+    Document --> End((Next Month Review))
     
     Automate["Automation Options:<br/>• Lambda for auto-shutdown<br/>• Instance Scheduler<br/>• Auto Scaling policies<br/>• Lifecycle policies"] -.Enhance.-> Implement
     

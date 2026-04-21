@@ -78,13 +78,13 @@ sequenceDiagram
 graph TB
     Request[API Request to use KMS Key]
     
-    Request --> KeyPolicy{"Key Policy<br/>Allows?}
+    Request --> KeyPolicy{"Key Policy<br/>Allows?"}
     
     KeyPolicy -->|No| Deny1["❌ DENY"]
     KeyPolicy -->|Yes| IAMPolicy{"IAM Policy<br/>Allows?"}
     
     IAMPolicy -->|No| Deny2["❌ DENY"]
-    IAMPolicy -->|Yes| Grant{"Grant<br/>Allows?"}"
+    IAMPolicy -->|Yes| Grant{"Grant<br/>Allows?"}
     
     Grant -->|Not Required| Allow["✅ ALLOW"]
     Grant -->|Yes| Allow

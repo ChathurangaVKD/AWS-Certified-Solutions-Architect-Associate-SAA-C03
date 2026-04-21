@@ -244,14 +244,14 @@ graph TB
 
 ```mermaid
 graph TB
-    S3[S3 Bucket] --> Events{Event Types{
+    S3[S3 Bucket] --> Events{Event Types}
     
     Events --> Create["Object Created<br/>s3:ObjectCreated:*"]
     Events --> Delete["Object Removed<br/>s3:ObjectRemoved:*"]
     Events --> Restore["Object Restore<br/>s3:ObjectRestore:*"]
     Events --> Replication["Replication<br/>s3:Replication:*"]
     
-    Create --> Targets{Notification Targets{
+    Create --> Targets{Notification Targets}
     Delete --> Targets
     
     Targets --> SNS["SNS Topic<br/>Email/SMS notifications"]
@@ -552,7 +552,7 @@ graph TB
 graph TB
     OnPrem["On-Premises<br/>Data Center"]
     
-    OnPrem --> Gateway{Storage Gateway{
+    OnPrem --> Gateway{Storage Gateway}
     
     Gateway --> S3File["S3 File Gateway<br/>📁 NFS/SMB protocol<br/>☁️ Store as S3 objects<br/>💾 Local cache<br/>Use: File shares, backups"]
     
@@ -564,7 +564,7 @@ graph TB
     
     Volume --> Stored["Stored Volumes<br/>💾 Primary data on-premises<br/>☁️ Async backup to S3<br/>📦 Up to 32 volumes<br/>📊 16 TiB each"]
     
-    Gateway --> Tape["Tape Gateway<br/>📼 Virtual Tape Library ([VTL[<br/>☁️ Backup to S3 & Glacier<br/>✅ Works with backup software<br/>Use: Backup & archive"]
+    Gateway --> Tape["Tape Gateway<br/>📼 Virtual Tape Library (VTL)<br/>☁️ Backup to S3 & Glacier<br/>✅ Works with backup software<br/>Use: Backup & archive"]
     
     S3File --> S3[Amazon S3]
     FSx --> FSxService[Amazon FSx]
@@ -607,7 +607,7 @@ graph TB
     
     Lifecycle[Lifecycle Policies] -.Auto-archive.-> Glacier
     
-    Benefits]"Benefits:<br/>✅ Low-latency local access<br/>✅ Durable cloud storage<br/>✅ Seamless migration<br/>✅ Disaster recovery<br/>✅ Reduced on-prem storage costs"]
+    Benefits["Benefits:<br/>✅ Low-latency local access<br/>✅ Durable cloud storage<br/>✅ Seamless migration<br/>✅ Disaster recovery<br/>✅ Reduced on-prem storage costs"]
     
     classDef style1 fill:#FF9900
     class Gateway style1
@@ -751,12 +751,12 @@ graph TB
 
 ```mermaid
 graph TB
-    Start]Choose Storage Service()
+    Start([Choose Storage Service])
     
-    Start --> Q1{Data Type?{
+    Start --> Q1{Data Type?}
     
-    Q1 -->|Object Storage| S3Decision{Access Pattern?{
-    Q1 -->|Block Storage| BlockDecision{Shared Access?{
+    Q1 -->|Object Storage| S3Decision{Access Pattern?}
+    Q1 -->|Block Storage| BlockDecision{Shared Access?}
     Q1 -->|File Storage| FileDecision{OS Type?}
     
     S3Decision -->|Frequent| S3Standard[S3 Standard]
