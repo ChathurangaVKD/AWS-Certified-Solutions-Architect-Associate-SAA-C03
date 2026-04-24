@@ -16,11 +16,11 @@
 
 ### 🌐 Interactive Study Site
 
-> **New!** Browse all modules, search topics, and track your progress with the enhanced web UI:
+> Browse all 14 modules with search, learning path cards, exam domain breakdown and score tracker — all in one place.
 >
-> **👉 [https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/)**
+> **👉 [Open Interactive Study Site →](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/)**
 >
-> Features: sidebar navigation · live search · learning path cards · exam domain breakdown · practice score tracker
+> `sidebar navigation` · `live search` · `learning path cards` · `exam domain breakdown` · `practice score tracker`
 
 ---
 
@@ -170,7 +170,7 @@ A curated set of resources to support every stage of your preparation:
 
 | Resource | Est. Time | Description | Best For |
 |----------|-----------|-------------|----------|
-| [🌐 Interactive Study Site](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/) | — | Web UI with search, navigation & progress tracking | All learners |
+| [🌐 Interactive Study Site](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/) | — | Web UI with search, module cards, navigation & score tracker | All learners |
 | [🎯 Exam Day Cheat Sheet](exam-reviews/quick-reference/ULTRA-QUICK-REFERENCE-CARD.md) | 30 min | 150+ edge cases, 15 critical rules, exam strategies | Final review / Exam day |
 | [🚀 Ultra-Fast Index](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) | 3–4 hrs | Highly condensed bullet summaries | Last-minute cramming |
 | [⚡ Fast-Learn Guide](docs/study-guides/FAST-LEARN-GUIDE.md) | 11–14 hrs | Condensed essentials with decision trees | Quick preparation |
