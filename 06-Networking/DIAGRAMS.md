@@ -618,7 +618,7 @@ graph TB
     
     PlacementGroup[Cluster Placement Group] -.Combine with.-> ENA
     
-    EFA]"Elastic Fabric Adapter<br/>HPC & ML workloads<br/>OS-bypass for ultra-low latency"] --> ENA
+    EFA["Elastic Fabric Adapter<br/>HPC & ML workloads<br/>OS-bypass for ultra-low latency"] --> ENA
     
     classDef style1 fill:#FF9900
     class ENA style1

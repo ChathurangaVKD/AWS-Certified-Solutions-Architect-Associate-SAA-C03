@@ -659,11 +659,11 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph Lazy_Loading_Cache_Aside_Group["Lazy Loading (Cache-Aside["]
+    subgraph Lazy_Loading_Cache_Aside_Group["Lazy Loading (Cache-Aside)"]
         App1[Application]
-        App1 --&gt;|1. Read| Cache1[Cache]
-        Cache1 --&gt;|2. Cache Miss| App1
-        App1 --&gt;|3. Read from DB| DB1[(Database]]
+        App1 -->|1. Read| Cache1[Cache]
+        Cache1 -->|2. Cache Miss| App1
+        App1 -->|3. Read from DB| DB1[(Database)]
         DB1 -->|4. Return Data| App1
         App1 -->|5. Write to Cache| Cache1
         
@@ -673,7 +673,7 @@ graph TB
     subgraph Write_Through_Group["Write-Through"]
         App2[Application]
         App2 -->|1. Write| Cache2[Cache]
-        Cache2 -->|2. Write to DB| DB2[(Database]"]
+        Cache2 -->|2. Write to DB| DB2[(Database)]
         DB2 -->|3. Confirm| App2
         
         WriteThrough["Pros:<br/>✅ Data never stale<br/>✅ Cache always updated<br/>Cons:<br/>❌ Write penalty<br/>❌ Missing data until added<br/>❌ Cache churn"]
@@ -681,7 +681,7 @@ graph TB
     
     subgraph Cache_Invalidation_Group["Cache Invalidation"]
         App3[Application]
-        App3 -->|1. Update/Delete| DB3[(Database]"]
+        App3 -->|1. Update/Delete| DB3[(Database)]
         DB3 -->|2. Success| App3
         App3 -->|3. Invalidate| Cache3[Cache]
         
@@ -797,11 +797,11 @@ graph TB
 
 ```mermaid
 flowchart TD
-    Start]Choose Database Service()
+    Start([Choose Database Service])
     
-    Start --> Q1{Workload Type?{
+    Start --> Q1{Workload Type?}
     
-    Q1 -->|OLTP<br/>Transactional| OLTP{Data Model?{
+    Q1 -->|OLTP<br/>Transactional| OLTP{Data Model?}
     Q1 -->|OLAP<br/>Analytics| Redshift["Amazon Redshift<br/>Data Warehouse"]
     Q1 -->|Caching| Cache{Feature Needs?}
     

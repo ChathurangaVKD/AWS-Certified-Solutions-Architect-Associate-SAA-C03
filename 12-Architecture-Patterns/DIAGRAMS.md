@@ -251,7 +251,7 @@ graph TB
     ProdDB -.Async Replication.-> DRDB
     ProdS3 -.Cross-Region Replication.-> DRS3
     
-    Disaster[Disaster Event] -.Triggers.-> Failover]"Failover Process:<br/>1. Promote RDS replica<br/>2. Launch app servers from AMI<br/>3. Update Route 53 DNS<br/>4. Scale to production capacity"]
+    Disaster[Disaster Event] -.Triggers.-> Failover["Failover Process:<br/>1. Promote RDS replica<br/>2. Launch app servers from AMI<br/>3. Update Route 53 DNS<br/>4. Scale to production capacity"]
     
     Failover --> DRCore
     
@@ -452,7 +452,7 @@ graph TB
     Lambda2 --> S3[S3]
     ECS --> RDS[RDS]
     
-    WAF[AWS WAF[ -.Protect.-> API
+    WAF[AWS WAF] -.Protect.-> API
     Shield[AWS Shield] -.DDoS Protection.-> API
     
     classDef style1 fill:#FF9900
@@ -467,7 +467,7 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph Data_Sources_Group]"Data Sources"]
+    subgraph Data_Sources_Group["Data Sources"]
         Streaming["Streaming Data<br/>Kinesis, IoT"]
         Batch["Batch Data<br/>Databases, Files"]
         RealTime["Real-time Apps<br/>APIs, Logs"]
