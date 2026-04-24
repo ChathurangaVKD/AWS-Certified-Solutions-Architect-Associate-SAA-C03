@@ -10,7 +10,27 @@
 
 **A comprehensive, free, and open-source study guide for the AWS Certified Solutions Architect – Associate (SAA-C03) certification exam.**
 
-[🚀 Ultra-Fast (3–4 hrs)](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) • [⚡ Fast-Learn (11–14 hrs)](docs/reference/QUICK-START.md) • [📊 Visual Diagrams](docs/reference/DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start)
+[🌐 Interactive Study Site](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/) • [🚀 Ultra-Fast (3–4 hrs)](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) • [⚡ Fast-Learn (11–14 hrs)](docs/reference/QUICK-START.md) • [📊 Visual Diagrams](docs/reference/DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start)
+
+---
+
+### 🌐 Interactive Study Site
+
+> **New!** Browse all modules, search topics, and track your progress with the enhanced web UI:
+>
+> **👉 [https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/)**
+>
+> Features: sidebar navigation · live search · learning path cards · exam domain breakdown · practice score tracker
+
+---
+
+### 🎯 Exam Day Cheat Sheet
+
+> Save this for your final 30-minute review before the exam:
+>
+> **👉 [ULTRA QUICK REFERENCE CARD — 150+ Edge Cases, Must-Memorize Rules & Exam Strategies](exam-reviews/quick-reference/ULTRA-QUICK-REFERENCE-CARD.md)**
+>
+> Covers: 15 critical rules · 150+ edge cases & traps · service selection guide · anti-patterns · numerical limits · exam day tactics
 
 </div>
 
@@ -110,12 +130,14 @@ Choose the learning path that fits your available time and experience level.
 3. **Memory aids** — Review [Quick Study Notes](docs/study-guides/QUICK-STUDY-NOTES.md)
 4. **Visual patterns** — Study [Visual Guide](docs/reference/VISUAL-GUIDE.md) diagrams
 5. **Mock exams** — Practice in [Module 14](14-Practice/README.md)
+6. **Cheat sheet** — Bookmark the [Ultra Quick Reference Card](exam-reviews/quick-reference/ULTRA-QUICK-REFERENCE-CARD.md)
 
 ### Day Before the Exam
 
 1. **Morning** — [ULTRA-FAST-LEARN all modules](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) (3–4 hours)
 2. **Afternoon** — Review [Module 14 — Exam Tips](14-Practice/ULTRA-FAST-LEARN.md)
 3. **Evening** — Light review of [Quick Study Notes](docs/study-guides/QUICK-STUDY-NOTES.md), then rest
+4. **Final 30 min** — Run through the [🎯 Exam Day Cheat Sheet](exam-reviews/quick-reference/ULTRA-QUICK-REFERENCE-CARD.md)
 
 ---
 
@@ -148,6 +170,8 @@ A curated set of resources to support every stage of your preparation:
 
 | Resource | Est. Time | Description | Best For |
 |----------|-----------|-------------|----------|
+| [🌐 Interactive Study Site](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/) | — | Web UI with search, navigation & progress tracking | All learners |
+| [🎯 Exam Day Cheat Sheet](exam-reviews/quick-reference/ULTRA-QUICK-REFERENCE-CARD.md) | 30 min | 150+ edge cases, 15 critical rules, exam strategies | Final review / Exam day |
 | [🚀 Ultra-Fast Index](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) | 3–4 hrs | Highly condensed bullet summaries | Last-minute cramming |
 | [⚡ Fast-Learn Guide](docs/study-guides/FAST-LEARN-GUIDE.md) | 11–14 hrs | Condensed essentials with decision trees | Quick preparation |
 | [📊 Diagrams Index](docs/reference/DIAGRAMS-INDEX.md) | 2–3 hrs | 217+ visual architecture diagrams | Visual learners |
