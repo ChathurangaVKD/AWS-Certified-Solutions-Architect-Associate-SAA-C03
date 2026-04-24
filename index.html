@@ -14,23 +14,28 @@
 
   <style>
     :root {
-      --aws-orange: #FF9900;
-      --aws-dark: #232F3E;
-      --aws-blue: #1a73e8;
-      --aws-light-blue: #4da6ff;
-      --bg-primary: #0d1117;
-      --bg-secondary: #161b22;
-      --bg-card: #1c2128;
-      --bg-hover: #21262d;
-      --border: #30363d;
-      --text-primary: #e6edf3;
-      --text-secondary: #8b949e;
-      --text-muted: #6e7681;
-      --success: #3fb950;
-      --warning: #d29922;
-      --danger: #f85149;
-      --info: #58a6ff;
-      --purple: #a371f7;
+      --aws-orange: #a78bfa;
+      --accent: #7c3aed;
+      --accent-light: #c4b5fd;
+      --accent-glow: rgba(124, 58, 237, 0.25);
+      --grad-start: #7c3aed;
+      --grad-end: #2563eb;
+      --aws-dark: #1e1b4b;
+      --aws-blue: #2563eb;
+      --aws-light-blue: #60a5fa;
+      --bg-primary: #09090f;
+      --bg-secondary: #0f0e1a;
+      --bg-card: #13111f;
+      --bg-hover: #1a1730;
+      --border: #2d2a4a;
+      --text-primary: #e9e7ff;
+      --text-secondary: #9d9bc0;
+      --text-muted: #6b6890;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --info: #60a5fa;
+      --purple: #c084fc;
       --sidebar-width: 280px;
       --header-height: 64px;
     }
@@ -66,13 +71,13 @@
     }
     .logo-icon {
       width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--aws-orange), #e68900);
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem; color: #fff; font-weight: 700;
     }
     .logo-text { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .logo-sub { font-size: 0.65rem; color: var(--aws-orange); font-weight: 500; letter-spacing: 0.05em; }
+    .logo-sub { font-size: 0.65rem; color: var(--accent-light); font-weight: 500; letter-spacing: 0.05em; }
 
     .search-bar {
       flex: 1; max-width: 420px; margin: 0 1rem;
@@ -88,7 +93,7 @@
       font-family: inherit;
       transition: border-color 0.2s;
     }
-    .search-bar input:focus { outline: none; border-color: var(--aws-orange); }
+    .search-bar input:focus { outline: none; border-color: var(--accent); }
     .search-bar i {
       position: absolute; left: 0.75rem; top: 50%;
       transform: translateY(-50%);
@@ -113,10 +118,10 @@
     }
     .nav-btn.github:hover { background: var(--bg-hover); color: var(--text-primary); }
     .nav-btn.cta {
-      background: var(--aws-orange);
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
       color: #fff;
     }
-    .nav-btn.cta:hover { background: #e68900; }
+    .nav-btn.cta:hover { background: linear-gradient(135deg, #6d28d9, #1d4ed8); }
 
     .hamburger {
       display: none; background: none; border: none;
@@ -164,7 +169,7 @@
       white-space: nowrap;
     }
     .sidebar-link:hover { background: var(--bg-hover); color: var(--text-primary); }
-    .sidebar-link.active { background: rgba(255, 153, 0, 0.15); color: var(--aws-orange); }
+    .sidebar-link.active { background: rgba(124,58,237,0.15); color: var(--accent-light); }
     .sidebar-link .icon {
       width: 20px; height: 20px;
       border-radius: 4px;
@@ -182,7 +187,7 @@
 
     /* ── HERO ── */
     .hero {
-      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1f26 100%);
+      background: linear-gradient(135deg, #09090f 0%, #0f0e1a 50%, #111128 100%);
       padding: 4rem 2rem 3rem;
       text-align: center;
       position: relative;
@@ -191,16 +196,16 @@
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(255,153,0,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.18) 0%, rgba(37,99,235,0.08) 50%, transparent 70%);
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 0.4rem;
       padding: 0.35rem 0.9rem;
-      background: rgba(255,153,0,0.1);
-      border: 1px solid rgba(255,153,0,0.3);
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.35);
       border-radius: 999px;
       font-size: 0.75rem; font-weight: 600;
-      color: var(--aws-orange);
+      color: var(--accent-light);
       margin-bottom: 1.5rem;
       position: relative;
     }
@@ -211,7 +216,7 @@
       margin-bottom: 1rem;
       position: relative;
     }
-    .hero h1 span { color: var(--aws-orange); }
+    .hero h1 span { color: var(--accent-light); }
     .hero p {
       font-size: 1.05rem;
       color: var(--text-secondary);
@@ -233,7 +238,7 @@
       padding: 0.4rem 1rem;
       font-size: 0.82rem; font-weight: 500;
     }
-    .stat-pill i { color: var(--aws-orange); }
+    .stat-pill i { color: var(--accent-light); }
 
     .hero-cta {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem;
@@ -248,10 +253,10 @@
       transition: all 0.2s;
     }
     .btn-primary {
-      background: var(--aws-orange);
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
       color: #fff;
     }
-    .btn-primary:hover { background: #e68900; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,153,0,0.3); }
+    .btn-primary:hover { background: linear-gradient(135deg, #6d28d9, #1d4ed8); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
     .btn-secondary {
       background: var(--bg-card);
       color: var(--text-primary);
@@ -267,11 +272,11 @@
     }
     .section-icon {
       width: 36px; height: 36px;
-      background: rgba(255,153,0,0.1);
-      border: 1px solid rgba(255,153,0,0.2);
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.25);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; color: var(--aws-orange);
+      font-size: 1rem; color: var(--accent-light);
       flex-shrink: 0;
     }
     .section-title {
@@ -298,7 +303,7 @@
     }
     .exam-item .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
     .exam-item .value { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .exam-item .value.highlight { color: var(--aws-orange); }
+    .exam-item .value.highlight { color: var(--accent-light); }
 
     /* ── LEARNING PATHS ── */
     .path-cards {
@@ -321,13 +326,13 @@
       position: absolute; top: 0; left: 0; right: 0;
       height: 3px;
     }
-    .path-card.ultra::before { background: linear-gradient(90deg, var(--aws-orange), #ffb84d); }
-    .path-card.fast::before { background: linear-gradient(90deg, var(--aws-blue), var(--aws-light-blue)); }
-    .path-card.full::before { background: linear-gradient(90deg, var(--success), #56e365); }
-    .path-card:hover { border-color: rgba(255,153,0,0.4); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .path-card.ultra::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .path-card.fast::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+    .path-card.full::before { background: linear-gradient(90deg, #0891b2, #34d399); }
+    .path-card:hover { border-color: rgba(124,58,237,0.45); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.2); }
     .path-card .emoji { font-size: 2rem; margin-bottom: 0.75rem; }
     .path-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
-    .path-card .time { font-size: 0.8rem; color: var(--aws-orange); font-weight: 600; margin-bottom: 0.5rem; }
+    .path-card .time { font-size: 0.8rem; color: var(--accent-light); font-weight: 600; margin-bottom: 0.5rem; }
     .path-card p { font-size: 0.8rem; color: var(--text-secondary); }
 
     /* ── MODULE GRID ── */
@@ -343,7 +348,7 @@
       overflow: hidden;
       transition: all 0.2s;
     }
-    .module-card:hover { border-color: rgba(255,153,0,0.4); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .module-card:hover { border-color: rgba(124,58,237,0.45); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.15); }
     .module-header {
       display: flex; align-items: center; gap: 0.75rem;
       padding: 1rem 1.25rem;
@@ -351,7 +356,7 @@
     }
     .module-num {
       width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--aws-orange), #e68900);
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 800; color: #fff;
@@ -372,29 +377,29 @@
       text-decoration: none;
       transition: all 0.15s;
     }
-    .ml-ultra { background: rgba(255,153,0,0.1); color: var(--aws-orange); border: 1px solid rgba(255,153,0,0.2); }
-    .ml-ultra:hover { background: rgba(255,153,0,0.2); }
-    .ml-fast { background: rgba(26,115,232,0.1); color: var(--aws-light-blue); border: 1px solid rgba(26,115,232,0.2); }
-    .ml-fast:hover { background: rgba(26,115,232,0.2); }
-    .ml-full { background: rgba(63,185,80,0.1); color: var(--success); border: 1px solid rgba(63,185,80,0.2); }
-    .ml-full:hover { background: rgba(63,185,80,0.2); }
-    .ml-diagrams { background: rgba(163,113,247,0.1); color: var(--purple); border: 1px solid rgba(163,113,247,0.2); }
-    .ml-diagrams:hover { background: rgba(163,113,247,0.2); }
-    .ml-practice { background: rgba(248,81,73,0.1); color: var(--danger); border: 1px solid rgba(248,81,73,0.2); }
-    .ml-practice:hover { background: rgba(248,81,73,0.2); }
+    .ml-ultra { background: rgba(124,58,237,0.1); color: var(--accent-light); border: 1px solid rgba(124,58,237,0.25); }
+    .ml-ultra:hover { background: rgba(124,58,237,0.2); }
+    .ml-fast { background: rgba(37,99,235,0.1); color: var(--aws-light-blue); border: 1px solid rgba(37,99,235,0.25); }
+    .ml-fast:hover { background: rgba(37,99,235,0.2); }
+    .ml-full { background: rgba(52,211,153,0.1); color: var(--success); border: 1px solid rgba(52,211,153,0.2); }
+    .ml-full:hover { background: rgba(52,211,153,0.2); }
+    .ml-diagrams { background: rgba(192,132,252,0.1); color: var(--purple); border: 1px solid rgba(192,132,252,0.2); }
+    .ml-diagrams:hover { background: rgba(192,132,252,0.2); }
+    .ml-practice { background: rgba(248,113,113,0.1); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
+    .ml-practice:hover { background: rgba(248,113,113,0.2); }
 
     /* ── DOMAIN BARS ── */
     .domains { display: flex; flex-direction: column; gap: 0.75rem; }
     .domain-row { display: flex; flex-direction: column; gap: 0.25rem; }
     .domain-info { display: flex; justify-content: space-between; font-size: 0.82rem; }
     .domain-name { font-weight: 500; }
-    .domain-pct { color: var(--aws-orange); font-weight: 700; }
+    .domain-pct { color: var(--accent-light); font-weight: 700; }
     .domain-bar { height: 8px; background: var(--bg-hover); border-radius: 999px; overflow: hidden; }
     .domain-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
-    .d1 { background: linear-gradient(90deg, #FF9900, #ffb84d); }
-    .d2 { background: linear-gradient(90deg, #1a73e8, #4da6ff); }
-    .d3 { background: linear-gradient(90deg, #a371f7, #c29fff); }
-    .d4 { background: linear-gradient(90deg, #3fb950, #56e365); }
+    .d1 { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .d2 { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+    .d3 { background: linear-gradient(90deg, #0891b2, #67e8f9); }
+    .d4 { background: linear-gradient(90deg, #059669, #34d399); }
 
     /* ── SCORE TRACKER ── */
     .score-grid {
@@ -409,7 +414,7 @@
       text-decoration: none; color: inherit;
       transition: all 0.2s;
     }
-    .score-card:hover { border-color: rgba(255,153,0,0.4); transform: translateY(-1px); }
+    .score-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-1px); }
     .score-card .test-name { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
     .score-card .score { font-size: 1.4rem; font-weight: 800; }
     .score-card .date { font-size: 0.7rem; color: var(--text-muted); }
@@ -439,7 +444,7 @@
       text-decoration: none; color: inherit;
       transition: all 0.2s;
     }
-    .resource-card:hover { border-color: rgba(255,153,0,0.4); background: var(--bg-hover); }
+    .resource-card:hover { border-color: rgba(124,58,237,0.4); background: var(--bg-hover); }
     .resource-icon {
       width: 36px; height: 36px; flex-shrink: 0;
       border-radius: 8px;
@@ -451,7 +456,7 @@
     .resource-info .time-tag {
       display: inline-block;
       font-size: 0.65rem; font-weight: 600;
-      color: var(--aws-orange);
+      color: var(--accent-light);
       margin-top: 0.25rem;
     }
 
@@ -466,7 +471,7 @@
     }
     .week-label {
       font-size: 0.75rem; font-weight: 700;
-      color: var(--aws-orange);
+      color: var(--accent-light);
       min-width: 60px;
     }
     .week-focus { font-size: 0.85rem; font-weight: 600; }
@@ -480,7 +485,7 @@
       background: var(--bg-secondary);
     }
     footer p { font-size: 0.8rem; color: var(--text-muted); }
-    footer a { color: var(--aws-orange); text-decoration: none; }
+    footer a { color: var(--accent-light); text-decoration: none; }
 
     /* ── SEARCH RESULTS ── */
     #search-results {
@@ -504,7 +509,7 @@
       font-size: 0.82rem;
     }
     .search-item:hover { background: var(--bg-hover); }
-    .search-item i { color: var(--aws-orange); width: 16px; }
+    .search-item i { color: var(--accent-light); width: 16px; }
 
     /* ── MOBILE ── */
     @media (max-width: 900px) {
@@ -614,20 +619,20 @@
 
     <div class="sidebar-section">
       <div class="sidebar-label">Modules</div>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/01-AWS-Fundamentals/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">01</span> AWS Fundamentals</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/02-IAM/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">02</span> IAM</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/03-Compute/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">03</span> Compute</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/04-Storage/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">04</span> Storage</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/05-Database/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">05</span> Databases</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/06-Networking/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">06</span> Networking</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/07-Security/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">07</span> Security</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/08-Application-Integration/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">08</span> App Integration</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/09-Monitoring/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">09</span> Monitoring</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/10-Migration/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">10</span> Migration</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/11-Analytics/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">11</span> Analytics</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/12-Architecture-Patterns/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">12</span> Architecture</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/13-Cost-Optimization/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">13</span> Cost Optimization</a>
-      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/14-Practice/README.md" target="_blank"><span class="icon" style="background:rgba(255,153,0,0.15);">14</span> Practice</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/01-AWS-Fundamentals/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">01</span> AWS Fundamentals</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/02-IAM/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">02</span> IAM</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/03-Compute/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">03</span> Compute</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/04-Storage/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">04</span> Storage</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/05-Database/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">05</span> Databases</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/06-Networking/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">06</span> Networking</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/07-Security/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">07</span> Security</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/08-Application-Integration/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">08</span> App Integration</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/09-Monitoring/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">09</span> Monitoring</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/10-Migration/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">10</span> Migration</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/11-Analytics/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">11</span> Analytics</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/12-Architecture-Patterns/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">12</span> Architecture</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/13-Cost-Optimization/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">13</span> Cost Optimization</a>
+      <a class="sidebar-link" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/14-Practice/README.md" target="_blank"><span class="icon" style="background:rgba(124,58,237,0.18);">14</span> Practice</a>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -1050,7 +1055,7 @@
       </div>
       <div class="resource-grid">
         <a class="resource-card" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md" target="_blank">
-          <div class="resource-icon" style="background:rgba(255,153,0,0.1);">🚀</div>
+          <div class="resource-icon" style="background:rgba(124,58,237,0.12);">🚀</div>
           <div class="resource-info">
             <h4>Ultra-Fast Index</h4>
             <p>Highly condensed bullet summaries for all 14 modules</p>
@@ -1106,7 +1111,7 @@
           </div>
         </a>
         <a class="resource-card" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/docs/reference/QUICK-REFERENCE.md" target="_blank">
-          <div class="resource-icon" style="background:rgba(255,153,0,0.1);">🔍</div>
+          <div class="resource-icon" style="background:rgba(124,58,237,0.12);">🔍</div>
           <div class="resource-info">
             <h4>Quick Reference</h4>
             <p>Service lookup table for quick facts and comparisons</p>
@@ -1170,9 +1175,9 @@
         </a>
         <a class="score-card" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/exam-reviews/README.md" target="_blank" style="border-style:dashed;">
           <div class="test-name">Average Score</div>
-          <div class="score" style="color:var(--aws-orange);">71.22%</div>
+        <div class="score" style="color:var(--accent-light);">71.22%</div>
           <div class="date">Target: 85%+</div>
-          <span class="badge" style="background:rgba(255,153,0,0.1);color:var(--aws-orange);">📈 Improving</span>
+        <span class="badge" style="background:rgba(124,58,237,0.12);color:var(--accent-light);">📈 Improving</span>
         </a>
       </div>
     </section>
