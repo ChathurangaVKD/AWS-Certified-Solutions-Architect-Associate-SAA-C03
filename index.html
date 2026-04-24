@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AWS SAA-C03 Study Guide</title>
+  <meta name="description" content="Free, comprehensive AWS Certified Solutions Architect Associate (SAA-C03) study guide with 14 modules, 217+ diagrams, 276+ practice questions." />
+  <link rel="icon" href="https://img.icons8.com/color/48/amazon-web-services.png" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1a73e8;
+      --aws-light-blue: #4da6ff;
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-card: #1c2128;
+      --bg-hover: #21262d;
+      --border: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f85149;
+      --info: #58a6ff;
+      --purple: #a371f7;
+      --sidebar-width: 280px;
+      --header-height: 64px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: var(--header-height);
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto; padding: 0 1.5rem;
+      width: 100%; display: flex; align-items: center; gap: 1rem;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--aws-orange), #e68900);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #fff; font-weight: 700;
+    }
+    .logo-text { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    .logo-sub { font-size: 0.65rem; color: var(--aws-orange); font-weight: 500; letter-spacing: 0.05em; }
+
+    .search-bar {
+      flex: 1; max-width: 420px; margin: 0 1rem;
+      position: relative;
+    }
+    .search-bar input {
+      width: 100%; padding: 0.5rem 1rem 0.5rem 2.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .search-bar input:focus { outline: none; border-color: var(--aws-orange); }
+    .search-bar i {
+      position: absolute; left: 0.75rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted); font-size: 0.8rem;
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 0.5rem; margin-left: auto;
+    }
+    .nav-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem; font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-btn.github {
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+    .nav-btn.github:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-btn.cta {
+      background: var(--aws-orange);
+      color: #fff;
+    }
+    .nav-btn.cta:hover { background: #e68900; }
+
+    .hamburger {
+      display: none; background: none; border: none;
+      color: var(--text-primary); font-size: 1.2rem; cursor: pointer;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-height);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      position: fixed;
+      top: var(--header-height);
+      left: 0; bottom: 0;
+      overflow-y: auto;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 0;
+      transition: transform 0.3s;
+      z-index: 900;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sidebar-section { padding: 0 0.75rem 1rem; }
+    .sidebar-label {
+      font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-muted);
+      padding: 0 0.5rem 0.5rem;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .sidebar-link:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .sidebar-link.active { background: rgba(255, 153, 0, 0.15); color: var(--aws-orange); }
+    .sidebar-link .icon {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; flex-shrink: 0;
+    }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 0.5rem 0.75rem; }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: calc(100vh - var(--header-height));
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1f26 100%);
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,153,0,0.12) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.35rem 0.9rem;
+      background: rgba(255,153,0,0.1);
+      border: 1px solid rgba(255,153,0,0.3);
+      border-radius: 999px;
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--aws-orange);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .hero h1 span { color: var(--aws-orange); }
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+
+    .hero-stats {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .stat-pill {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      font-size: 0.82rem; font-weight: 500;
+    }
+    .stat-pill i { color: var(--aws-orange); }
+
+    .hero-cta {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem;
+      position: relative;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--aws-orange);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #e68900; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,153,0,0.3); }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--bg-hover); transform: translateY(-1px); }
+
+    /* ── SECTION ── */
+    .section { padding: 2.5rem 2rem; }
+    .section-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-icon {
+      width: 36px; height: 36px;
+      background: rgba(255,153,0,0.1);
+      border: 1px solid rgba(255,153,0,0.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--aws-orange);
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 1.3rem; font-weight: 700;
+    }
+    .section-subtitle {
+      font-size: 0.85rem; color: var(--text-secondary);
+    }
+
+    /* ── EXAM INFO BANNER ── */
+    .exam-banner {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .exam-item {
+      background: var(--bg-card);
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .exam-item .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+    .exam-item .value { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    .exam-item .value.highlight { color: var(--aws-orange); }
+
+    /* ── LEARNING PATHS ── */
+    .path-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem; margin-bottom: 1rem;
+    }
+    .path-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .path-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .path-card.ultra::before { background: linear-gradient(90deg, var(--aws-orange), #ffb84d); }
+    .path-card.fast::before { background: linear-gradient(90deg, var(--aws-blue), var(--aws-light-blue)); }
+    .path-card.full::before { background: linear-gradient(90deg, var(--success), #56e365); }
+    .path-card:hover { border-color: rgba(255,153,0,0.4); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .path-card .emoji { font-size: 2rem; margin-bottom: 0.75rem; }
+    .path-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .path-card .time { font-size: 0.8rem; color: var(--aws-orange); font-weight: 600; margin-bottom: 0.5rem; }
+    .path-card p { font-size: 0.8rem; color: var(--text-secondary); }
+
+    /* ── MODULE GRID ── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1rem;
+    }
+    .module-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .module-card:hover { border-color: rgba(255,153,0,0.4); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .module-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .module-num {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--aws-orange), #e68900);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .module-name { font-size: 0.9rem; font-weight: 600; }
+    .module-desc { font-size: 0.75rem; color: var(--text-secondary); }
+    .module-links {
+      display: flex; gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      flex-wrap: wrap;
+    }
+    .module-link {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.75rem; font-weight: 500;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .ml-ultra { background: rgba(255,153,0,0.1); color: var(--aws-orange); border: 1px solid rgba(255,153,0,0.2); }
+    .ml-ultra:hover { background: rgba(255,153,0,0.2); }
+    .ml-fast { background: rgba(26,115,232,0.1); color: var(--aws-light-blue); border: 1px solid rgba(26,115,232,0.2); }
+    .ml-fast:hover { background: rgba(26,115,232,0.2); }
+    .ml-full { background: rgba(63,185,80,0.1); color: var(--success); border: 1px solid rgba(63,185,80,0.2); }
+    .ml-full:hover { background: rgba(63,185,80,0.2); }
+    .ml-diagrams { background: rgba(163,113,247,0.1); color: var(--purple); border: 1px solid rgba(163,113,247,0.2); }
+    .ml-diagrams:hover { background: rgba(163,113,247,0.2); }
+    .ml-practice { background: rgba(248,81,73,0.1); color: var(--danger); border: 1px solid rgba(248,81,73,0.2); }
+    .ml-practice:hover { background: rgba(248,81,73,0.2); }
+
+    /* ── DOMAIN BARS ── */
+    .domains { display: flex; flex-direction: column; gap: 0.75rem; }
+    .domain-row { display: flex; flex-direction: column; gap: 0.25rem; }
+    .domain-info { display: flex; justify-content: space-between; font-size: 0.82rem; }
+    .domain-name { font-weight: 500; }
+    .domain-pct { color: var(--aws-orange); font-weight: 700; }
+    .domain-bar { height: 8px; background: var(--bg-hover); border-radius: 999px; overflow: hidden; }
+    .domain-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
+    .d1 { background: linear-gradient(90deg, #FF9900, #ffb84d); }
+    .d2 { background: linear-gradient(90deg, #1a73e8, #4da6ff); }
+    .d3 { background: linear-gradient(90deg, #a371f7, #c29fff); }
+    .d4 { background: linear-gradient(90deg, #3fb950, #56e365); }
+
+    /* ── SCORE TRACKER ── */
+    .score-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .score-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-decoration: none; color: inherit;
+      transition: all 0.2s;
+    }
+    .score-card:hover { border-color: rgba(255,153,0,0.4); transform: translateY(-1px); }
+    .score-card .test-name { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+    .score-card .score { font-size: 1.4rem; font-weight: 800; }
+    .score-card .date { font-size: 0.7rem; color: var(--text-muted); }
+    .score-card .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.65rem; font-weight: 700;
+      margin-top: 0.35rem;
+    }
+    .badge-pass { background: rgba(63,185,80,0.15); color: var(--success); }
+    .badge-border { background: rgba(210,153,34,0.15); color: var(--warning); }
+    .badge-fail { background: rgba(248,81,73,0.15); color: var(--danger); }
+    .score-pass { color: var(--success); }
+    .score-border { color: var(--warning); }
+    .score-fail { color: var(--danger); }
+
+    /* ── RESOURCES ── */
+    .resource-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
+    .resource-card {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-decoration: none; color: inherit;
+      transition: all 0.2s;
+    }
+    .resource-card:hover { border-color: rgba(255,153,0,0.4); background: var(--bg-hover); }
+    .resource-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .resource-info h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .resource-info p { font-size: 0.75rem; color: var(--text-secondary); }
+    .resource-info .time-tag {
+      display: inline-block;
+      font-size: 0.65rem; font-weight: 600;
+      color: var(--aws-orange);
+      margin-top: 0.25rem;
+    }
+
+    /* ── WEEK PLAN ── */
+    .weeks { display: flex; flex-direction: column; gap: 0.5rem; }
+    .week-row {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+    }
+    .week-label {
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--aws-orange);
+      min-width: 60px;
+    }
+    .week-focus { font-size: 0.85rem; font-weight: 600; }
+    .week-modules { font-size: 0.75rem; color: var(--text-secondary); margin-left: auto; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      background: var(--bg-secondary);
+    }
+    footer p { font-size: 0.8rem; color: var(--text-muted); }
+    footer a { color: var(--aws-orange); text-decoration: none; }
+
+    /* ── SEARCH RESULTS ── */
+    #search-results {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 2000;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .search-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 0.85rem;
+      cursor: pointer;
+      text-decoration: none; color: var(--text-primary);
+      font-size: 0.82rem;
+    }
+    .search-item:hover { background: var(--bg-hover); }
+    .search-item i { color: var(--aws-orange); width: 16px; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .hamburger { display: block; }
+      .search-bar { max-width: 200px; }
+      .nav-links .nav-btn.cta { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 2.5rem 1rem 2rem; }
+      .section { padding: 1.5rem 1rem; }
+      .hero-stats { gap: 0.75rem; }
+      .module-grid { grid-template-columns: 1fr; }
+      .path-cards { grid-template-columns: 1fr; }
+    }
+
+    /* ── OVERLAY ── */
+    .overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 850;
+      backdrop-filter: blur(2px);
+    }
+    .overlay.open { display: block; }
+
+    /* ── TOOLTIP ── */
+    .tooltip { position: relative; }
+    .tooltip:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 0.72rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Progress bar animation */
+    @keyframes fillBar { from { width: 0; } }
+    .domain-fill { animation: fillBar 1.2s ease both; }
+  </style>
+</head>
+<body>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    <a class="logo" href="#">
+      <div class="logo-icon">AWS</div>
+      <div>
+        <div class="logo-text">SAA-C03 Study Guide</div>
+        <div class="logo-sub">Solutions Architect Associate</div>
+      </div>
+    </a>
+
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Search modules, topics…" autocomplete="off" />
+      <div id="search-results"></div>
+    </div>
+
+    <div class="nav-links">
+      <a class="nav-btn github" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03" target="_blank">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+      <a class="nav-btn cta" href="#modules">
+        <i class="fas fa-rocket"></i> Start Studying
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ── LAYOUT ── -->
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a class="sidebar-link active" href="#home"><span class="icon">🏠</span> Home</a>
+      <a class="sidebar-link" href="#learning-paths"><span class="icon">🛤️</span> Learning Paths</a>
+      <a class="sidebar-link" href="#modules"><span class="icon">📚</span> Study Modules</a>
+      <a class="sidebar-link" href="#domains"><span class="icon">📊</span> Exam Domains</a>
+      <a class="sidebar-link" href="#resources"><span class="icon">📖</span> Resources</a>
+      <a class="sidebar-link" href="#scores"><span class="icon">📈</span> Test Scores</a>
+      <a class="sidebar-link" href="#study-plan"><span class="icon">📅</span> 8-Week Plan</a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Modules</div>
+      <a class="sidebar-link" href="01-AWS-Fundamentals/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">01</span> AWS Fundamentals</a>
+      <a class="sidebar-link" href="02-IAM/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">02</span> IAM</a>
+      <a class="sidebar-link" href="03-Compute/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">03</span> Compute</a>
+      <a class="sidebar-link" href="04-Storage/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">04</span> Storage</a>
+      <a class="sidebar-link" href="05-Database/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">05</span> Databases</a>
+      <a class="sidebar-link" href="06-Networking/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">06</span> Networking</a>
+      <a class="sidebar-link" href="07-Security/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">07</span> Security</a>
+      <a class="sidebar-link" href="08-Application-Integration/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">08</span> App Integration</a>
+      <a class="sidebar-link" href="09-Monitoring/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">09</span> Monitoring</a>
+      <a class="sidebar-link" href="10-Migration/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">10</span> Migration</a>
+      <a class="sidebar-link" href="11-Analytics/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">11</span> Analytics</a>
+      <a class="sidebar-link" href="12-Architecture-Patterns/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">12</span> Architecture</a>
+      <a class="sidebar-link" href="13-Cost-Optimization/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">13</span> Cost Optimization</a>
+      <a class="sidebar-link" href="14-Practice/README.md"><span class="icon" style="background:rgba(255,153,0,0.15);">14</span> Practice</a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Quick Links</div>
+      <a class="sidebar-link" href="docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md"><span class="icon">🚀</span> Ultra-Fast Index</a>
+      <a class="sidebar-link" href="docs/study-guides/FAST-LEARN-GUIDE.md"><span class="icon">⚡</span> Fast-Learn Guide</a>
+      <a class="sidebar-link" href="docs/reference/DIAGRAMS-INDEX.md"><span class="icon">📊</span> Diagrams Index</a>
+      <a class="sidebar-link" href="exam-reviews/README.md"><span class="icon">📝</span> Exam Reviews</a>
+      <a class="sidebar-link" href="docs/study-guides/FLASHCARDS.md"><span class="icon">🃏</span> Flashcards</a>
+      <a class="sidebar-link" href="docs/reference/QUICK-REFERENCE.md"><span class="icon">🔍</span> Quick Reference</a>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main" id="home">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">
+        <i class="fas fa-certificate"></i>
+        AWS SAA-C03 · Free & Open Source · Updated April 2026
+      </div>
+      <h1>AWS <span>Solutions Architect</span><br />Associate Study Guide</h1>
+      <p>A comprehensive, exam-focused study guide with multiple learning speeds, interactive diagrams, and 276+ practice questions — completely free.</p>
+
+      <div class="hero-stats">
+        <div class="stat-pill"><i class="fas fa-book"></i> 14 Modules</div>
+        <div class="stat-pill"><i class="fas fa-project-diagram"></i> 217+ Diagrams</div>
+        <div class="stat-pill"><i class="fas fa-question-circle"></i> 276+ Questions</div>
+        <div class="stat-pill"><i class="fas fa-clock"></i> 3 Learning Speeds</div>
+        <div class="stat-pill"><i class="fas fa-flask"></i> 40+ Labs</div>
+      </div>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#modules"><i class="fas fa-rocket"></i> Start Studying</a>
+        <a class="btn btn-secondary" href="docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md"><i class="fas fa-bolt"></i> Ultra-Fast (3-4 hrs)</a>
+        <a class="btn btn-secondary" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+      </div>
+    </section>
+
+    <!-- EXAM INFO -->
+    <section class="section">
+      <div class="exam-banner">
+        <div class="exam-item">
+          <div class="label">Exam Code</div>
+          <div class="value highlight">SAA-C03</div>
+        </div>
+        <div class="exam-item">
+          <div class="label">Duration</div>
+          <div class="value">130 min</div>
+        </div>
+        <div class="exam-item">
+          <div class="label">Questions</div>
+          <div class="value">65</div>
+        </div>
+        <div class="exam-item">
+          <div class="label">Passing Score</div>
+          <div class="value highlight">720 / 1000</div>
+        </div>
+        <div class="exam-item">
+          <div class="label">Validity</div>
+          <div class="value">3 Years</div>
+        </div>
+        <div class="exam-item">
+          <div class="label">Cost</div>
+          <div class="value">$150 USD</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARNING PATHS -->
+    <section class="section" id="learning-paths">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-road"></i></div>
+        <div>
+          <div class="section-title">Choose Your Learning Path</div>
+          <div class="section-subtitle">Pick the speed that matches your available time and experience</div>
+        </div>
+      </div>
+      <div class="path-cards">
+        <a class="path-card ultra" href="docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md">
+          <div class="emoji">🚀</div>
+          <h3>Ultra-Fast Track</h3>
+          <div class="time">3 – 4 Hours</div>
+          <p>Highly condensed bullet summaries per module. Ideal for last-minute review or experienced AWS users needing a quick refresh.</p>
+        </a>
+        <a class="path-card fast" href="docs/study-guides/FAST-LEARN-GUIDE.md">
+          <div class="emoji">⚡</div>
+          <h3>Fast Track</h3>
+          <div class="time">11 – 14 Hours</div>
+          <p>Condensed essentials with decision trees and key diagrams. Perfect for a focused weekend study sprint.</p>
+        </a>
+        <a class="path-card full" href="docs/study-guides/STUDY-ROADMAP.md">
+          <div class="emoji">📚</div>
+          <h3>Comprehensive</h3>
+          <div class="time">40 – 60 Hours</div>
+          <p>Full 8-week structured study plan with in-depth module reading, hands-on labs, and progressive practice tests.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- MODULES -->
+    <section class="section" id="modules">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="section-title">Study Modules</div>
+          <div class="section-subtitle">14 comprehensive modules covering all SAA-C03 exam domains</div>
+        </div>
+      </div>
+
+      <div class="module-grid" id="module-grid">
+
+        <!-- Module 01 -->
+        <div class="module-card" data-search="aws fundamentals regions az global infrastructure">
+          <div class="module-header">
+            <div class="module-num">01</div>
+            <div>
+              <div class="module-name">AWS Fundamentals</div>
+              <div class="module-desc">Regions, AZs, Global Infrastructure, Shared Responsibility</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="01-AWS-Fundamentals/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="01-AWS-Fundamentals/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="01-AWS-Fundamentals/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="01-AWS-Fundamentals/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="01-AWS-Fundamentals/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 02 -->
+        <div class="module-card" data-search="iam identity access management roles policies users groups mfa">
+          <div class="module-header">
+            <div class="module-num">02</div>
+            <div>
+              <div class="module-name">IAM</div>
+              <div class="module-desc">Identity & Access Management, Roles, Policies, MFA</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="02-IAM/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="02-IAM/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="02-IAM/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="02-IAM/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="02-IAM/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 03 -->
+        <div class="module-card" data-search="compute ec2 lambda auto scaling elastic beanstalk ecs fargate">
+          <div class="module-header">
+            <div class="module-num">03</div>
+            <div>
+              <div class="module-name">Compute</div>
+              <div class="module-desc">EC2, Lambda, Auto Scaling, ECS, Fargate, Elastic Beanstalk</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="03-Compute/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="03-Compute/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="03-Compute/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="03-Compute/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="03-Compute/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 04 -->
+        <div class="module-card" data-search="storage s3 ebs efs glacier fsx object block file">
+          <div class="module-header">
+            <div class="module-num">04</div>
+            <div>
+              <div class="module-name">Storage</div>
+              <div class="module-desc">S3, EBS, EFS, FSx, Glacier, Storage Gateway</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="04-Storage/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="04-Storage/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="04-Storage/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="04-Storage/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="04-Storage/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 05 -->
+        <div class="module-card" data-search="database rds aurora dynamodb elasticache redshift nosql sql">
+          <div class="module-header">
+            <div class="module-num">05</div>
+            <div>
+              <div class="module-name">Databases</div>
+              <div class="module-desc">RDS, Aurora, DynamoDB, ElastiCache, Redshift</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="05-Database/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="05-Database/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="05-Database/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="05-Database/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="05-Database/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 06 -->
+        <div class="module-card" data-search="networking vpc route53 cloudfront elb alb nlb direct connect vpn subnets nacl security groups">
+          <div class="module-header">
+            <div class="module-num">06</div>
+            <div>
+              <div class="module-name">Networking</div>
+              <div class="module-desc">VPC, Route 53, CloudFront, ELB, Direct Connect, VPN</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="06-Networking/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="06-Networking/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="06-Networking/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="06-Networking/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="06-Networking/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 07 -->
+        <div class="module-card" data-search="security kms shield waf cognito secrets manager certificate manager inspector guardduty">
+          <div class="module-header">
+            <div class="module-num">07</div>
+            <div>
+              <div class="module-name">Security</div>
+              <div class="module-desc">KMS, Shield, WAF, Cognito, Secrets Manager, GuardDuty</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="07-Security/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="07-Security/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="07-Security/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="07-Security/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="07-Security/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 08 -->
+        <div class="module-card" data-search="application integration sqs sns sqs kinesis step functions eventbridge api gateway">
+          <div class="module-header">
+            <div class="module-num">08</div>
+            <div>
+              <div class="module-name">Application Integration</div>
+              <div class="module-desc">SQS, SNS, Kinesis, Step Functions, EventBridge, API Gateway</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="08-Application-Integration/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="08-Application-Integration/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="08-Application-Integration/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="08-Application-Integration/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="08-Application-Integration/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 09 -->
+        <div class="module-card" data-search="monitoring cloudwatch cloudtrail x-ray config trusted advisor">
+          <div class="module-header">
+            <div class="module-num">09</div>
+            <div>
+              <div class="module-name">Monitoring</div>
+              <div class="module-desc">CloudWatch, CloudTrail, X-Ray, Config, Trusted Advisor</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="09-Monitoring/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="09-Monitoring/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="09-Monitoring/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="09-Monitoring/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="09-Monitoring/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 10 -->
+        <div class="module-card" data-search="migration transfer dms snowball datasync application migration service">
+          <div class="module-header">
+            <div class="module-num">10</div>
+            <div>
+              <div class="module-name">Migration & Transfer</div>
+              <div class="module-desc">DMS, Snowball, DataSync, AWS Migration Hub, MGN</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="10-Migration/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="10-Migration/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="10-Migration/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="10-Migration/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="10-Migration/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 11 -->
+        <div class="module-card" data-search="analytics athena glue emr quicksight opensearch lake formation kinesis data analytics ml">
+          <div class="module-header">
+            <div class="module-num">11</div>
+            <div>
+              <div class="module-name">Analytics</div>
+              <div class="module-desc">Athena, Glue, EMR, QuickSight, OpenSearch, Lake Formation</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="11-Analytics/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="11-Analytics/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="11-Analytics/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="11-Analytics/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="11-Analytics/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 12 -->
+        <div class="module-card" data-search="architecture patterns well architected microservices serverless event driven high availability disaster recovery">
+          <div class="module-header">
+            <div class="module-num">12</div>
+            <div>
+              <div class="module-name">Architecture Patterns</div>
+              <div class="module-desc">Well-Architected, Serverless, HA/DR, Microservices</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="12-Architecture-Patterns/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="12-Architecture-Patterns/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="12-Architecture-Patterns/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="12-Architecture-Patterns/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="12-Architecture-Patterns/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 13 -->
+        <div class="module-card" data-search="cost optimization savings plans reserved instances spot compute optimizer cost explorer billing">
+          <div class="module-header">
+            <div class="module-num">13</div>
+            <div>
+              <div class="module-name">Cost Optimization</div>
+              <div class="module-desc">Savings Plans, Reserved Instances, Spot, Cost Explorer</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="13-Cost-Optimization/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="13-Cost-Optimization/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="13-Cost-Optimization/README.md">📄 Full</a>
+            <a class="module-link ml-diagrams" href="13-Cost-Optimization/DIAGRAMS.md">📊 Diagrams</a>
+            <a class="module-link ml-practice" href="13-Cost-Optimization/PRACTICE-QUESTIONS.md">❓ Practice</a>
+          </div>
+        </div>
+
+        <!-- Module 14 -->
+        <div class="module-card" data-search="practice exam prep flashcards questions mock test">
+          <div class="module-header">
+            <div class="module-num">14</div>
+            <div>
+              <div class="module-name">Practice & Exam Prep</div>
+              <div class="module-desc">Mock questions, flashcards, exam strategy & tips</div>
+            </div>
+          </div>
+          <div class="module-links">
+            <a class="module-link ml-ultra" href="14-Practice/ULTRA-FAST-LEARN.md">🚀 Ultra</a>
+            <a class="module-link ml-fast" href="14-Practice/FAST-LEARN.md">⚡ Fast</a>
+            <a class="module-link ml-full" href="14-Practice/README.md">📄 Full</a>
+            <a class="module-link ml-practice" href="14-Practice/PRACTICE-QUESTIONS.md">❓ Practice</a>
+            <a class="module-link ml-practice" href="14-Practice/FLASHCARDS.md">🃏 Flashcards</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- EXAM DOMAINS -->
+    <section class="section" id="domains">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-chart-pie"></i></div>
+        <div>
+          <div class="section-title">Exam Domain Breakdown</div>
+          <div class="section-subtitle">SAA-C03 weighs four domains — know where the marks are</div>
+        </div>
+      </div>
+      <div class="domains">
+        <div class="domain-row">
+          <div class="domain-info">
+            <span class="domain-name">Domain 1 — Design Secure Architectures</span>
+            <span class="domain-pct">30%</span>
+          </div>
+          <div class="domain-bar"><div class="domain-fill d1" style="width:30%"></div></div>
+        </div>
+        <div class="domain-row">
+          <div class="domain-info">
+            <span class="domain-name">Domain 2 — Design Resilient Architectures</span>
+            <span class="domain-pct">26%</span>
+          </div>
+          <div class="domain-bar"><div class="domain-fill d2" style="width:26%"></div></div>
+        </div>
+        <div class="domain-row">
+          <div class="domain-info">
+            <span class="domain-name">Domain 3 — Design High-Performing Architectures</span>
+            <span class="domain-pct">24%</span>
+          </div>
+          <div class="domain-bar"><div class="domain-fill d3" style="width:24%"></div></div>
+        </div>
+        <div class="domain-row">
+          <div class="domain-info">
+            <span class="domain-name">Domain 4 — Design Cost-Optimized Architectures</span>
+            <span class="domain-pct">20%</span>
+          </div>
+          <div class="domain-bar"><div class="domain-fill d4" style="width:20%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section class="section" id="resources">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-book-open"></i></div>
+        <div>
+          <div class="section-title">Learning Resources</div>
+          <div class="section-subtitle">Curated materials for every stage of your preparation</div>
+        </div>
+      </div>
+      <div class="resource-grid">
+        <a class="resource-card" href="docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md">
+          <div class="resource-icon" style="background:rgba(255,153,0,0.1);">🚀</div>
+          <div class="resource-info">
+            <h4>Ultra-Fast Index</h4>
+            <p>Highly condensed bullet summaries for all 14 modules</p>
+            <span class="time-tag">3 – 4 hours</span>
+          </div>
+        </a>
+        <a class="resource-card" href="docs/study-guides/FAST-LEARN-GUIDE.md">
+          <div class="resource-icon" style="background:rgba(26,115,232,0.1);">⚡</div>
+          <div class="resource-info">
+            <h4>Fast-Learn Guide</h4>
+            <p>Condensed essentials with decision trees and key diagrams</p>
+            <span class="time-tag">11 – 14 hours</span>
+          </div>
+        </a>
+        <a class="resource-card" href="docs/reference/DIAGRAMS-INDEX.md">
+          <div class="resource-icon" style="background:rgba(163,113,247,0.1);">📊</div>
+          <div class="resource-info">
+            <h4>Diagrams Index</h4>
+            <p>217+ visual architecture diagrams for visual learners</p>
+            <span class="time-tag">2 – 3 hours</span>
+          </div>
+        </a>
+        <a class="resource-card" href="exam-reviews/README.md">
+          <div class="resource-icon" style="background:rgba(63,185,80,0.1);">📝</div>
+          <div class="resource-info">
+            <h4>Exam Reviews</h4>
+            <p>7 detailed practice test analyses with weak area tracking</p>
+            <span class="time-tag">Ongoing</span>
+          </div>
+        </a>
+        <a class="resource-card" href="exam-reviews/REINFORCEMENT-QUESTIONS-ALL-TESTS.md">
+          <div class="resource-icon" style="background:rgba(248,81,73,0.1);">🎯</div>
+          <div class="resource-info">
+            <h4>65 Reinforcement Questions</h4>
+            <p>Exam-style questions based on identified weak areas</p>
+            <span class="time-tag">2 – 3 hours</span>
+          </div>
+        </a>
+        <a class="resource-card" href="docs/study-guides/QUICK-STUDY-NOTES.md">
+          <div class="resource-icon" style="background:rgba(88,166,255,0.1);">🧠</div>
+          <div class="resource-info">
+            <h4>Quick Study Notes</h4>
+            <p>Mnemonics and memory shortcuts for key concepts</p>
+            <span class="time-tag">1 – 2 hours</span>
+          </div>
+        </a>
+        <a class="resource-card" href="docs/study-guides/FLASHCARDS.md">
+          <div class="resource-icon" style="background:rgba(210,153,34,0.1);">🃏</div>
+          <div class="resource-info">
+            <h4>Flashcards</h4>
+            <p>Quick review cards for final day preparation</p>
+            <span class="time-tag">30 – 60 min</span>
+          </div>
+        </a>
+        <a class="resource-card" href="docs/reference/QUICK-REFERENCE.md">
+          <div class="resource-icon" style="background:rgba(255,153,0,0.1);">🔍</div>
+          <div class="resource-info">
+            <h4>Quick Reference</h4>
+            <p>Service lookup table for quick facts and comparisons</p>
+            <span class="time-tag">15 min</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- PRACTICE TEST SCORES -->
+    <section class="section" id="scores">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-chart-line"></i></div>
+        <div>
+          <div class="section-title">Practice Test Performance</div>
+          <div class="section-subtitle">Track your progress — target 85%+ before the real exam</div>
+        </div>
+      </div>
+      <div class="score-grid">
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-1-Review.md">
+          <div class="test-name">Practice Test 1</div>
+          <div class="score score-fail">52.31%</div>
+          <div class="date">Mar 2026</div>
+          <span class="badge badge-fail">❌ Fail</span>
+        </a>
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-2-Review.md">
+          <div class="test-name">Practice Test 2</div>
+          <div class="score score-border">75.38%</div>
+          <div class="date">Mar 2026</div>
+          <span class="badge badge-border">⚠️ Borderline</span>
+        </a>
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-3-Review.md">
+          <div class="test-name">Practice Test 3</div>
+          <div class="score score-pass">80.00%</div>
+          <div class="date">Mar 2026</div>
+          <span class="badge badge-pass">✅ Pass</span>
+        </a>
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-4-Review.md">
+          <div class="test-name">Practice Test 4</div>
+          <div class="score score-border">75.38%</div>
+          <div class="date">Mar 2026</div>
+          <span class="badge badge-border">⚠️ Borderline</span>
+        </a>
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-5-Review.md">
+          <div class="test-name">Practice Test 5</div>
+          <div class="score score-fail">64.62%</div>
+          <div class="date">Mar 2026</div>
+          <span class="badge badge-fail">❌ Fail</span>
+        </a>
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-6-Review.md">
+          <div class="test-name">Practice Test 6</div>
+          <div class="score score-pass">80.00%</div>
+          <div class="date">Mar 5, 2026</div>
+          <span class="badge badge-pass">✅ Pass</span>
+        </a>
+        <a class="score-card" href="exam-reviews/complete-reviews/Practice-Test-7-Review.md">
+          <div class="test-name">Practice Test 7</div>
+          <div class="score score-border">73.85%</div>
+          <div class="date">Mar 6, 2026</div>
+          <span class="badge badge-border">⚠️ Borderline</span>
+        </a>
+        <a class="score-card" href="exam-reviews/README.md" style="border-style:dashed;">
+          <div class="test-name">Average Score</div>
+          <div class="score" style="color:var(--aws-orange);">71.22%</div>
+          <div class="date">Target: 85%+</div>
+          <span class="badge" style="background:rgba(255,153,0,0.1);color:var(--aws-orange);">📈 Improving</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 8-WEEK PLAN -->
+    <section class="section" id="study-plan">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-calendar-alt"></i></div>
+        <div>
+          <div class="section-title">8-Week Study Plan</div>
+          <div class="section-subtitle">Structured learning roadmap for comprehensive preparation</div>
+        </div>
+      </div>
+      <div class="weeks">
+        <div class="week-row">
+          <div class="week-label">Week 1–2</div>
+          <div class="week-focus">Foundations</div>
+          <div class="week-modules">Modules 01, 02, 03 — AWS Fundamentals, IAM, Compute</div>
+        </div>
+        <div class="week-row">
+          <div class="week-label">Week 3–4</div>
+          <div class="week-focus">Storage & Data</div>
+          <div class="week-modules">Modules 04, 05, 11 — Storage, Databases, Analytics</div>
+        </div>
+        <div class="week-row">
+          <div class="week-label">Week 5–6</div>
+          <div class="week-focus">Networking & Security</div>
+          <div class="week-modules">Modules 06, 07, 08 — Networking, Security, App Integration</div>
+        </div>
+        <div class="week-row">
+          <div class="week-label">Week 7</div>
+          <div class="week-focus">Advanced Topics</div>
+          <div class="week-modules">Modules 09, 10, 12, 13 — Monitoring, Migration, Architecture, Cost</div>
+        </div>
+        <div class="week-row">
+          <div class="week-label">Week 8</div>
+          <div class="week-focus">Practice & Review</div>
+          <div class="week-modules">Module 14 — Mock exams, weak areas, final revision</div>
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <a class="btn btn-secondary" href="docs/study-guides/STUDY-ROADMAP.md">
+          <i class="fas fa-map"></i> View Complete Roadmap
+        </a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>Built with ❤️ by the community · <a href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03" target="_blank">GitHub</a> · <a href="LICENSE">MIT License</a></p>
+      <p style="margin-top:0.5rem;">Not affiliated with Amazon Web Services · For educational purposes only · <a href="CONTENT-POLICY.md">Content Policy</a></p>
+    </footer>
+
+  </main>
+</div><!-- /layout -->
+
+<script>
+  // ── SIDEBAR TOGGLE ──
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  // ── ACTIVE SIDEBAR LINK ──
+  const sidebarLinks = document.querySelectorAll('.sidebar-link');
+  function setActive(href) {
+    sidebarLinks.forEach(l => l.classList.remove('active'));
+    const found = [...sidebarLinks].find(l => l.getAttribute('href') === href);
+    if (found) found.classList.add('active');
+  }
+
+  // Intersection observer for sections
+  const sections = document.querySelectorAll('section[id]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) setActive('#' + e.target.id);
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+
+  // ── SEARCH ──
+  const searchData = [
+    { label: 'Module 01 — AWS Fundamentals', href: '01-AWS-Fundamentals/README.md', icon: 'fas fa-cloud' },
+    { label: 'Module 02 — IAM', href: '02-IAM/README.md', icon: 'fas fa-user-shield' },
+    { label: 'Module 03 — Compute (EC2, Lambda)', href: '03-Compute/README.md', icon: 'fas fa-server' },
+    { label: 'Module 04 — Storage (S3, EBS, EFS)', href: '04-Storage/README.md', icon: 'fas fa-database' },
+    { label: 'Module 05 — Databases', href: '05-Database/README.md', icon: 'fas fa-table' },
+    { label: 'Module 06 — Networking (VPC)', href: '06-Networking/README.md', icon: 'fas fa-network-wired' },
+    { label: 'Module 07 — Security', href: '07-Security/README.md', icon: 'fas fa-shield-alt' },
+    { label: 'Module 08 — Application Integration', href: '08-Application-Integration/README.md', icon: 'fas fa-plug' },
+    { label: 'Module 09 — Monitoring', href: '09-Monitoring/README.md', icon: 'fas fa-chart-bar' },
+    { label: 'Module 10 — Migration & Transfer', href: '10-Migration/README.md', icon: 'fas fa-exchange-alt' },
+    { label: 'Module 11 — Analytics', href: '11-Analytics/README.md', icon: 'fas fa-chart-line' },
+    { label: 'Module 12 — Architecture Patterns', href: '12-Architecture-Patterns/README.md', icon: 'fas fa-project-diagram' },
+    { label: 'Module 13 — Cost Optimization', href: '13-Cost-Optimization/README.md', icon: 'fas fa-dollar-sign' },
+    { label: 'Module 14 — Practice & Exam Prep', href: '14-Practice/README.md', icon: 'fas fa-pencil-alt' },
+    { label: 'Ultra-Fast Learning Index', href: 'docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md', icon: 'fas fa-rocket' },
+    { label: 'Fast-Learn Guide', href: 'docs/study-guides/FAST-LEARN-GUIDE.md', icon: 'fas fa-bolt' },
+    { label: 'Diagrams Index (217+)', href: 'docs/reference/DIAGRAMS-INDEX.md', icon: 'fas fa-sitemap' },
+    { label: 'Flashcards', href: 'docs/study-guides/FLASHCARDS.md', icon: 'fas fa-clone' },
+    { label: 'Quick Reference', href: 'docs/reference/QUICK-REFERENCE.md', icon: 'fas fa-search' },
+    { label: 'Exam Reviews Dashboard', href: 'exam-reviews/README.md', icon: 'fas fa-clipboard-list' },
+    { label: '65 Reinforcement Questions', href: 'exam-reviews/REINFORCEMENT-QUESTIONS-ALL-TESTS.md', icon: 'fas fa-question-circle' },
+    { label: '8-Week Study Roadmap', href: 'docs/study-guides/STUDY-ROADMAP.md', icon: 'fas fa-calendar' },
+    { label: 'Quick Study Notes (Mnemonics)', href: 'docs/study-guides/QUICK-STUDY-NOTES.md', icon: 'fas fa-brain' },
+  ];
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase().trim();
+    if (!q) { searchResults.style.display = 'none'; return; }
+    const matches = searchData.filter(d => d.label.toLowerCase().includes(q)).slice(0, 8);
+    if (!matches.length) { searchResults.style.display = 'none'; return; }
+    searchResults.innerHTML = matches.map(m =>
+      `<a class="search-item" href="${m.href}"><i class="${m.icon}"></i>${m.label}</a>`
+    ).join('');
+    searchResults.style.display = 'block';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-bar')) searchResults.style.display = 'none';
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') searchResults.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,33 @@
+title: "AWS SAA-C03 Study Guide"
+description: "Free, comprehensive AWS Certified Solutions Architect Associate study guide with 14 modules, 217+ diagrams, and 276+ practice questions."
+url: "https://chathurangavkd.github.io"
+baseurl: "/AWS-Certified-Solutions-Architect-Associate-SAA-C03"
+
+# GitHub Pages settings
+theme: null
+
+# Exclude unnecessary files from build
+exclude:
+  - scripts/
+  - "*.py"
+  - CHANGELOG.md
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - CONTRIBUTORS.md
+  - SECURITY.md
+  - CONTENT-POLICY.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+# Plugins
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+
