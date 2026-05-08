@@ -18,38 +18,38 @@ FAST-LEARN materials are **condensed, high-impact study guides** designed to hel
 ## 📚 Complete Fast-Learn Curriculum
 
 ### Core Foundation (3-4 hours)
-| Module | Time | Exam Weight | Priority | Link |
-|--------|------|-------------|----------|------|
-| **01. AWS Fundamentals** | 30-45 min | ~10% | 🔥 CRITICAL | [FAST-LEARN.md](01-AWS-Fundamentals/FAST-LEARN.md) |
-| **02. IAM** | 45-60 min | ~15-20% | 🔥 CRITICAL | [FAST-LEARN.md](02-IAM/FAST-LEARN.md) |
-| **03. Compute Services** | 60-90 min | ~20-25% | 🔥 CRITICAL | [FAST-LEARN.md](03-Compute/FAST-LEARN.md) |
+| Module | Time | Exam Weight | Priority | Link                                                |
+|--------|------|-------------|----------|-----------------------------------------------------|
+| **01. AWS Fundamentals** | 30-45 min | ~10% | 🔥 CRITICAL | [FAST-LEARN.md](/01-AWS-Fundamentals/FAST-LEARN.md) |
+| **02. IAM** | 45-60 min | ~15-20% | 🔥 CRITICAL | [FAST-LEARN.md](/02-IAM/FAST-LEARN.md)               |
+| **03. Compute Services** | 60-90 min | ~20-25% | 🔥 CRITICAL | [FAST-LEARN.md](/03-Compute/FAST-LEARN.md)           |
 
 ### Core Services (4-5 hours)
 | Module | Time | Exam Weight | Priority | Link |
 |--------|------|-------------|----------|------|
-| **04. Storage** | 60-75 min | ~15-20% | 🔥 CRITICAL | [FAST-LEARN.md](04-Storage/FAST-LEARN.md) |
-| **05. Database** | 60-75 min | ~15-20% | 🔥 CRITICAL | [FAST-LEARN.md](05-Database/FAST-LEARN.md) |
-| **06. Networking** | 75-90 min | ~20-25% | 🔥 CRITICAL | [FAST-LEARN.md](06-Networking/FAST-LEARN.md) |
+| **04. Storage** | 60-75 min | ~15-20% | 🔥 CRITICAL | [FAST-LEARN.md](/04-Storage/FAST-LEARN.md) |
+| **05. Database** | 60-75 min | ~15-20% | 🔥 CRITICAL | [FAST-LEARN.md](/05-Database/FAST-LEARN.md) |
+| **06. Networking** | 75-90 min | ~20-25% | 🔥 CRITICAL | [FAST-LEARN.md](/06-Networking/FAST-LEARN.md) |
 
 ### Security & Integration (3-4 hours)
 | Module | Time | Exam Weight | Priority | Link |
 |--------|------|-------------|----------|------|
-| **07. Security** | 60-75 min | ~20-25% | 🔥 CRITICAL | [FAST-LEARN.md](07-Security/FAST-LEARN.md) |
-| **08. Application Integration** | 45-60 min | ~10-15% | ⚡ HIGH | [FAST-LEARN.md](08-Application-Integration/FAST-LEARN.md) |
-| **09. Monitoring** | 45-60 min | ~10-15% | ⚡ HIGH | [FAST-LEARN.md](09-Monitoring/FAST-LEARN.md) |
+| **07. Security** | 60-75 min | ~20-25% | 🔥 CRITICAL | [FAST-LEARN.md](/07-Security/FAST-LEARN.md) |
+| **08. Application Integration** | 45-60 min | ~10-15% | ⚡ HIGH | [FAST-LEARN.md](/08-Application-Integration/FAST-LEARN.md) |
+| **09. Monitoring** | 45-60 min | ~10-15% | ⚡ HIGH | [FAST-LEARN.md](/09-Monitoring/FAST-LEARN.md) |
 
 ### Advanced Topics (3-4 hours)
 | Module | Time | Exam Weight | Priority | Link |
 |--------|------|-------------|----------|------|
-| **10. Migration** | 40-50 min | ~8-12% | ⭐ MEDIUM | [FAST-LEARN.md](10-Migration/FAST-LEARN.md) |
-| **11. Analytics** | 45-60 min | ~8-12% | ⭐ MEDIUM | [FAST-LEARN.md](11-Analytics/FAST-LEARN.md) |
-| **12. Architecture Patterns** | 60-75 min | ~25-30% | 🔥 CRITICAL | [FAST-LEARN.md](12-Architecture-Patterns/FAST-LEARN.md) |
-| **13. Cost Optimization** | 40-50 min | ~10-15% | ⚡ HIGH | [FAST-LEARN.md](13-Cost-Optimization/FAST-LEARN.md) |
+| **10. Migration** | 40-50 min | ~8-12% | ⭐ MEDIUM | [FAST-LEARN.md](/10-Migration/FAST-LEARN.md) |
+| **11. Analytics** | 45-60 min | ~8-12% | ⭐ MEDIUM | [FAST-LEARN.md](/11-Analytics/FAST-LEARN.md) |
+| **12. Architecture Patterns** | 60-75 min | ~25-30% | 🔥 CRITICAL | [FAST-LEARN.md](/12-Architecture-Patterns/FAST-LEARN.md) |
+| **13. Cost Optimization** | 40-50 min | ~10-15% | ⚡ HIGH | [FAST-LEARN.md](/13-Cost-Optimization/FAST-LEARN.md) |
 
 ### Exam Preparation (30-45 min)
 | Module | Time | Purpose | Priority | Link |
 |--------|------|---------|----------|------|
-| **14. Practice & Exam Strategies** | 30-45 min | Final prep | 🔥 CRITICAL | [FAST-LEARN.md](14-Practice/FAST-LEARN.md) |
+| **14. Practice & Exam Strategies** | 30-45 min | Final prep | 🔥 CRITICAL | [FAST-LEARN.md](/14-Practice/FAST-LEARN.md) |
 
 ---
 
@@ -337,7 +337,7 @@ Time saved:                   40-70 hours!
 
 ---
 
-**🚀 Ready to start? Jump to [Module 01: AWS Fundamentals](01-AWS-Fundamentals/FAST-LEARN.md)**
+**🚀 Ready to start? Jump to [Module 01: AWS Fundamentals](/01-AWS-Fundamentals/FAST-LEARN.md)**
 
 **💪 You've got this! Let's get you certified!**
 

@@ -9,16 +9,16 @@
 Having trouble with practice tests? Check out these targeted resources:
 
 ### 📊 **Track Your Progress**
-- **[Test Results Tracker](14-Practice/TEST-RESULTS-TRACKER.md)** - Log practice test scores and identify weak areas
+- **[Test Results Tracker](/14-Practice/TEST-RESULTS-TRACKER.md)** - Log practice test scores and identify weak areas
 
 ### 🎴 **Focused Flashcards**
-- **[Focused Review Flashcards](14-Practice/FOCUSED-REVIEW-FLASHCARDS.md)** - 35 cards covering the most commonly missed topics
+- **[Focused Review Flashcards](/14-Practice/FOCUSED-REVIEW-FLASHCARDS.md)** - 35 cards covering the most commonly missed topics
 
 ### 📚 **Deep Dive Study Notes**
-- **[Weak Areas Study Notes](14-Practice/WEAK-AREAS-STUDY-NOTES.md)** - Comprehensive explanations of difficult concepts
+- **[Weak Areas Study Notes](/14-Practice/WEAK-AREAS-STUDY-NOTES.md)** - Comprehensive explanations of difficult concepts
 
 ### 📝 **Targeted Practice**
-- **[Targeted Weak Area Questions](14-Practice/TARGETED-WEAK-AREA-QUESTIONS.md)** - 30+ practice questions on commonly missed topics
+- **[Targeted Weak Area Questions](/14-Practice/TARGETED-WEAK-AREA-QUESTIONS.md)** - 30+ practice questions on commonly missed topics
 
 **Use these resources when you:**
 - Score below 70% on practice tests
