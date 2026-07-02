@@ -223,7 +223,7 @@ Account A                    Account B
 - Time spent: ~45-60 min
 - Practice: Write sample policies
 - Ready for: IAM practice questions
-- Move to: Module 03 - Compute
+- Move to: [Module 03 - Compute](../03-Compute/FAST-LEARN.md)
 
 ---
 

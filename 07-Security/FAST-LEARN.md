@@ -328,7 +328,7 @@ CUSTOMER RESPONSIBILITY (Security IN the cloud)
 - Time spent: ~60-75 min
 - Practice: Enable GuardDuty, create KMS key, CloudTrail
 - Ready for: Security practice questions
-- Move to: Module 08 - Application Integration
+- Move to: [Module 08 - Application Integration](../08-Application-Integration/FAST-LEARN.md)
 
 ---
 

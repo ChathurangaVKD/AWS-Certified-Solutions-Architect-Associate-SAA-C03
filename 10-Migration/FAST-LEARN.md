@@ -419,7 +419,7 @@ INTEGRATES WITH:
 - Time spent: ~40-50 min
 - Practice: Understand DMS, Snow device selection
 - Ready for: Migration practice questions
-- Move to: Module 11 - Analytics
+- Move to: [Module 11 - Analytics](../11-Analytics/FAST-LEARN.md)
 
 ---
 

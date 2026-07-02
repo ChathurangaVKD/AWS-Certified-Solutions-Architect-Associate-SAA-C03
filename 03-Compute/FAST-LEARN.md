@@ -258,7 +258,7 @@ EBS (Persistent)
 - Time spent: ~60-90 min
 - Practice: Launch EC2, create ASG, configure ALB
 - Ready for: Compute practice questions
-- Move to: Module 04 - Storage
+- Move to: [Module 04 - Storage](../04-Storage/FAST-LEARN.md)
 
 ---
 
