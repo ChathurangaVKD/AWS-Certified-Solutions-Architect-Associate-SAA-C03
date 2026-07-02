@@ -442,7 +442,7 @@ OUTPUTS:
 - Time spent: ~45-60 min
 - Practice: Run Athena query, understand Redshift
 - Ready for: Analytics practice questions
-- Move to: [Module 12 - Architecture Patterns](../12-Architecture-Patterns/README.md)
+- Move to: Module 12 - Architecture Patterns
 
 ---
 
