@@ -322,7 +322,7 @@ ENCRYPTION IN TRANSIT
 - Time spent: ~60-75 min
 - Practice: Create RDS instance, DynamoDB table
 - Ready for: Database practice questions
-- Move to: Module 06 - Networking
+- Move to: [Module 06 - Networking](../06-Networking/FAST-LEARN.md)
 
 ---
 

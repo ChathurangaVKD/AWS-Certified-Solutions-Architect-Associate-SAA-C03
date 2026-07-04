@@ -383,7 +383,7 @@ RULES: Filter events → Route to targets
 - Time spent: ~45-60 min
 - Practice: Create CloudWatch alarm, enable CloudTrail, Config rule
 - Ready for: Monitoring practice questions
-- Move to: Module 10 - Migration
+- Move to: [Module 10 - Migration](../10-Migration/FAST-LEARN.md)
 
 ---
 

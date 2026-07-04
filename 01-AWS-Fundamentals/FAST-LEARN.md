@@ -246,5 +246,5 @@ Total: 2,000 GB → Higher pricing tier applies to all
 ## ⏱️ Next Steps
 - Time spent: ~30 min
 - Ready for: Practice questions
-- Move to: Module 02 - IAM
+- Move to: [Module 02 - IAM](../02-IAM/FAST-LEARN.md)
 

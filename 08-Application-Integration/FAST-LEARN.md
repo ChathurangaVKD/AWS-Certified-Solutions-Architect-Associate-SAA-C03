@@ -389,7 +389,7 @@ WHEN NOT TO USE:
 - Time spent: ~45-60 min
 - Practice: Create SQS queue, SNS topic, fan-out pattern
 - Ready for: Application Integration practice questions
-- Move to: Module 09 - Monitoring
+- Move to: [Module 09 - Monitoring](../09-Monitoring/FAST-LEARN.md)
 
 ---
 

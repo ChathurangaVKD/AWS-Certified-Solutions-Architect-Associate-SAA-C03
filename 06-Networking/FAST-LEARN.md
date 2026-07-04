@@ -319,7 +319,7 @@ GATEWAY ENDPOINT
 - Time spent: ~75-90 min
 - Practice: Create VPC, subnets, route tables, security groups
 - Ready for: Networking practice questions
-- Move to: Module 07 - Security
+- Move to: [Module 07 - Security](../07-Security/FAST-LEARN.md)
 
 ---
 

@@ -301,7 +301,7 @@ Delete incomplete multipart uploads after 7 days
 - Time spent: ~60-75 min
 - Practice: Create S3 bucket, lifecycle rules, EBS volume
 - Ready for: Storage practice questions
-- Move to: Module 05 - Database
+- Move to: [Module 05 - Database](../05-Database/FAST-LEARN.md)
 
 ---
 
