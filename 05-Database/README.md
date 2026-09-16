@@ -142,8 +142,8 @@ AWS offers a comprehensive range of database services for different use cases. T
 
 **Aurora Global Database**
 - **1 primary region** (read/write)
-- Up to **5 secondary regions** (read-only)
-- Up to **16 Read Replicas per secondary region**
+- Up to **10 secondary regions** (read-only) *(updated from 5 in 2025)*
+- Up to **16 Read Replicas total across secondary regions**
 - **< 1 second** replication lag
 - **< 1 minute** to promote secondary region (disaster recovery)
 

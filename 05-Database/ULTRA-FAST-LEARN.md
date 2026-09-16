@@ -50,7 +50,7 @@
 
 ### Aurora Global Database
 - **1 primary region** (read/write)
-- **Up to 5 secondary regions** (read-only)
+- **Up to 10 secondary regions** (read-only) *(2025: was 5)*
 - **<1 second** replication lag
 - **RTO <1 minute** for disaster recovery
 

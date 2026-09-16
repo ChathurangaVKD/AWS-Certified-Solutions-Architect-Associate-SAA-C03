@@ -298,7 +298,7 @@
 ### Aurora Edge Cases
 **19. Aurora Global Database Architecture**
 - 1 primary region (read-write)
-- Up to 5 secondary regions (read-only)
+- Up to 10 secondary regions (read-only) *(2025: was 5)*
 - <1 second replication lag
 - ❌ TRAP: "Aurora Global = Multi-master writes"
 - Reality: DynamoDB Global Tables = Multi-master, Aurora = Single master

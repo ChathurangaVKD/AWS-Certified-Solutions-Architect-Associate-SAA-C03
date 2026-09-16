@@ -5,7 +5,7 @@
 ### KMS Basics
 - **Managed encryption** service
 - **Regional** service
-- **FIPS 140-2 Level 2** validated
+- **FIPS 140-3 Level 3** validated (upgraded from Level 2 in 2023)
 - Audit with CloudTrail
 - **$1/month** per customer managed key
 
@@ -53,7 +53,7 @@
 - **SecureString**: Encrypted with KMS
 
 ## CloudHSM
-- **FIPS 140-2 Level 3** (higher than KMS)
+- **FIPS 140-3 Level 3** (same level as KMS now — key difference is single-tenancy)
 - **Dedicated hardware** (not multi-tenant)
 - **You manage keys** (AWS manages hardware)
 - **Single-tenant**, deployed in VPC

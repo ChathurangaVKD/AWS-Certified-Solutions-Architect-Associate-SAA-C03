@@ -7,7 +7,7 @@
 ```mermaid
 graph TB
     subgraph KMS_Service_Group["KMS Service"]
-        CMK["Customer Master Key<br/>Never leaves KMS<br/>FIPS 140-2 Level 2"]
+        CMK["Customer Master Key<br/>Never leaves KMS<br/>FIPS 140-3 Level 3"]
         
         Symmetric["Symmetric CMK<br/>AES-256<br/>Same key encrypt/decrypt"]
         Asymmetric["Asymmetric CMK<br/>RSA or ECC<br/>Public + Private keys"]
@@ -117,18 +117,18 @@ graph TB
 graph TB
     subgraph AWS_KMS_Group["AWS KMS"]
         KMS[KMS]
-        KMS_Features["• Multi-tenant<br/>• AWS manages hardware<br/>• FIPS 140-2 Level 2<br/>• Automatic backups<br/>• Free tier available<br/>• Integrates with AWS services"]
+        KMS_Features["• Multi-tenant<br/>• AWS manages hardware<br/>• FIPS 140-3 Level 3 (2025)<br/>• Automatic backups<br/>• Free tier available<br/>• Integrates with AWS services"]
     end
     
     subgraph AWS_CloudHSM_Group["AWS CloudHSM"]
         HSM[CloudHSM]
-        HSM_Features["• Single-tenant dedicated HSM<br/>• You manage keys<br/>• FIPS 140-2 Level 3<br/>• No free tier<br/>• Industry-standard APIs<br/>• PKCS#11, JCE, CNG"]
+        HSM_Features["• Single-tenant dedicated HSM<br/>• You manage keys<br/>• FIPS 140-3 Level 3<br/>• No free tier<br/>• Industry-standard APIs<br/>• PKCS#11, JCE, CNG"]
     end
     
     subgraph Use_Cases_Group["Use Cases"]
         KMS --> KMS_Use["• Most AWS workloads<br/>• S3, EBS encryption<br/>• Simple key management<br/>• Cost-effective"]
         
-        HSM --> HSM_Use["• Contractual requirements<br/>• Regulatory compliance<br/>• FIPS 140-2 Level 3<br/>• Custom key store for KMS"]
+        HSM --> HSM_Use["• Contractual requirements<br/>• Regulatory compliance (single-tenant)<br/>• FIPS 140-3 Level 3<br/>• Custom key store for KMS"]
     end
     
     classDef style1 fill:#FF9900

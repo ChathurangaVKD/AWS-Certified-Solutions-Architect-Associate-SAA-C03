@@ -331,7 +331,7 @@ graph TB
     
     SecondaryCluster -.Can Promote<br/>< 1 minute RTO.-> NewPrimary[New Primary Region]
     
-    UseCases["Use Cases:<br/>✅ Disaster Recovery (RPO &lt; 1 sec, RTO &lt; 1 min[<br/>✅ Global read scaling<br/>✅ Low latency for global users<br/>📊 Up to 5 secondary regions<br/>📊 16 read replicas per region"]
+    UseCases["Use Cases:<br/>✅ Disaster Recovery (RPO &lt; 1 sec, RTO &lt; 1 min[<br/>✅ Global read scaling<br/>✅ Low latency for global users<br/>📊 Up to 10 secondary regions (2025)<br/>📊 16 read replicas total (secondary)"]
     
     classDef style1 fill:#569A31
     class PrimaryCluster style1

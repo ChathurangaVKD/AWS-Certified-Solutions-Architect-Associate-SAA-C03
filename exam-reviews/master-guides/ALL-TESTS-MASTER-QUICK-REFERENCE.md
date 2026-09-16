@@ -52,7 +52,7 @@
 23. **RDS IAM Authentication:** Token-based (15 min), no passwords, MySQL/PostgreSQL/Aurora
 24. **RDS Storage Auto Scaling:** Auto-increase when <10% free space
 25. **RDS Blue/Green:** Test changes on clone, 1-min switchover downtime
-26. **Aurora Global Database:** <1s replication lag, <1 min failover, up to 5 secondary regions
+26. **Aurora Global Database:** <1s replication lag, <1 min failover, up to 10 secondary regions *(updated 2025, was 5)*
 27. **Aurora Serverless:** Auto-scales capacity (ACUs), intermittent workloads
 28. **Aurora Read Replica Lag:** Check ReplicaLag metric, add more replicas
 

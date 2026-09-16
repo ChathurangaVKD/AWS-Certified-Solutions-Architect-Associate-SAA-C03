@@ -1672,8 +1672,8 @@ Difficulty: ⭐⭐⭐
 ║                                              ║
 ║  Architecture:                               ║
 ║  • 1 Primary region (read/write)             ║
-║  • Up to 5 secondary regions (read-only)     ║
-║  • 16 read replicas per secondary region     ║
+║  • Up to 10 secondary regions (read-only)    ║
+║  • 16 read replicas total (all secondary)    ║
 ║                                              ║
 ║  Performance:                                ║
 ║  • Replication lag: <1 second                ║

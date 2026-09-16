@@ -66,8 +66,8 @@
 | Service | Purpose | Key Features |
 |---------|---------|--------------|
 | **IAM** | Identity & Access | Users, groups, roles, policies |
-| **KMS** | Key Management | Encryption keys, FIPS 140-2 Level 2 |
-| **CloudHSM** | Hardware Security | FIPS 140-2 Level 3, single-tenant |
+| **KMS** | Key Management | Encryption keys, FIPS 140-3 Level 3 |
+| **CloudHSM** | Hardware Security | FIPS 140-3 Level 3, single-tenant |
 | **Secrets Manager** | Secret Rotation | Auto-rotate DB credentials |
 | **WAF** | Web Firewall | SQL injection, XSS protection |
 | **Shield** | DDoS Protection | Standard (free), Advanced ($3k/month) |
