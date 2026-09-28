@@ -392,7 +392,7 @@
 - **Performance Insights**: Database performance monitoring
 
 ### Aurora Features
-- **Aurora Global Database**: <1s replication lag, <1 min failover, 5 secondary regions
+- **Aurora Global Database**: <1s replication lag, <1 min failover, 10 secondary regions (2025, was 5)
 - **Aurora Serverless**: Auto-scales ACUs, pay per second, intermittent workloads
 - **Aurora Multi-Master**: Multiple write nodes (all regions)
 - **Backtrack**: Rewind to point in time (no restore needed)

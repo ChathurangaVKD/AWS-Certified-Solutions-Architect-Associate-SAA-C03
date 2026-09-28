@@ -17,7 +17,7 @@ Security is the foundation of AWS Solutions Architecture. This module covers enc
 ### What is KMS?
 - **Managed service** for creating and controlling encryption keys
 - Integrated with most AWS services
-- **FIPS 140-2 Level 2** validated (Level 3 in some regions)
+- **FIPS 140-3 Level 3** validated (upgraded from 140-2 Level 2 in May 2023; FIPS 140-3 since Feb 2025)
 - Audit with CloudTrail
 - **Regional service**
 
@@ -106,7 +106,7 @@ Default Key Policy:
 
 ### What is CloudHSM?
 - **Hardware Security Module** in AWS Cloud
-- **FIPS 140-2 Level 3** compliance
+- **FIPS 140-3 Level 3** compliance
 - **You manage the keys entirely**
 - Runs in your VPC
 - **Tamper resistant, single-tenant**
@@ -117,14 +117,15 @@ Default Key Policy:
 |---------|-----|----------|
 | **Tenancy** | Multi-tenant | Single-tenant |
 | **Key Control** | AWS manages | You manage |
-| **FIPS 140-2** | Level 2 (Level 3 in some regions) | Level 3 |
+| **FIPS Certification** | FIPS 140-3 Level 3 (since 2023/2025) | FIPS 140-3 Level 3 |
+| **Key Differentiator** | Multi-tenant, AWS-managed | Single-tenant, customer-managed |
 | **Key Types** | Symmetric + Asymmetric | Symmetric + Asymmetric |
 | **Pricing** | Per API call + key | Per hour (cluster) |
 | **Integration** | Native AWS integration | Limited integration |
 | **High Availability** | Automatic | Manual (multi-AZ cluster) |
 
 ### CloudHSM Use Cases
-- **Compliance**: FIPS 140-2 Level 3 required
+- **Single-tenant compliance**: Regulated workloads requiring dedicated HSMs
 - **Full control** over keys
 - **Custom key management**
 - SSL/TLS offload
@@ -496,13 +497,15 @@ Default Key Policy:
 
 ## Practice Questions
 
-1. **Which service provides FIPS 140-2 Level 3 compliance?**
+1. **Which service provides single-tenant dedicated HSMs where you manage the keys entirely?**
    - A. KMS
    - B. CloudHSM
    - C. Secrets Manager
    - D. Certificate Manager
    
    **Answer**: B
+   
+   *(Note: Since May 2023, KMS HSMs are also FIPS 140-2/140-3 Level 3 validated. FIPS level is no longer the differentiator — single-tenancy and full key control are.)*
 
 2. **Which AWS service automatically rotates database credentials?**
    - A. KMS
@@ -562,7 +565,7 @@ Default Key Policy:
 
 ## Key Takeaways
 
-✅ KMS manages encryption keys, CloudHSM for FIPS 140-2 Level 3  
+✅ KMS manages encryption keys (FIPS 140-3 Level 3), CloudHSM for single-tenant dedicated HSMs with full key control  
 ✅ Secrets Manager for automatic rotation of database credentials  
 ✅ Parameter Store for application configuration (cheaper than Secrets Manager)  
 ✅ WAF protects against SQL injection, XSS, rate limiting  

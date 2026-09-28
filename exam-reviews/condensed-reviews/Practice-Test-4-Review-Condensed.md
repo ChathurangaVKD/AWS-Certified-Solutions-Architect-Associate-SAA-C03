@@ -82,7 +82,7 @@
 ## High-Performing (5 Errors)
 
 ### Q2: Aurora Global Database
-- **Feature:** Single primary region, up to 5 secondary regions
+- **Feature:** Single primary region, up to 10 secondary regions *(updated 2025, was 5)*
 - **Replication:** <1 second lag between regions
 - **RPO:** 1 second, RTO: <1 minute (promote secondary)
 - **Use case:** DR, global low-latency reads

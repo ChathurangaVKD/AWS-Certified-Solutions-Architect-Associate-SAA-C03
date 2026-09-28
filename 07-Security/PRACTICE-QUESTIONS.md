@@ -1906,7 +1906,7 @@ D. Amazon Macie
 
 **Explanation:**
 - AWS CloudHSM provides dedicated HSM appliances in the AWS Cloud
-- Used for FIPS 140-2 Level 3 compliance, custom key management
+- Used for single-tenant key management with FIPS 140-3 Level 3 compliance
 - KMS is managed, shared HSMs
 - Secrets Manager is for secrets, not HSM
 - Macie is for PII detection

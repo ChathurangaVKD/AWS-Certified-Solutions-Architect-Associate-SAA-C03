@@ -312,10 +312,10 @@ ENCRYPTION IN TRANSIT
 | Large datasets | RDS | Snowball + DMS |
 
 ### Aurora Global Database
-- **Regions**: Up to 5 secondary regions
+- **Regions**: Up to 10 secondary regions *(updated from 5 in 2025)*
 - **Latency**: < 1 second cross-region replication
 - **Recovery**: < 1 minute RTO
-- **Read replicas**: 16 per region
+- **Read replicas**: 16 total across secondary regions
 - **Use Case**: Global applications, DR
 
 ## ⏱️ Next Steps

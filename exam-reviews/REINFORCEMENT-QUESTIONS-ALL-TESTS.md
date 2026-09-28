@@ -2254,7 +2254,7 @@ AWS KMS (Recommended): ✅
 AWS CloudHSM:
 ├── Single-tenant hardware security module
 ├── Benefits:
-│   ├── FIPS 140-2 Level 3 compliance
+│   ├── FIPS 140-3 Level 3 compliance
 │   ├── Customer manages keys
 │   └── High security requirements
 └── Cost: $1.60/hour per HSM (~$1,168/month) + setup
