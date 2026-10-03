@@ -161,10 +161,9 @@ function home() {
   const hist = store.get(KEY, []), draft = store.get(DRAFT, null);
   try { navigator.storage?.persist?.(); } catch {}
   const stale = hist.length >= 3 && Date.now() - store.get(BACKUP, 0) > 14 * 864e5;
-  const okAns = hist.reduce((a, r) => a + r.correct, 0);
+  const stK = store.get(QS, {}), seenK = Q.filter(q => stK[q.id]), okAns = seenK.filter(q => stK[q.id].last === 1).length;
   const wp = weakPlan(), best = hist.length ? Math.max(...hist.map(r => r.pct)) : null;
   const avg = hist.length ? Math.round(hist.reduce((a, r) => a + r.pct, 0) / hist.length) : null;
-  const qs = hist.reduce((a, r) => a + r.total, 0);
   app.innerHTML = `
   <div class="card hero"><h2>Practice for the AWS Certified AI Practitioner</h2>
     <p>${Q.length} exam-style questions across ${Object.keys(DOM).length} topics: take a timed exam or drill one topic, then see where to focus next.</p></div>
@@ -175,9 +174,9 @@ function home() {
     <div class="stat"><span class="muted small">Attempts</span><b>${hist.length}</b></div>
     <div class="stat"><span class="muted small">Best score</span><b>${best ?? "–"}${best != null ? "%" : ""}</b></div>
     <div class="stat"><span class="muted small">Average</span><b>${avg ?? "–"}${avg != null ? "%" : ""}</b></div>
-    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}<span class="muted" style="font-size:.9rem;font-weight:500"> / ${Q.length}</span></b></div>
-    <div class="stat"><span class="muted small">✅ Correct</span><b class="pass">${okAns}</b></div>
-    <div class="stat"><span class="muted small">❌ Incorrect</span><b class="fail">${qs - okAns}</b></div>
+    <div class="stat" title="Different questions you have answered at least once"><span class="muted small">Questions answered</span><b>${seenK.length}<span class="muted" style="font-size:.9rem;font-weight:500"> / ${Q.length}</span></b></div>
+    <div class="stat" title="Questions whose most recent answer was right"><span class="muted small">✅ Correct</span><b class="pass">${okAns}</b></div>
+    <div class="stat" title="Questions whose most recent answer was wrong"><span class="muted small">❌ Incorrect</span><b class="fail">${seenK.length - okAns}</b></div>
     <div class="stat"><span class="muted small">Time practised</span><b>${fmtLong(hist.reduce((a, r) => a + (r.secs || 0), 0))}</b></div>
   </div>
   <div class="home"><div>
@@ -384,7 +383,7 @@ function finish() {
   const total = S.qs.length, pct = Math.round(100 * correct / total);
   const h = store.get(KEY, []); h.push({ date: S.date, title: S.title, correct, total, pct, secs: S.elapsed || 0, byDomain }); store.set(KEY, h);
   const st = store.get(QS, {}), now = Date.now();
-  S.qs.forEach((q, i) => { const ok = isRight(q, S.ans[i]), s = st[q.id] || { w: 0, c: 0 }; ok ? s.c++ : s.w++; s.last = ok ? 1 : 0; s.t = now; st[q.id] = s; });
+  S.qs.forEach((q, i) => { if (!S.ans[i]) return; const ok = isRight(q, S.ans[i]), s = st[q.id] || { w: 0, c: 0 }; ok ? s.c++ : s.w++; s.last = ok ? 1 : 0; s.t = now; st[q.id] = s; });
   store.set(QS, st);
   S.result = { correct, total, pct, byDomain }; results("all");
 }
