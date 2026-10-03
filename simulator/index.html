@@ -161,6 +161,7 @@ function home() {
   const hist = store.get(KEY, []), draft = store.get(DRAFT, null);
   try { navigator.storage?.persist?.(); } catch {}
   const stale = hist.length >= 3 && Date.now() - store.get(BACKUP, 0) > 14 * 864e5;
+  const okAns = hist.reduce((a, r) => a + r.correct, 0), st0 = store.get(QS, {}), remaining = Q.filter(q => !st0[q.id]).length, legacy = qs > Object.values(st0).reduce((x, s) => x + s.w + s.c, 0);
   const wp = weakPlan(), best = hist.length ? Math.max(...hist.map(r => r.pct)) : null;
   const avg = hist.length ? Math.round(hist.reduce((a, r) => a + r.pct, 0) / hist.length) : null;
   const qs = hist.reduce((a, r) => a + r.total, 0);
@@ -174,7 +175,7 @@ function home() {
     <div class="stat"><span class="muted small">Attempts</span><b>${hist.length}</b></div>
     <div class="stat"><span class="muted small">Best score</span><b>${best ?? "–"}${best != null ? "%" : ""}</b></div>
     <div class="stat"><span class="muted small">Average</span><b>${avg ?? "–"}${avg != null ? "%" : ""}</b></div>
-    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}</b></div>
+    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}</b><div class="small" style="margin-top:6px;line-height:1.7"><span class="pass">✅ ${okAns} correct</span> · <span class="fail">❌ ${qs - okAns} incorrect</span><br><span class="muted" title="Questions you have never answered (tracked per question from the update that added per-question history)">📋 ${remaining} of ${Q.length} remaining${legacy ? "*" : ""}</span>${legacy ? `<br><span class="muted" style="font-size:.72rem">*counts attempts since per-question tracking began</span>` : ""}</div></div>
     <div class="stat"><span class="muted small">Time practised</span><b>${fmtLong(hist.reduce((a, r) => a + (r.secs || 0), 0))}</b></div>
   </div>
   <div class="home"><div>
