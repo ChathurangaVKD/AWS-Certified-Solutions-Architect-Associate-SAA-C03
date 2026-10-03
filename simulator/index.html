@@ -161,11 +161,10 @@ function home() {
   const hist = store.get(KEY, []), draft = store.get(DRAFT, null);
   try { navigator.storage?.persist?.(); } catch {}
   const stale = hist.length >= 3 && Date.now() - store.get(BACKUP, 0) > 14 * 864e5;
-  const okAns = hist.reduce((a, r) => a + r.correct, 0), st0 = store.get(QS, {}), remaining = Q.filter(q => !st0[q.id]).length;
+  const okAns = hist.reduce((a, r) => a + r.correct, 0);
   const wp = weakPlan(), best = hist.length ? Math.max(...hist.map(r => r.pct)) : null;
   const avg = hist.length ? Math.round(hist.reduce((a, r) => a + r.pct, 0) / hist.length) : null;
   const qs = hist.reduce((a, r) => a + r.total, 0);
-  const legacy = qs > Object.values(st0).reduce((x, s) => x + s.w + s.c, 0);
   app.innerHTML = `
   <div class="card hero"><h2>Practice for the AWS Certified AI Practitioner</h2>
     <p>${Q.length} exam-style questions across ${Object.keys(DOM).length} topics: take a timed exam or drill one topic, then see where to focus next.</p></div>
@@ -176,10 +175,9 @@ function home() {
     <div class="stat"><span class="muted small">Attempts</span><b>${hist.length}</b></div>
     <div class="stat"><span class="muted small">Best score</span><b>${best ?? "–"}${best != null ? "%" : ""}</b></div>
     <div class="stat"><span class="muted small">Average</span><b>${avg ?? "–"}${avg != null ? "%" : ""}</b></div>
-    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}</b></div>
+    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}<span class="muted" style="font-size:.9rem;font-weight:500"> / ${Q.length}</span></b></div>
     <div class="stat"><span class="muted small">✅ Correct</span><b class="pass">${okAns}</b></div>
     <div class="stat"><span class="muted small">❌ Incorrect</span><b class="fail">${qs - okAns}</b></div>
-    <div class="stat" title="Questions you have never answered"><span class="muted small">📋 Remaining</span><b>${remaining}<span class="muted" style="font-size:.9rem;font-weight:500"> / ${Q.length}${legacy ? "*" : ""}</span></b>${legacy ? `<span class="muted" style="font-size:.7rem;display:block;line-height:1.3">*counts attempts since per-question tracking began</span>` : ""}</div>
     <div class="stat"><span class="muted small">Time practised</span><b>${fmtLong(hist.reduce((a, r) => a + (r.secs || 0), 0))}</b></div>
   </div>
   <div class="home"><div>
