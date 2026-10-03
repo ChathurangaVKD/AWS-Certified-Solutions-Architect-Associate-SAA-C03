@@ -10,7 +10,15 @@
 
 **A comprehensive, free, and open-source study guide for the AWS Certified Solutions Architect – Associate (SAA-C03) certification exam.**
 
-[🌐 Interactive Study Site](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/) • [🚀 Ultra-Fast (3–4 hrs)](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) • [⚡ Fast-Learn (11–14 hrs)](docs/reference/QUICK-START.md) • [📊 Visual Diagrams](docs/reference/DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start)
+[🎯 Exam Simulator](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/simulator/) • [🌐 Interactive Study Site](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/) • [🚀 Ultra-Fast (3–4 hrs)](docs/study-guides/ULTRA-FAST-LEARNING-INDEX.md) • [⚡ Fast-Learn (11–14 hrs)](docs/reference/QUICK-START.md) • [📊 Visual Diagrams](docs/reference/DIAGRAMS-INDEX.md) • [📚 Get Started](#-quick-start)
+
+---
+
+### 🎯 Exam Simulator
+
+> Take a timed 65-question exam (130 min) or drill one topic. **298 practice questions**, per-topic scores, answer explanations, and a results history kept in your own browser (no sign-up, no tracking).
+>
+> **👉 [Open the Exam Simulator →](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/simulator/)**
 
 ---
 

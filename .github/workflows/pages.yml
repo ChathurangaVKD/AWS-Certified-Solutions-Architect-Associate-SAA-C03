@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build simulator question bank
+        run: python3 simulator/build_questions.py
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
