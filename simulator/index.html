@@ -121,6 +121,7 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch {} }
 };
 const fmt = s => { s = Math.max(0, s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" : "") + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0"); };
+const fmtLong = s => s >= 3600 ? Math.floor(s / 3600) + "h " + Math.floor(s % 3600 / 60) + "m" : Math.floor(s / 60) + "m";
 const isRight = (q, sel) => !!sel && sel.length === q.answer.length && q.answer.every(a => sel.includes(a));
 const TK = q => q.module;
 const TL = k => k;
@@ -173,6 +174,7 @@ function home() {
     <div class="stat"><span class="muted small">Best score</span><b>${best ?? "–"}${best != null ? "%" : ""}</b></div>
     <div class="stat"><span class="muted small">Average</span><b>${avg ?? "–"}${avg != null ? "%" : ""}</b></div>
     <div class="stat"><span class="muted small">Questions answered</span><b>${qs}</b></div>
+    <div class="stat"><span class="muted small">Time practised</span><b>${fmtLong(hist.reduce((a, r) => a + (r.secs || 0), 0))}</b></div>
   </div>
   <div class="home"><div>
     <div class="card"><h3>Start an exam</h3><div class="modes">
@@ -188,7 +190,7 @@ function home() {
   </div>`;
   app.querySelectorAll("[data-m]").forEach(b => b.onclick = () => start(b.dataset.m, b.dataset.d));
   const wk = app.querySelector('[data-m=weak]'); if (wk && !wp.ready) wk.disabled = true;
-  if (draft) { document.getElementById("resume").onclick = () => { S = draft; S.qs.forEach(q => q.order = Object.keys(q.options)); runTimer(); render(); };
+  if (draft) { document.getElementById("resume").onclick = () => { S = draft; S.paused = false; S.elapsed = S.elapsed || 0; S.qs.forEach(q => q.order = Object.keys(q.options)); runTimer(); render(); };
     document.getElementById("discard").onclick = async () => { if (await modal("<h3>Discard unfinished exam?</h3><p>This cannot be undone.</p>", [{ t: "Cancel", v: false }, { t: "Discard", v: true, cls: "danger" }])) { store.del(DRAFT); home(); } }; }
   const ex = document.getElementById("exp"); if (ex) ex.onclick = exportHist;
   const e2 = document.getElementById("exp2"); if (e2) e2.onclick = () => { exportHist(); home(); };
@@ -201,10 +203,10 @@ const domBar = (d, c, t) => { const p = t ? Math.round(100 * c / t) : 0; return 
 function aggregate(h) { const agg = {}; h.forEach(r => Object.entries(r.byDomain).forEach(([d, v]) => { (agg[d] ??= [0, 0]); agg[d][0] += v[0]; agg[d][1] += v[1]; })); return agg; }
 function histHtml(h) {
   if (!h.length) return `<p class="muted">No attempts yet. Your scores and topic accuracy will appear here.</p><button id="imp" class="small">⬆ Import backup</button>`;
-  const rows = h.slice().reverse().slice(0, 10).map(r => `<tr><td>${new Date(r.date).toLocaleDateString()}</td><td>${esc(r.title)}</td><td>${r.correct}/${r.total}</td><td class="${r.pct >= PASS * 100 ? "pass" : "fail"}"><b>${r.pct}%</b></td></tr>`).join("");
+  const rows = h.slice().reverse().slice(0, 10).map(r => `<tr><td>${new Date(r.date).toLocaleDateString()}</td><td>${esc(r.title)}</td><td>${r.correct}/${r.total}</td><td class="${r.pct >= PASS * 100 ? "pass" : "fail"}"><b>${r.pct}%</b></td><td>${r.secs != null ? fmt(r.secs) : "–"}</td></tr>`).join("");
   const agg = aggregate(h);
   return `<h3 class="muted small" style="font-weight:600">Accuracy by topic</h3>${Object.keys(DOM).filter(d => agg[d]).map(d => domBar(d, agg[d][0], agg[d][1])).join("")}
-  <h3 class="muted small" style="font-weight:600;margin-top:18px">Recent attempts</h3><table><tr><th>Date</th><th>Exam</th><th>Score</th><th>%</th></tr>${rows}</table>
+  <h3 class="muted small" style="font-weight:600;margin-top:18px">Recent attempts</h3><table><tr><th>Date</th><th>Exam</th><th>Score</th><th>%</th><th>Time</th></tr>${rows}</table>
   <div class="row" style="margin-top:10px"><button id="exp" class="small">⬇ Export backup</button><button id="imp" class="small">⬆ Import backup</button><button id="clr" class="small danger">Clear history</button></div>
   <p class="muted small">Results live only in this browser. Export a backup to keep them safe or move them to another device.</p>`;
 }
@@ -242,7 +244,7 @@ function start(mode, d) {
   begin(qs, title, feedback, limit);
 }
 function begin(qs, title, feedback = true, limit = 0) {
-  S = { title, feedback, limit, left: limit, i: 0, flags: [], ans: {}, revealed: {}, finished: false, date: Date.now(),
+  S = { title, feedback, limit, left: limit, elapsed: 0, paused: false, i: 0, flags: [], ans: {}, revealed: {}, finished: false, date: Date.now(),
         qs: qs.map(q => ({ ...q, order: Object.keys(q.options) })) };
   runTimer(); render();
 }
@@ -261,15 +263,28 @@ function weakPlan(n = 20) {
 }
 function pick(n) { return shuffle(Q).slice(0, n); }
 
+function paint() {
+  const el = document.getElementById("timer");
+  if (el) { el.textContent = "⏱ " + (S.limit ? fmt(S.left) + " left" : fmt(S.elapsed)); el.classList.toggle("low", !!S.limit && S.left < 600); }
+  const e2 = document.getElementById("elapsed"); if (e2) e2.textContent = "elapsed " + fmt(S.elapsed);
+}
+// Counts only time the exam is actually running: nothing is added while paused, saved-and-exited, or the tab is closed.
 function runTimer() {
-  clearInterval(timerId); if (!S.limit || S.finished) return;
+  clearInterval(timerId); if (S.finished || S.paused) return;
+  S.elapsed = S.elapsed || 0;
   let last = Date.now();
   timerId = setInterval(() => {
-    const now = Date.now(); S.left -= Math.round((now - last) / 1000); last = now;
-    const el = document.getElementById("timer"); if (el) { el.textContent = "⏱ " + fmt(S.left); el.classList.toggle("low", S.left < 600); }
-    if (S.left % 15 === 0) save();
-    if (S.left <= 0) finish();
-  }, 1000);
+    const now = Date.now(), dt = Math.floor((now - last) / 1000); if (!dt) return;
+    last += dt * 1000; S.elapsed += dt; if (S.limit) S.left -= dt;
+    paint(); if (S.elapsed % 10 < dt) save();
+    if (S.limit && S.left <= 0) finish();
+  }, 500);
+}
+function togglePause() {
+  if (!S || S.finished) return;
+  if (S.paused) { S.paused = false; runTimer(); }
+  else { S.paused = true; clearInterval(timerId); }
+  save(); render();
 }
 function save() { if (S && !S.finished) store.set(DRAFT, S); }
 
@@ -279,7 +294,17 @@ function render() {
   const q = S.qs[S.i], sel = S.ans[S.i] || [], rev = S.feedback && S.revealed[S.i], n = S.qs.length, ord = q.order;
   const answered = Object.keys(S.ans).length;
   mid.innerHTML = `<span class="ttl">${esc(S.title)}</span><div class="prog" title="${answered}/${n} answered"><i style="width:${100 * answered / n}%"></i></div><span class="small" style="color:#c8d0dc;white-space:nowrap">${answered}/${n}</span>
-    <span class="spacer"></span>${S.limit ? `<span class="timer ${S.left < 600 ? "low" : ""}" id="timer">⏱ ${fmt(S.left)}</span>` : ""}<button class="ibtn" id="quit">Save &amp; exit</button>`;
+    <span class="spacer"></span>${S.limit ? `<span class="small" id="elapsed" style="color:#c8d0dc;white-space:nowrap">elapsed ${fmt(S.elapsed || 0)}</span>` : ""}<span class="timer ${S.paused ? "low" : S.limit && S.left < 600 ? "low" : ""}" id="timer" title="${S.limit ? "Time left" : "Time elapsed"}">⏱ ${S.limit ? fmt(S.left) + " left" : fmt(S.elapsed || 0)}</span><button class="ibtn" id="pause" title="Pause (P)">${S.paused ? "▶ Resume" : "⏸ Pause"}</button><button class="ibtn" id="quit">Save &amp; exit</button>`;
+  const pb = document.getElementById("pause"); if (pb) pb.onclick = togglePause;
+  if (S.paused) {
+    app.innerHTML = `<div class="card" style="max-width:560px;margin:8vh auto;text-align:center"><h2>⏸ Exam paused</h2>
+      <p class="muted">Your timer is stopped and the questions are hidden. Time spent paused is not counted.</p>
+      <p><b>Time used:</b> ${fmt(S.elapsed || 0)}${S.limit ? " · <b>Time left:</b> " + fmt(S.left) : ""}<br><span class="muted small">${Object.keys(S.ans).length} of ${n} answered</span></p>
+      <div class="row" style="justify-content:center"><button class="primary" id="resume2">▶ Resume exam <kbd>P</kbd></button></div></div>`;
+    document.getElementById("resume2").onclick = togglePause;
+    document.getElementById("quit").onclick = () => { save(); home(); };
+    return;
+  }
   const ok = isRight(q, sel);
   app.innerHTML = `<div class="exam"><div>
     <div class="card" style="margin:0">
@@ -304,7 +329,7 @@ function render() {
       <div class="legend"><span><i style="background:var(--accent-bg);border-color:var(--accent)"></i>Answered</span><span><i></i>Unanswered</span><span style="color:var(--bad)">⚑ Flagged</span></div>
       <p class="muted small" style="margin:6px 0 14px">${answered} answered · ${n - answered} left · ${S.flags.length} flagged</p>
       <button class="primary" id="end2" style="width:100%">Finish exam</button>
-      <p class="muted small" style="margin:12px 0 0">Shortcuts: <kbd>A</kbd>–<kbd>F</kbd> choose · <kbd>←</kbd><kbd>→</kbd> navigate · <kbd>M</kbd> flag</p>
+      <p class="muted small" style="margin:12px 0 0">Shortcuts: <kbd>A</kbd>–<kbd>F</kbd> choose · <kbd>←</kbd><kbd>→</kbd> navigate · <kbd>M</kbd> flag · <kbd>P</kbd> pause</p>
     </aside></div>`;
   app.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(b.dataset.k));
   app.querySelectorAll(".pal button").forEach(b => b.onclick = () => go(+b.dataset.j));
@@ -329,6 +354,8 @@ async function tryFinish() {
 }
 document.addEventListener("keydown", e => {
   if (!S || S.finished || S.modal || e.ctrlKey || e.metaKey || e.altKey || /select|input|textarea/i.test(e.target.tagName)) return;
+  if (e.key.toLowerCase() === "p") { togglePause(); e.preventDefault(); return; }
+  if (S.paused) return;
   const k = e.key.toLowerCase(), q = S.qs[S.i], idx = "abcdef".indexOf(k);
   if (idx >= 0 && idx < q.order.length) { choose(q.order[idx]); e.preventDefault(); }
   else if (k === "arrowright") go(S.i + 1);
@@ -339,11 +366,11 @@ document.addEventListener("keydown", e => {
 
 /* RESULTS */
 function finish() {
-  clearInterval(timerId); S.finished = true; store.del(DRAFT);
+  clearInterval(timerId); S.finished = true; S.paused = false; store.del(DRAFT);
   const byDomain = {}; let correct = 0;
   S.qs.forEach((q, i) => { const ok = isRight(q, S.ans[i]); (byDomain[q.module] ??= [0, 0])[1]++; if (ok) { correct++; byDomain[q.module][0]++; } });
   const total = S.qs.length, pct = Math.round(100 * correct / total);
-  const h = store.get(KEY, []); h.push({ date: S.date, title: S.title, correct, total, pct, byDomain }); store.set(KEY, h);
+  const h = store.get(KEY, []); h.push({ date: S.date, title: S.title, correct, total, pct, secs: S.elapsed || 0, byDomain }); store.set(KEY, h);
   const st = store.get(QS, {}), now = Date.now();
   S.qs.forEach((q, i) => { const ok = isRight(q, S.ans[i]), s = st[q.id] || { w: 0, c: 0 }; ok ? s.c++ : s.w++; s.last = ok ? 1 : 0; s.t = now; st[q.id] = s; });
   store.set(QS, st);
@@ -357,7 +384,8 @@ function results(filter) {
   const doms = Object.keys(DOM).filter(d => byDomain[d]), weak = doms.slice().sort((a, b) => byDomain[a][0] / byDomain[a][1] - byDomain[b][0] / byDomain[b][1])[0];
   app.innerHTML = `<div class="res"><div class="card" style="margin:0"><div class="row" style="gap:24px">
       <div class="ring" style="--p:${pct};--c:var(--${pass ? "ok" : "bad"})"><div class="${pass ? "pass" : "fail"}">${pct}%</div></div>
-      <div><h2>${pass ? "🎉 Great job!" : "Keep practicing"}</h2><p style="margin:.2em 0"><b>${correct} of ${total}</b> correct${S.limit ? " · " + fmt(S.limit - Math.max(S.left, 0)) + " used" : ""}</p>
+      <div><h2>${pass ? "🎉 Great job!" : "Keep practicing"}</h2><p style="margin:.2em 0"><b>${correct} of ${total}</b> correct</p>
+        <p style="margin:.2em 0">⏱ <b>${fmt(S.elapsed || 0)}</b> taken · ${Math.round((S.elapsed || 0) / total)}s per question${S.limit ? " · " + fmt(Math.max(S.left, 0)) + " left of " + fmt(S.limit) : ""}</p>
         <p class="muted small" style="margin:.2em 0">Estimated pass mark ${Math.round(PASS * 100)}% (real exam: 720/1000 scaled).</p>
         <b class="${pass ? "pass" : "fail"}">${pass ? "Above" : "Below"} the estimated passing line</b></div></div>
       <div class="row" style="margin-top:18px">${correct < total ? `<button class="primary" id="retry">Retry the ${total - correct} incorrect</button>` : ""}<button class="primary" id="again">Take another</button><button id="home2">Home</button></div></div>
