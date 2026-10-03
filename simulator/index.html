@@ -176,7 +176,10 @@ function home() {
     <div class="stat"><span class="muted small">Attempts</span><b>${hist.length}</b></div>
     <div class="stat"><span class="muted small">Best score</span><b>${best ?? "–"}${best != null ? "%" : ""}</b></div>
     <div class="stat"><span class="muted small">Average</span><b>${avg ?? "–"}${avg != null ? "%" : ""}</b></div>
-    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}</b><div class="small" style="margin-top:6px;line-height:1.7"><span class="pass">✅ ${okAns} correct</span> · <span class="fail">❌ ${qs - okAns} incorrect</span><br><span class="muted" title="Questions you have never answered (tracked per question from the update that added per-question history)">📋 ${remaining} of ${Q.length} remaining${legacy ? "*" : ""}</span>${legacy ? `<br><span class="muted" style="font-size:.72rem">*counts attempts since per-question tracking began</span>` : ""}</div></div>
+    <div class="stat"><span class="muted small">Questions answered</span><b>${qs}</b></div>
+    <div class="stat"><span class="muted small">✅ Correct</span><b class="pass">${okAns}</b></div>
+    <div class="stat"><span class="muted small">❌ Incorrect</span><b class="fail">${qs - okAns}</b></div>
+    <div class="stat" title="Questions you have never answered"><span class="muted small">📋 Remaining</span><b>${remaining}<span class="muted" style="font-size:.9rem;font-weight:500"> / ${Q.length}${legacy ? "*" : ""}</span></b>${legacy ? `<span class="muted" style="font-size:.7rem;display:block;line-height:1.3">*counts attempts since per-question tracking began</span>` : ""}</div>
     <div class="stat"><span class="muted small">Time practised</span><b>${fmtLong(hist.reduce((a, r) => a + (r.secs || 0), 0))}</b></div>
   </div>
   <div class="home"><div>
