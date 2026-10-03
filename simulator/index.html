@@ -42,7 +42,7 @@ kbd{font:600 .72rem ui-monospace,monospace;border:1px solid var(--line);border-b
 select{font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text)}
 /* home */
 .hero{background:linear-gradient(120deg,#232f3e,#37475a);color:#fff;border:0}
-.hero p{color:#cfd6e2;margin:.2em 0 0;max-width:70ch}
+.hero p{color:#cfd6e2;margin:.2em 0 0}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
 .stat b{display:block;font-size:1.9rem;line-height:1.1}
@@ -65,6 +65,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 8px;text-align:left;
 .opt.bad{background:var(--badbg);border-color:var(--bad)}.opt.bad .l{background:var(--bad);border-color:var(--bad);color:#fff}
 .opt[disabled]{opacity:1;cursor:default;transform:none!important}
 .tag{display:inline-block;font-size:.76rem;padding:3px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);color:var(--muted);margin-right:6px}
+.tag.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
 .tag.m{background:var(--accent-bg);color:var(--accent-d);border-color:var(--accent)}
 .expl{margin-top:16px;padding:14px 16px;border-radius:10px;background:var(--bg);border-left:5px solid var(--accent)}
 .expl.ok{border-color:var(--ok)}.expl.bad{border-color:var(--bad)}
@@ -165,7 +166,7 @@ function home() {
   const qs = hist.reduce((a, r) => a + r.total, 0);
   app.innerHTML = `
   <div class="card hero"><h2>Practice for the AWS Certified AI Practitioner</h2>
-    <p>${Q.length} exam-style questions across ${Object.keys(DOM).length} topics. Take a timed full-length simulation or drill a single topic, then see exactly where to focus next.</p></div>
+    <p>${Q.length} exam-style questions across ${Object.keys(DOM).length} topics: take a timed exam or drill one topic, then see where to focus next.</p></div>
   ${stale ? `<div class="card" style="border-color:var(--accent)"><div class="row"><span>💾 You have ${hist.length} saved attempts that exist only in this browser. Back them up so they're never lost.</span><span class="spacer"></span><button class="primary" id="exp2">Export backup</button></div></div>` : ""}
   ${draft ? `<div class="card" style="border-color:var(--accent)"><div class="row"><div><b>You have an unfinished exam</b><br><span class="muted small">${esc(draft.title)} · ${Object.keys(draft.ans).length}/${draft.qs.length} answered${draft.limit ? " · " + fmt(draft.left) + " left" : ""}</span></div><span class="spacer"></span>
     <button id="discard" class="danger">Discard</button><button class="primary" id="resume">Resume ▶</button></div></div>` : ""}
@@ -184,7 +185,7 @@ function home() {
       <button class="mode" data-m="weak"><span class="ic">🎯</span><b>Weak-area drill</b><span class="muted small">${wp.ready ? wp.totalMissed + " missed question" + (wp.totalMissed === 1 ? "" : "s") + " to revisit" + (wp.weakest.length ? " · weakest: " + wp.weakest.map(w => TL(w.k) + " (" + w.p + "%)").join(", ") : "") : "Available after your first attempt"}</span></button>
     </div></div>
     <div class="card"><h3>Practice by topic</h3>
-      ${Object.entries(DOM).map(([k, v]) => `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span><b>${esc(v)}</b></span><span class="spacer"></span><span class="muted small">${Q.filter(q => q.module == k).length} questions</span><button data-m="domain" data-d="${esc(k)}">Start</button></div>`).join("")}
+      ${Object.entries(DOM).map(([k, v]) => domRow(k, v)).join("")}
     </div></div>
     <div class="card"><h3>Your results</h3>${histHtml(hist)}</div>
   </div>`;
@@ -200,6 +201,14 @@ function home() {
   window.scrollTo(0, 0);
 }
 const domBar = (d, c, t) => { const p = t ? Math.round(100 * c / t) : 0; return `<div class="dom"><div class="row"><span>${esc(d)}</span><span class="spacer"></span><b>${c}/${t} · ${p}%</b></div><div class="bar"><i class="${cls(p)}" style="width:${p}%"></i></div></div>`; };
+function domRow(k, v) {
+  const qs = Q.filter(q => TK(q) === k), tot = qs.length, st = store.get(QS, {}), hist = store.get(KEY, []);
+  const seen = qs.filter(q => st[q.id]).length, a = aggregate(hist)[k], pct = a && a[1] ? Math.round(100 * a[0] / a[1]) : null;
+  const drilled = hist.some(r => { const d = r.title; return d === k && r.total >= tot; });   // full drill finished before per-question tracking existed
+  const done = tot > 0 && (seen >= tot || drilled), cov = done ? 100 : Math.round(100 * seen / tot);
+  const badge = done ? `<span class="tag ok">✅ Completed</span>` : seen || pct != null ? `<span class="tag m">In progress · ${seen}/${tot}</span>` : `<span class="tag">Not started</span>`;
+  return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="row"><span><b>${esc(v)}</b></span>${badge}<span class="spacer"></span>${pct != null ? `<b class="${pct >= 72 ? "pass" : "fail"}" title="Average accuracy">${pct}%</b>` : ""}<span class="muted small">${tot} questions</span><button data-m="domain" data-d="${esc(k)}">${done ? "Practice again" : seen ? "Continue" : "Start"}</button></div><div class="bar" style="margin-top:8px;height:6px"><i class="${done ? "g" : "y"}" style="width:${cov}%"></i></div></div>`;
+}
 function aggregate(h) { const agg = {}; h.forEach(r => Object.entries(r.byDomain).forEach(([d, v]) => { (agg[d] ??= [0, 0]); agg[d][0] += v[0]; agg[d][1] += v[1]; })); return agg; }
 function histHtml(h) {
   if (!h.length) return `<p class="muted">No attempts yet. Your scores and topic accuracy will appear here.</p><button id="imp" class="small">⬆ Import backup</button>`;
@@ -240,7 +249,7 @@ function start(mode, d) {
   else if (mode === "weak") {
     const p = weakPlan(); qs = p.picks;
     title = "Weak-area drill (" + p.missed + " missed" + (p.weakest.length ? " + " + p.weakest.map(w => TL(w.k)).join(", ") : "") + ")";
-  } else { qs = shuffle(Q.filter(q => q.module == d)); title = d; }
+  } else { { const st = store.get(QS, {}); qs = shuffle(Q.filter(q => q.module == d)).sort((a, b) => !!st[a.id] - !!st[b.id]); } title = d; }
   begin(qs, title, feedback, limit);
 }
 function begin(qs, title, feedback = true, limit = 0) {
