@@ -68,6 +68,12 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 8px;text-align:left;
 .tag.m{background:var(--accent-bg);color:var(--accent-d);border-color:var(--accent)}
 .expl{margin-top:16px;padding:14px 16px;border-radius:10px;background:var(--bg);border-left:5px solid var(--accent)}
 .expl.ok{border-color:var(--ok)}.expl.bad{border-color:var(--bad)}
+.ex{white-space:normal;margin-top:10px}.ex h4{margin:12px 0 6px;font-size:.95rem}.ex h4:first-child{margin-top:0}
+.ex ul{margin:0;padding:0;list-style:none}.ex li{display:flex;gap:10px;align-items:flex-start;margin:7px 0;line-height:1.5}
+.ex .ans{padding:8px 12px;border-radius:8px;background:var(--okbg);font-weight:600;margin-bottom:6px}
+.chip{flex:none;min-width:26px;text-align:center;padding:1px 7px;border-radius:99px;font-size:.78rem;font-weight:700;background:var(--badbg);color:var(--bad);border:1px solid var(--bad)}
+.chip.g{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.hint{padding:12px 14px;border-radius:10px;background:var(--accent-bg);border:1px solid var(--accent);margin-bottom:14px;font-size:.92rem}
 .side{position:sticky;top:76px}
 .pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px;max-height:46vh;overflow:auto;padding:2px}
 .pal button{padding:6px 0;font-size:.82rem;border-radius:8px;position:relative}
@@ -104,7 +110,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:10px 16px 28
 "use strict";
 const Q = window.QUESTIONS, app = document.getElementById("app"), mid = document.getElementById("hdrMid");
 const DOM = {}; Q.forEach(q => { DOM[q.module] = q.module; });
-const PASS = 0.72, KEY = "saa-c03-history-v1", DRAFT = "saa-c03-draft-v1", THEME = "saa-c03-theme", BACKUP = "saa-c03-last-backup";
+const PASS = 0.72, KEY = "saa-c03-history-v1", DRAFT = "saa-c03-draft-v1", THEME = "saa-c03-theme", QS = "saa-c03-qstats-v1", BACKUP = "saa-c03-last-backup";
 let S = null, timerId = null;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -116,6 +122,15 @@ const store = {
 };
 const fmt = s => { s = Math.max(0, s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ":" : "") + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0"); };
 const isRight = (q, sel) => !!sel && sel.length === q.answer.length && q.answer.every(a => sel.includes(a));
+const TK = q => q.module;
+const TL = k => k;
+function explHtml(q) {
+  const right = q.answer.map(a => `<li><span class="chip g">${a}</span><span>${esc(q.options[a])}</span></li>`).join("");
+  const why = (q.why || []).map(w => `<li><span>•</span><span>${esc(w)}</span></li>`).join("");
+  const oth = (q.others || []).map(o => `<li><span class="chip">${o.l.join(" ")}</span><span>${esc(o.t)}</span></li>`).join("");
+  if (!right) return `<p>${esc(q.explanation)}</p>`;
+  return `<div class="ex"><h4>✅ Correct answer${q.answer.length > 1 ? "s" : ""}</h4><ul>${right}</ul>${why ? `<h4>💡 Why it's right</h4><ul>${why}</ul>` : ""}${oth ? `<h4>❌ Why the other options don't fit</h4><ul>${oth}</ul>` : ""}</div>`;
+}
 const L = i => "ABCDEF"[i];
 const cls = p => p >= 72 ? "g" : p >= 55 ? "y" : "r";
 
@@ -144,7 +159,7 @@ function home() {
   const hist = store.get(KEY, []), draft = store.get(DRAFT, null);
   try { navigator.storage?.persist?.(); } catch {}
   const stale = hist.length >= 3 && Date.now() - store.get(BACKUP, 0) > 14 * 864e5;
-  const best = hist.length ? Math.max(...hist.map(r => r.pct)) : null;
+  const wp = weakPlan(), best = hist.length ? Math.max(...hist.map(r => r.pct)) : null;
   const avg = hist.length ? Math.round(hist.reduce((a, r) => a + r.pct, 0) / hist.length) : null;
   const qs = hist.reduce((a, r) => a + r.total, 0);
   app.innerHTML = `
@@ -164,7 +179,7 @@ function home() {
       <button class="mode feat" data-m="full"><span class="ic">⏱️</span><b>Full exam simulation</b><span class="muted small">65 questions · 130 min · results only at the end. Mirrors the real exam length.</span></button>
       <button class="mode" data-m="quick"><span class="ic">⚡</span><b>Quick practice</b><span class="muted small">20 random questions · untimed · instant feedback</span></button>
       <button class="mode" data-m="all"><span class="ic">📚</span><b>Whole question bank</b><span class="muted small">All ${Q.length} questions · untimed · instant feedback</span></button>
-      <button class="mode" data-m="weak"><span class="ic">🎯</span><b>Weak-area drill</b><span class="muted small">${hist.length ? "20 questions from your lowest-scoring topics" : "Available after your first attempt"}</span></button>
+      <button class="mode" data-m="weak"><span class="ic">🎯</span><b>Weak-area drill</b><span class="muted small">${wp.ready ? wp.totalMissed + " missed question" + (wp.totalMissed === 1 ? "" : "s") + " to revisit" + (wp.weakest.length ? " · weakest: " + wp.weakest.map(w => TL(w.k) + " (" + w.p + "%)").join(", ") : "") : "Available after your first attempt"}</span></button>
     </div></div>
     <div class="card"><h3>Practice by topic</h3>
       ${Object.entries(DOM).map(([k, v]) => `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span><b>${esc(v)}</b></span><span class="spacer"></span><span class="muted small">${Q.filter(q => q.module == k).length} questions</span><button data-m="domain" data-d="${esc(k)}">Start</button></div>`).join("")}
@@ -172,8 +187,8 @@ function home() {
     <div class="card"><h3>Your results</h3>${histHtml(hist)}</div>
   </div>`;
   app.querySelectorAll("[data-m]").forEach(b => b.onclick = () => start(b.dataset.m, b.dataset.d));
-  const wk = app.querySelector('[data-m=weak]'); if (wk && !hist.length) wk.disabled = true;
-  if (draft) { document.getElementById("resume").onclick = () => { S = draft; runTimer(); render(); };
+  const wk = app.querySelector('[data-m=weak]'); if (wk && !wp.ready) wk.disabled = true;
+  if (draft) { document.getElementById("resume").onclick = () => { S = draft; S.qs.forEach(q => q.order = Object.keys(q.options)); runTimer(); render(); };
     document.getElementById("discard").onclick = async () => { if (await modal("<h3>Discard unfinished exam?</h3><p>This cannot be undone.</p>", [{ t: "Cancel", v: false }, { t: "Discard", v: true, cls: "danger" }])) { store.del(DRAFT); home(); } }; }
   const ex = document.getElementById("exp"); if (ex) ex.onclick = exportHist;
   const e2 = document.getElementById("exp2"); if (e2) e2.onclick = () => { exportHist(); home(); };
@@ -194,7 +209,7 @@ function histHtml(h) {
   <p class="muted small">Results live only in this browser. Export a backup to keep them safe or move them to another device.</p>`;
 }
 function exportHist() {
-  const blob = new Blob([JSON.stringify({ app: "saa-c03-simulator", version: 1, exported: new Date().toISOString(), history: store.get(KEY, []) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ app: "saa-c03-simulator", version: 1, exported: new Date().toISOString(), history: store.get(KEY, []), qstats: store.get(QS, {}) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "saa-c03-results-" + new Date().toISOString().slice(0, 10) + ".json";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); store.set(BACKUP, Date.now());
 }
@@ -205,7 +220,9 @@ function importHist() {
       const d = JSON.parse(await f.files[0].text()), ok = r => r && typeof r.date === "number" && typeof r.title === "string" && Number.isFinite(r.correct) && Number.isFinite(r.total) && Number.isFinite(r.pct) && r.byDomain && typeof r.byDomain === "object";
       if (d.app !== "saa-c03-simulator" || !Array.isArray(d.history) || !d.history.every(ok)) throw 0;
       const cur = store.get(KEY, []), seen = new Set(cur.map(r => r.date + r.title)), add = d.history.filter(r => !seen.has(r.date + r.title));
-      store.set(KEY, cur.concat(add).sort((a, b) => a.date - b.date)); home();
+      store.set(KEY, cur.concat(add).sort((a, b) => a.date - b.date));
+      if (d.qstats && typeof d.qstats === "object") { const st = store.get(QS, {}); for (const [id, s] of Object.entries(d.qstats)) if (s && Number.isFinite(s.t) && (!st[id] || st[id].t < s.t)) st[id] = { w: +s.w || 0, c: +s.c || 0, last: s.last ? 1 : 0, t: s.t }; store.set(QS, st); }
+      home();
       modal(`<h3>Import complete</h3><p>${add.length} new attempt(s) added.</p>`, [{ t: "OK", v: true, cls: "primary" }]);
     } catch { modal("<h3>Import failed</h3><p>That file isn't a valid backup from this simulator.</p>", [{ t: "OK", v: true, cls: "primary" }]); }
   };
@@ -219,12 +236,28 @@ function start(mode, d) {
   else if (mode === "quick") { qs = shuffle(Q).slice(0, 20); title = "Quick practice"; }
   else if (mode === "all") { qs = shuffle(Q); title = "Whole question bank"; }
   else if (mode === "weak") {
-    const agg = aggregate(store.get(KEY, [])), ds = Object.keys(DOM).sort((a, b) => (agg[a] ? agg[a][0] / agg[a][1] : 0) - (agg[b] ? agg[b][0] / agg[b][1] : 0)).slice(0, 3);
-    qs = shuffle(Q.filter(q => ds.includes(q.module))).slice(0, 20); title = "Weak-area drill (" + ds.join(" & ") + ")";
+    const p = weakPlan(); qs = p.picks;
+    title = "Weak-area drill (" + p.missed + " missed" + (p.weakest.length ? " + " + p.weakest.map(w => TL(w.k)).join(", ") : "") + ")";
   } else { qs = shuffle(Q.filter(q => q.module == d)); title = d; }
+  begin(qs, title, feedback, limit);
+}
+function begin(qs, title, feedback = true, limit = 0) {
   S = { title, feedback, limit, left: limit, i: 0, flags: [], ans: {}, revealed: {}, finished: false, date: Date.now(),
-        qs: qs.map(q => ({ ...q, order: shuffle(Object.keys(q.options)) })) };
+        qs: qs.map(q => ({ ...q, order: Object.keys(q.options) })) };
   runTimer(); render();
+}
+// Weak-area plan: questions you last got wrong come first, then unseen/old questions from the topics you score lowest in
+// (based on your most recent attempts; topics you have never attempted are NOT treated as weak).
+function weakPlan(n = 20) {
+  const hist = store.get(KEY, []).slice(-5), st = store.get(QS, {}), agg = aggregate(hist);
+  const acc = k => agg[k] && agg[k][1] >= 3 ? agg[k][0] / agg[k][1] : null;
+  const wt = q => { const a = acc(TK(q)); return a == null ? .35 : 1 - a; };
+  const score = q => { const s = st[q.id]; return (s ? (s.last === 0 ? 3 + Math.min(s.w, 3) * .3 + wt(q) : .15 * wt(q)) : wt(q)) + Math.random() * .25; };
+  const picks = Q.map(q => ({ q, s: score(q) })).sort((a, b) => b.s - a.s).slice(0, n).map(x => x.q);
+  const missed = picks.filter(q => st[q.id] && st[q.id].last === 0).length;
+  const weakest = Object.keys(agg).filter(k => acc(k) != null && acc(k) < .85).sort((a, b) => acc(a) - acc(b)).slice(0, 3).map(k => ({ k, p: Math.round(100 * acc(k)) }));
+  const totalMissed = Q.filter(q => st[q.id] && st[q.id].last === 0).length;
+  return { picks, missed, weakest, totalMissed, ready: hist.length > 0 || Object.keys(st).length > 0 };
 }
 function pick(n) { return shuffle(Q).slice(0, n); }
 
@@ -259,7 +292,7 @@ function render() {
         if (rev) c = q.answer.includes(k) ? "ok" : (sel.includes(k) ? "bad" : "");
         return `<button class="opt ${c}" data-k="${k}" role="${q.multi ? "checkbox" : "radio"}" aria-checked="${sel.includes(k)}"${rev ? " disabled" : ""}><span class="l">${rev && q.answer.includes(k) ? "✓" : rev && sel.includes(k) ? "✗" : L(idx)}</span><span>${esc(q.options[k])}</span></button>`;
       }).join("")}</div>
-      ${rev ? `<div class="expl ${ok ? "ok" : "bad"}"><b>${ok ? "✅ Correct" : "❌ Incorrect"}</b> · Answer: ${q.answer.map(a => L(ord.indexOf(a))).sort().join(", ")}<br>${esc(q.explanation)}</div>` : ""}
+      ${rev ? `<div class="expl ${ok ? "ok" : "bad"}"><b>${ok ? "✅ Correct" : "❌ Incorrect"}</b> · Answer: ${q.answer.map(a => L(ord.indexOf(a))).sort().join(", ")}${explHtml(q)}</div>` : ""}
       <div class="actions row">
         <button id="prev"${S.i ? "" : " disabled"}>← Previous <kbd>←</kbd></button><span class="spacer"></span>
         ${S.feedback && !rev ? `<button id="check" class="primary"${sel.length ? "" : " disabled"}>Check answer <kbd>↵</kbd></button>` : ""}
@@ -311,6 +344,9 @@ function finish() {
   S.qs.forEach((q, i) => { const ok = isRight(q, S.ans[i]); (byDomain[q.module] ??= [0, 0])[1]++; if (ok) { correct++; byDomain[q.module][0]++; } });
   const total = S.qs.length, pct = Math.round(100 * correct / total);
   const h = store.get(KEY, []); h.push({ date: S.date, title: S.title, correct, total, pct, byDomain }); store.set(KEY, h);
+  const st = store.get(QS, {}), now = Date.now();
+  S.qs.forEach((q, i) => { const ok = isRight(q, S.ans[i]), s = st[q.id] || { w: 0, c: 0 }; ok ? s.c++ : s.w++; s.last = ok ? 1 : 0; s.t = now; st[q.id] = s; });
+  store.set(QS, st);
   S.result = { correct, total, pct, byDomain }; results("all");
 }
 function results(filter) {
@@ -324,7 +360,7 @@ function results(filter) {
       <div><h2>${pass ? "🎉 Great job!" : "Keep practicing"}</h2><p style="margin:.2em 0"><b>${correct} of ${total}</b> correct${S.limit ? " · " + fmt(S.limit - Math.max(S.left, 0)) + " used" : ""}</p>
         <p class="muted small" style="margin:.2em 0">Estimated pass mark ${Math.round(PASS * 100)}% (real exam: 720/1000 scaled).</p>
         <b class="${pass ? "pass" : "fail"}">${pass ? "Above" : "Below"} the estimated passing line</b></div></div>
-      <div class="row" style="margin-top:18px"><button class="primary" id="again">Take another</button><button id="home2">Home</button></div></div>
+      <div class="row" style="margin-top:18px">${correct < total ? `<button class="primary" id="retry">Retry the ${total - correct} incorrect</button>` : ""}<button class="primary" id="again">Take another</button><button id="home2">Home</button></div></div>
     <div class="card" style="margin:0"><h3>Score by topic</h3>${doms.map(d => domBar(d, byDomain[d][0], byDomain[d][1])).join("")}
       ${doms.length > 1 ? `<p class="muted small">Focus next on <b>${esc(weak)}</b>.</p>` : ""}</div></div>
   <div class="card" style="margin-top:18px"><div class="row"><h3 style="margin:0">Review answers</h3><span class="spacer"></span>
@@ -333,10 +369,11 @@ function results(filter) {
   ${items.map(({ q, i, ok }) => { const sel = S.ans[i] || [];
     return `<div class="card" id="q${i}"><span class="tag">Q${i + 1}</span><span class="tag">${esc(q.module)}</span><b class="${ok ? "pass" : "fail"}">${ok ? "✅ Correct" : sel.length ? "❌ Incorrect" : "⚠ Unanswered"}</b>
     <p class="qtext" style="font-size:1.08rem">${esc(q.q)}</p>${q.order.map((k, idx) => `<div class="opt ${q.answer.includes(k) ? "ok" : sel.includes(k) ? "bad" : ""}"><span class="l">${q.answer.includes(k) ? "✓" : sel.includes(k) ? "✗" : L(idx)}</span><span>${esc(q.options[k])}${sel.includes(k) ? " <i class='muted'>(your answer)</i>" : ""}</span></div>`).join("")}
-    <div class="expl ${ok ? "ok" : "bad"}">${esc(q.explanation)}</div></div>`; }).join("") || `<div class="card muted">Nothing to show for this filter.</div>`}`;
+    <div class="expl ${ok ? "ok" : "bad"}">${explHtml(q)}</div></div>`; }).join("") || `<div class="card muted">Nothing to show for this filter.</div>`}`;
   const f = document.getElementById("flt"); f.value = filter; f.onchange = () => results(f.value);
   document.getElementById("home").onclick = document.getElementById("home2").onclick = home;
   document.getElementById("again").onclick = home;
+  const rt = document.getElementById("retry"); if (rt) rt.onclick = () => begin(S.qs.filter((q, i) => !isRight(q, S.ans[i])), "Retry: incorrect questions");
   app.querySelectorAll(".pal button").forEach(b => b.onclick = () => { const e = document.getElementById("q" + b.dataset.j); e ? e.scrollIntoView({ behavior: "smooth", block: "start" }) : results("all"); });
   window.scrollTo(0, 0);
 }

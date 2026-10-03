@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Parse the practice-question markdown files into simulator/questions.js."""
-import json, re, pathlib
+import json, re, pathlib, sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from explain_structure import structure
 from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -60,7 +62,8 @@ def practice_parse(path):  # 14-Practice: "✓" marks the correct option, catego
 allq, skipped = [], []
 for p in sorted(ROOT.glob("[0-9][0-9]-*/PRACTICE-QUESTIONS.md")):
     q, s = (practice_parse if p.parent.name.startswith("14-") else module_parse)(p); allq += q; skipped += s
-# hide the answer-letter order cue: nothing to do here, the page shuffles options
+for q in allq:
+    q["why"], q["others"] = structure(q["explanation"], q["answer"], q["options"][q["answer"][0]])
 (pathlib.Path(__file__).parent / "questions.js").write_text("window.QUESTIONS = " + json.dumps(allq, indent=1, ensure_ascii=False) + ";\n")
 print(len(allq), "questions;", sum(q["multi"] for q in allq), "multi; skipped", skipped)
 print(sorted(Counter(q["module"] for q in allq).items()))
