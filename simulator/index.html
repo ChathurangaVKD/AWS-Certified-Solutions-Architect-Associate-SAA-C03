@@ -112,7 +112,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:10px 16px 28
 "use strict";
 const Q = window.QUESTIONS, app = document.getElementById("app"), mid = document.getElementById("hdrMid");
 const DOM = {}; Q.forEach(q => { DOM[q.module] = q.module; });
-const PASS = 0.72, KEY = "saa-c03-history-v1", DRAFT = "saa-c03-draft-v1", THEME = "saa-c03-theme", QS = "saa-c03-qstats-v1", BACKUP = "saa-c03-last-backup";
+const PASS = 0.72, KEY = "saa-c03-history-v1", DRAFT = "saa-c03-draft-v1", THEME = "saa-c03-theme", QS = "saa-c03-qstats-v1", RV = "saa-c03-reviews-v1", BACKUP = "saa-c03-last-backup";
 let S = null, timerId = null;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -197,6 +197,7 @@ function home() {
   const wk = app.querySelector('[data-m=weak]'); if (wk && !wp.ready) wk.disabled = true;
   if (draft) { document.getElementById("resume").onclick = () => { S = draft; S.paused = false; S.elapsed = S.elapsed || 0; S.qs.forEach(q => q.order = Object.keys(q.options)); runTimer(); render(); };
     document.getElementById("discard").onclick = async () => { if (await modal("<h3>Discard unfinished exam?</h3><p>This cannot be undone.</p>", [{ t: "Cancel", v: false }, { t: "Discard", v: true, cls: "danger" }])) { store.del(DRAFT); home(); } }; }
+  app.querySelectorAll("[data-rv]").forEach(b => b.onclick = () => reviewAttempt(+b.dataset.rv));
   const ex = document.getElementById("exp"); if (ex) ex.onclick = exportHist;
   const e2 = document.getElementById("exp2"); if (e2) e2.onclick = () => { exportHist(); home(); };
   const im = document.getElementById("imp"); if (im) im.onclick = importHist;
@@ -224,17 +225,26 @@ function domRow(k, v) {
   return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="row"><span><b>${esc(v)}</b></span>${badge}<span class="spacer"></span>${pct != null ? `<b class="${pct >= 72 ? "pass" : "fail"}" title="Average accuracy">${pct}%</b>` : ""}<span class="muted small">${tot} questions</span><button data-m="domain" data-d="${esc(k)}">${done ? "Practice again" : seen ? "Continue" : "Start"}</button></div><div class="bar" style="margin-top:8px;height:6px"><i class="${done ? "g" : "y"}" style="width:${cov}%"></i></div></div>`;
 }
 function aggregate(h) { const agg = {}; h.forEach(r => Object.entries(r.byDomain).forEach(([d, v]) => { (agg[d] ??= [0, 0]); agg[d][0] += v[0]; agg[d][1] += v[1]; })); return agg; }
+function reviewAttempt(date) {
+  const r = store.get(KEY, []).find(x => x.date === date), rv = store.get(RV, {})[date];
+  if (!r || !rv) return;
+  const items = rv.ids.map((id, i) => ({ q: Q.find(q => q.id === id), a: rv.ans[i], f: (rv.flags || []).includes(i) })).filter(x => x.q);
+  const ans = {}, flags = []; items.forEach((x, j) => { if (x.a) ans[j] = x.a; if (x.f) flags.push(j); });
+  S = { title: r.title + " · " + new Date(r.date).toLocaleDateString(), feedback: false, limit: 0, left: 0, elapsed: r.secs || 0, paused: false, i: 0, flags, ans, revealed: {}, finished: true, date: r.date,
+        qs: items.map(x => ({ ...x.q, order: Object.keys(x.q.options) })), result: { correct: r.correct, total: r.total, pct: r.pct, byDomain: r.byDomain } };
+  results("all");
+}
 function histHtml(h) {
   if (!h.length) return `<p class="muted">No attempts yet. Your scores and topic accuracy will appear here.</p><button id="imp" class="small">⬆ Import backup</button>`;
-  const rows = h.slice().reverse().slice(0, 10).map(r => `<tr><td>${new Date(r.date).toLocaleDateString()}</td><td>${esc(r.title)}</td><td>${r.correct}/${r.total}</td><td class="${r.pct >= PASS * 100 ? "pass" : "fail"}"><b>${r.pct}%</b></td><td>${r.secs != null ? fmt(r.secs) : "–"}</td></tr>`).join("");
+  const rvs0 = store.get(RV, {}), rows = h.slice().reverse().slice(0, 10).map(r => `<tr><td>${new Date(r.date).toLocaleDateString()}</td><td>${esc(r.title)}</td><td>${r.correct}/${r.total}</td><td class="${r.pct >= PASS * 100 ? "pass" : "fail"}"><b>${r.pct}%</b></td><td>${r.secs != null ? fmt(r.secs) : "–"}</td><td>${rvs0[r.date] ? `<button class="small" data-rv="${r.date}">Review</button>` : `<span class="muted" title="Question review was not saved for attempts made before this feature">–</span>`}</td></tr>`).join("");
   const agg = aggregate(h);
   return `<h3 class="muted small" style="font-weight:600">Accuracy by topic</h3>${Object.keys(DOM).filter(d => agg[d]).map(d => domBar(d, agg[d][0], agg[d][1])).join("")}
-  <h3 class="muted small" style="font-weight:600;margin-top:18px">Recent attempts</h3><table><tr><th>Date</th><th>Exam</th><th>Score</th><th>%</th><th>Time</th></tr>${rows}</table>
+  <h3 class="muted small" style="font-weight:600;margin-top:18px">Recent attempts</h3><table><tr><th>Date</th><th>Exam</th><th>Score</th><th>%</th><th>Time</th><th></th></tr>${rows}</table>
   <div class="row" style="margin-top:10px"><button id="exp" class="small">⬇ Export backup</button><button id="imp" class="small">⬆ Import backup</button><button id="clr" class="small danger">Clear history</button></div>
   <p class="muted small">Results live only in this browser. Export a backup to keep them safe or move them to another device.</p>`;
 }
 function exportHist() {
-  const blob = new Blob([JSON.stringify({ app: "saa-c03-simulator", version: 1, exported: new Date().toISOString(), history: store.get(KEY, []), qstats: store.get(QS, {}) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ app: "saa-c03-simulator", version: 1, exported: new Date().toISOString(), history: store.get(KEY, []), qstats: store.get(QS, {}), reviews: store.get(RV, {}) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "saa-c03-results-" + new Date().toISOString().slice(0, 10) + ".json";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); store.set(BACKUP, Date.now());
 }
@@ -246,6 +256,7 @@ function importHist() {
       if (d.app !== "saa-c03-simulator" || !Array.isArray(d.history) || !d.history.every(ok)) throw 0;
       const cur = store.get(KEY, []), seen = new Set(cur.map(r => r.date + r.title)), add = d.history.filter(r => !seen.has(r.date + r.title));
       store.set(KEY, cur.concat(add).sort((a, b) => a.date - b.date));
+      if (d.reviews && typeof d.reviews === "object") { const rv = store.get(RV, {}); for (const [k, v] of Object.entries(d.reviews)) if (!rv[k] && v && Array.isArray(v.ids) && v.ids.every(i => typeof i === "string") && v.ans && typeof v.ans === "object") rv[k] = { ids: v.ids, ans: v.ans, flags: Array.isArray(v.flags) ? v.flags.filter(Number.isInteger) : [] }; store.set(RV, rv); }
       if (d.qstats && typeof d.qstats === "object") { const st = store.get(QS, {}); for (const [id, s] of Object.entries(d.qstats)) if (s && Number.isFinite(s.t) && (!st[id] || st[id].t < s.t)) st[id] = { w: +s.w || 0, c: +s.c || 0, last: s.last ? 1 : 0, t: s.t }; store.set(QS, st); }
       home();
       modal(`<h3>Import complete</h3><p>${add.length} new attempt(s) added.</p>`, [{ t: "OK", v: true, cls: "primary" }]);
@@ -394,6 +405,8 @@ function finish() {
   S.qs.forEach((q, i) => { const ok = isRight(q, S.ans[i]); (byDomain[q.module] ??= [0, 0])[1]++; if (ok) { correct++; byDomain[q.module][0]++; } });
   const total = S.qs.length, pct = Math.round(100 * correct / total);
   const h = store.get(KEY, []); h.push({ date: S.date, title: S.title, correct, total, pct, secs: S.elapsed || 0, byDomain }); store.set(KEY, h);
+  const rvs = store.get(RV, {}); rvs[S.date] = { ids: S.qs.map(q => q.id), ans: S.ans, flags: S.flags };
+  Object.keys(rvs).sort((a, b) => b - a).slice(30).forEach(k => delete rvs[k]); store.set(RV, rvs);
   const st = store.get(QS, {}), now = Date.now();
   S.qs.forEach((q, i) => { if (!S.ans[i]) return; const ok = isRight(q, S.ans[i]), s = st[q.id] || { w: 0, c: 0 }; ok ? s.c++ : s.w++; s.last = ok ? 1 : 0; s.t = now; st[q.id] = s; });
   store.set(QS, st);
