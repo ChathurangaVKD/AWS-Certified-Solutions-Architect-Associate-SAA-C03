@@ -107,6 +107,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:10px 16px 28
 <main id="app"></main>
 <footer>Unofficial study tool, not affiliated with or endorsed by AWS. Results are stored only in your browser.</footer>
 <script src="questions.js"></script>
+<script src="affiliates.js"></script>
 <script>
 "use strict";
 const Q = window.QUESTIONS, app = document.getElementById("app"), mid = document.getElementById("hdrMid");
@@ -189,6 +190,7 @@ function home() {
     <div class="card"><h3>Practice by topic</h3>
       ${Object.entries(DOM).map(([k, v]) => domRow(k, v)).join("")}
     </div></div>
+    ${resourcesHtml()}
     <div class="card"><h3>Your results</h3>${histHtml(hist)}</div>
   </div>`;
   app.querySelectorAll("[data-m]").forEach(b => b.onclick = () => start(b.dataset.m, b.dataset.d));
@@ -203,6 +205,16 @@ function home() {
   window.scrollTo(0, 0);
 }
 const domBar = (d, c, t) => { const p = t ? Math.round(100 * c / t) : 0; return `<div class="dom"><div class="row"><span>${esc(d)}</span><span class="spacer"></span><b>${c}/${t} · ${p}%</b></div><div class="bar"><i class="${cls(p)}" style="width:${p}%"></i></div></div>`; };
+// Optional "Recommended resources" card (affiliate links from affiliates.js); renders nothing until links are configured.
+function resourcesHtml(focus) {
+  const all = (window.AFFILIATES || []).filter(a => a && a.title && /^https:\/\//.test(a.url));
+  if (!all.length) return "";
+  const rel = focus ? all.filter(a => (a.topics || []).includes(focus)) : [];
+  const list = rel.concat(all.filter(a => !rel.includes(a))).slice(0, 3);
+  return `<div class="card"><h3>📚 Recommended resources${focus && rel.length ? ` <span class="muted small">· for your weakest topic: ${esc(focus)}</span>` : ""}</h3>
+    <ul style="margin:0 0 10px;padding-left:20px">${list.map(a => `<li style="margin:6px 0"><a href="${esc(a.url)}" target="_blank" rel="sponsored noopener noreferrer"><b>${esc(a.title)}</b></a>${a.desc ? ` <span class="muted">· ${esc(a.desc)}</span>` : ""}</li>`).join("")}</ul>
+    <p class="muted small" style="margin:0">Disclosure: some of these are affiliate links. I may earn a commission if you buy, at no extra cost to you. Not affiliated with or endorsed by AWS.</p></div>`;
+}
 function domRow(k, v) {
   const qs = Q.filter(q => TK(q) === k), tot = qs.length, st = store.get(QS, {}), hist = store.get(KEY, []);
   const seen = qs.filter(q => st[q.id]).length, a = aggregate(hist)[k], pct = a && a[1] ? Math.round(100 * a[0] / a[1]) : null;
@@ -402,6 +414,7 @@ function results(filter) {
       <div class="row" style="margin-top:18px">${correct < total ? `<button class="primary" id="retry">Retry the ${total - correct} incorrect</button>` : ""}<button class="primary" id="again">Take another</button><button id="home2">Home</button></div></div>
     <div class="card" style="margin:0"><h3>Score by topic</h3>${doms.map(d => domBar(d, byDomain[d][0], byDomain[d][1])).join("")}
       ${doms.length > 1 ? `<p class="muted small">Focus next on <b>${esc(weak)}</b>.</p>` : ""}</div></div>
+  ${resourcesHtml(doms.length > 1 && byDomain[weak][0] / byDomain[weak][1] < .85 ? weak : "")}
   <div class="card" style="margin-top:18px"><div class="row"><h3 style="margin:0">Review answers</h3><span class="spacer"></span>
     <select id="flt" aria-label="Filter"><option value="all">All (${total})</option><option value="wrong">Incorrect only (${total - correct})</option><option value="flag">Flagged only (${S.flags.length})</option></select></div>
     <div class="pal" style="margin-top:14px;max-height:none">${S.qs.map((q, j) => `<button class="${isRight(q, S.ans[j]) ? "r-ok" : "r-bad"} ${S.flags.includes(j) ? "flag" : ""}" data-j="${j}">${j + 1}</button>`).join("")}</div></div>
