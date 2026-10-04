@@ -165,7 +165,7 @@ function home() {
   const wp = weakPlan(), best = hist.length ? Math.max(...hist.map(r => r.pct)) : null;
   const avg = hist.length ? Math.round(hist.reduce((a, r) => a + r.pct, 0) / hist.length) : null;
   app.innerHTML = `
-  <div class="card hero"><h2>Practice for the AWS Certified AI Practitioner</h2>
+  <div class="card hero"><h2>Practice for the AWS Certified Solutions Architect – Associate</h2>
     <p>${Q.length} exam-style questions across ${Object.keys(DOM).length} topics: take a timed exam or drill one topic, then see where to focus next.</p></div>
   ${stale ? `<div class="card" style="border-color:var(--accent)"><div class="row"><span>💾 You have ${hist.length} saved attempts that exist only in this browser. Back them up so they're never lost.</span><span class="spacer"></span><button class="primary" id="exp2">Export backup</button></div></div>` : ""}
   ${draft ? `<div class="card" style="border-color:var(--accent)"><div class="row"><div><b>You have an unfinished exam</b><br><span class="muted small">${esc(draft.title)} · ${Object.keys(draft.ans).length}/${draft.qs.length} answered${draft.limit ? " · " + fmt(draft.left) + " left" : ""}</span></div><span class="spacer"></span>
