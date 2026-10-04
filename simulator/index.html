@@ -271,10 +271,8 @@ function start(mode, d) {
   if (mode === "full") { qs = pick(65); title = "Full exam simulation"; feedback = false; limit = 130 * 60; }
   else if (mode === "quick") { qs = shuffle(Q).slice(0, 20); title = "Quick practice"; }
   else if (mode === "all") { qs = shuffle(Q); title = "Whole question bank"; }
-  else if (mode === "weak") {
-    const p = weakPlan(); qs = p.picks;
-    title = "Weak-area drill (" + p.missed + " missed" + (p.weakest.length ? " + " + p.weakest.map(w => TL(w.k)).join(", ") : "") + ")";
-  } else { { const st = store.get(QS, {}); qs = shuffle(Q.filter(q => q.module == d)).sort((a, b) => !!st[a.id] - !!st[b.id]); } title = d; }
+  else if (mode === "weak") { showWeakPlan(); return; }
+  else { { const st = store.get(QS, {}); qs = shuffle(Q.filter(q => q.module == d)).sort((a, b) => !!st[a.id] - !!st[b.id]); } title = d; }
   begin(qs, title, feedback, limit);
 }
 function begin(qs, title, feedback = true, limit = 0) {
@@ -282,18 +280,59 @@ function begin(qs, title, feedback = true, limit = 0) {
         qs: qs.map(q => ({ ...q, order: Object.keys(q.options) })) };
   runTimer(); render();
 }
-// Weak-area plan: questions you last got wrong come first, then unseen/old questions from the topics you score lowest in
-// (based on your most recent attempts; topics you have never attempted are NOT treated as weak).
-function weakPlan(n = 20) {
+// Weak-area plan: every area (domain/topic) with your latest accuracy and the questions you last got wrong in it.
+// Accuracy comes from your 5 most recent attempts (falls back to per-question results); areas you never attempted are not treated as weak.
+function weakPlan() {
   const hist = store.get(KEY, []).slice(-5), st = store.get(QS, {}), agg = aggregate(hist);
-  const acc = k => agg[k] && agg[k][1] >= 3 ? agg[k][0] / agg[k][1] : null;
-  const wt = q => { const a = acc(TK(q)); return a == null ? .35 : 1 - a; };
-  const score = q => { const s = st[q.id]; return (s ? (s.last === 0 ? 3 + Math.min(s.w, 3) * .3 + wt(q) : .15 * wt(q)) : wt(q)) + Math.random() * .25; };
-  const picks = Q.map(q => ({ q, s: score(q) })).sort((a, b) => b.s - a.s).slice(0, n).map(x => x.q);
-  const missed = picks.filter(q => st[q.id] && st[q.id].last === 0).length;
-  const weakest = Object.keys(agg).filter(k => acc(k) != null && acc(k) < .85).sort((a, b) => acc(a) - acc(b)).slice(0, 3).map(k => ({ k, p: Math.round(100 * acc(k)) }));
-  const totalMissed = Q.filter(q => st[q.id] && st[q.id].last === 0).length;
-  return { picks, missed, weakest, totalMissed, ready: hist.length > 0 || Object.keys(st).length > 0 };
+  const keys = [...new Set(Q.map(TK))];
+  const acc = k => {
+    if (agg[k] && agg[k][1] >= 3) return agg[k][0] / agg[k][1];
+    const seen = Q.filter(q => TK(q) === k && st[q.id]);
+    return seen.length >= 3 ? seen.filter(q => st[q.id].last === 1).length / seen.length : null;
+  };
+  const rows = keys.map(k => {
+    const qs = Q.filter(q => TK(q) === k);
+    return { k, acc: acc(k), total: qs.length, seen: qs.filter(q => st[q.id]).length,
+             missed: qs.filter(q => st[q.id] && st[q.id].last === 0).sort((a, b) => st[b.id].w - st[a.id].w) };
+  }).sort((a, b) => (a.acc ?? 1.01) - (b.acc ?? 1.01) || b.missed.length - a.missed.length);   // weakest first, never-attempted last
+  const weakest = rows.filter(r => r.acc != null && r.acc < .85).slice(0, 3).map(r => ({ k: r.k, p: Math.round(100 * r.acc) }));
+  return { rows, weakest, totalMissed: rows.reduce((a, r) => a + r.missed.length, 0), ready: hist.length > 0 || Object.keys(st).length > 0 };
+}
+// Drill for the chosen areas: ALL questions you last got wrong there (weakest area first, up to 50);
+// if that is fewer than 10, top up with new / least-recent questions from the same areas so a drill is never tiny.
+function drillFor(rows, keys, cap = 50, min = 10) {
+  const use = rows.filter(r => keys.includes(r.k)), st = store.get(QS, {});
+  const picks = [].concat(...use.map(r => r.missed)).slice(0, cap), have = new Set(picks.map(q => q.id));
+  const pools = use.map(r => shuffle(Q.filter(q => TK(q) === r.k && !have.has(q.id)))
+    .sort((a, b) => (!!st[a.id] - !!st[b.id]) || ((st[a.id] || {}).t - (st[b.id] || {}).t) || 0));
+  for (let i = 0; picks.length < min && pools.some(p => p.length); i++) { const p = pools[i % pools.length]; if (p.length) picks.push(p.shift()); }
+  return picks;
+}
+function showWeakPlan() {
+  const wp = weakPlan(); mid.innerHTML = `<span class="ttl">Weak-area drill</span><span class="spacer"></span><button class="ibtn" id="wback">Back</button>`;
+  const on = new Set(wp.rows.filter(r => r.missed.length || (r.acc != null && r.acc < .85)).map(r => r.k));
+  if (!on.size && wp.rows.length) on.add(wp.rows[0].k);
+  const label = k => TL(k) + (DOM[k] && DOM[k] !== k ? " · " + DOM[k] : "");
+  app.innerHTML = `<div class="card"><h2>🎯 Weak-area drill</h2>
+    <p class="muted" style="margin-top:0">Your weakest areas come first. The drill contains <b>every question you last got wrong</b> in the areas ticked below (untick any to skip it).</p>
+    <div id="wrows">${wp.rows.map(r => { const p = r.acc == null ? null : Math.round(100 * r.acc);
+      return `<label class="row" style="padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;align-items:flex-start">
+        <input type="checkbox" data-k="${esc(r.k)}" ${on.has(r.k) ? "checked" : ""} style="margin-top:5px;width:18px;height:18px">
+        <div style="flex:1;min-width:180px"><b>${esc(label(r.k))}</b>
+          <div class="bar" style="margin-top:6px;height:6px"><i class="${p == null ? "y" : cls(p)}" style="width:${p == null ? 0 : p}%"></i></div></div>
+        <div style="min-width:130px;text-align:right">${p == null ? '<span class="muted small">not attempted</span>' : `<b class="${p >= 72 ? "pass" : "fail"}">${p}%</b> <span class="muted small">accuracy</span>`}<br>
+          <span class="${r.missed.length ? "fail" : "muted"} small">${r.missed.length ? "❌ " + r.missed.length + " to revisit" : "no missed questions"}</span></div></label>`; }).join("")}</div>
+    <div class="row" style="margin-top:16px"><button class="primary" id="wgo"></button><button id="wback2">Back</button>
+      <span class="muted small" id="wnote"></span></div></div>`;
+  const sel = () => [...app.querySelectorAll("#wrows input:checked")].map(i => i.dataset.k);
+  const refresh = () => { const ks = sel(), n = drillFor(wp.rows, ks).length, miss = wp.rows.filter(r => ks.includes(r.k)).reduce((a, r) => a + Math.min(r.missed.length, 50), 0);
+    const b = document.getElementById("wgo"); b.disabled = !n; b.textContent = "Start drill (" + n + " question" + (n === 1 ? "" : "s") + ")";
+    document.getElementById("wnote").textContent = n && miss < n ? "includes " + (n - miss) + " new/older question(s) to reach the 10-question minimum" : ""; };
+  app.querySelectorAll("#wrows input").forEach(i => i.onchange = refresh); refresh();
+  document.getElementById("wgo").onclick = () => { const ks = sel(), qs = drillFor(wp.rows, ks);
+    begin(qs, "Weak-area drill (" + qs.length + " questions · " + ks.map(TL).join(", ") + ")"); };
+  document.getElementById("wback").onclick = document.getElementById("wback2").onclick = home;
+  window.scrollTo(0, 0);
 }
 function pick(n) { return shuffle(Q).slice(0, n); }
 
