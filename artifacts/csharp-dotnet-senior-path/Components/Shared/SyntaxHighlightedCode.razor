@@ -1,0 +1,13 @@
+@using TrilhaCsharpDotnetSenior.Models
+
+<pre class="code-block" aria-label="Exemplo de código C#"><code class="language-csharp" lang="en"><span class="sr-only">Código-fonte C#</span>@foreach (var token in Tokens)
+{
+    <span class="@token.CssClass">@token.Text</span>
+}</code></pre>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Code { get; set; } = string.Empty;
+
+    private IReadOnlyList<CSharpSyntaxToken> Tokens => CSharpSyntaxHighlighter.Tokenize(Code);
+}

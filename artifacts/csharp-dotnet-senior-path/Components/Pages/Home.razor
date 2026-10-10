@@ -1,0 +1,109 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<PageTitle>Roadmap | Trilha C#/.NET Sênior</PageTitle>
+
+<section class="hero" aria-labelledby="page-title">
+    <div class="hero-copy">
+        <p class="eyebrow">C# / .NET · aprendizagem guiada</p>
+        <h1 id="page-title">Trilha C#/.NET <span>Sênior</span></h1>
+        <p class="hero-lead">Uma jornada prática para sair dos fundamentos e tomar decisões de engenharia com clareza, segurança e impacto.</p>
+        <a class="primary-button" href="#roadmap">Explorar a trilha <span aria-hidden="true">↓</span></a>
+    </div>
+    <div class="hero-card" aria-label="Resumo do progresso">
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
+        <span class="hero-card-label">Seu progresso</span>
+        <strong class="hero-progress-value">@CompletedCount<span>/@LearningCatalog.Modules.Count</span></strong>
+        <div class="progress-track" role="progressbar" aria-label="Progresso da trilha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@ProgressPercent">
+            <span style="width: @(ProgressPercent)%"></span>
+        </div>
+        <p>@ProgressPercent% concluído · salvo neste navegador</p>
+    </div>
+</section>
+
+<section class="roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
+    <div class="section-heading">
+        <div><p class="eyebrow">O caminho</p><h2 id="roadmap-title">Nove movimentos para crescer com consistência</h2></div>
+        <p class="section-note">Leia na ordem. Pratique antes de avançar.</p>
+    </div>
+    <div class="track-list">
+        @foreach (var track in LearningCatalog.Tracks)
+        {
+            var modules = LearningCatalog.Modules.Where(module => module.Track == track.Slug).ToList();
+            <section class="track-block" aria-labelledby="track-@track.Slug">
+                <div class="track-heading">
+                    <div><p class="eyebrow">Trilha</p><h3 id="track-@track.Slug">@track.Title</h3></div>
+                    <p>@track.Description</p>
+                </div>
+                <div class="roadmap" role="list" aria-label="Módulos: @track.Title">
+                    @foreach (var module in modules)
+                    {
+                        var isComplete = CompletedSlugs.Contains(module.Slug);
+                        <article class="module-card @(isComplete ? "is-complete" : string.Empty)" role="listitem">
+                            <div class="module-number" aria-hidden="true">@module.Icon</div>
+                            <div class="module-card-body">
+                                <div class="module-meta"><span>@module.Kicker</span><span>@module.Duration</span></div>
+                                <h3><a href="/modulos/@module.Slug">@module.Title</a></h3>
+                                <p>@module.Description</p>
+                                <div class="module-footer">
+                                    <span class="lesson-count">@module.Lessons.Count aulas · 1 self-check</span>
+                                    @if (isComplete)
+                                    {
+                                        <span class="status-pill done">Concluído <span aria-hidden="true">✓</span></span>
+                                    }
+                                    else
+                                    {
+                                        <a class="text-link" href="/modulos/@module.Slug">Ver módulo <span aria-hidden="true">→</span></a>
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+</section>
+
+<section class="principles" aria-labelledby="principles-title">
+    <div><p class="eyebrow">Como estudar</p><h2 id="principles-title">A senioridade aparece nas escolhas.</h2></div>
+    <div class="principle-grid">
+        <div><span>01</span><h3>Entenda o porquê</h3><p>Antes da API, modele o problema e explicite os trade-offs.</p></div>
+        <div><span>02</span><h3>Pratique o essencial</h3><p>Pequenos exercícios dão feedback melhor que tutoriais passivos.</p></div>
+        <div><span>03</span><h3>Comunique impacto</h3><p>Uma decisão só escala quando outras pessoas conseguem entendê-la.</p></div>
+    </div>
+</section>
+
+<section class="capstone" id="capstone" aria-labelledby="capstone-title">
+    <div class="capstone-heading"><p class="eyebrow">Desafio final</p><h2 id="capstone-title">Capstone: Plataforma de pedidos resiliente</h2></div>
+    <div class="capstone-content">
+        <p>Projete e implemente uma API de pedidos que aceite comandos, publique eventos e ofereça uma leitura observável. A entrega deve tornar visíveis suas decisões, limites e aprendizados.</p>
+        <div class="capstone-columns">
+            <div><h3>Entregáveis</h3><ul><li>API com contrato versionado e autenticação</li><li>Persistência com idempotência e outbox</li><li>Testes, métricas, logs e health checks</li></ul></div>
+            <div><h3>Critérios de revisão</h3><ul><li>Falhas têm timeout e comportamento documentado</li><li>Dados sensíveis não aparecem nos logs</li><li>ADR explica trade-offs e próximos passos</li></ul></div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private HashSet<string> CompletedSlugs { get; } = new(StringComparer.OrdinalIgnoreCase);
+    private int CompletedCount => CompletedSlugs.Count;
+    private int ProgressPercent => LearningCatalog.Modules.Count == 0 ? 0 : (int)Math.Round(CompletedCount * 100d / LearningCatalog.Modules.Count);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var saved = await JS.InvokeAsync<string?>("learningProgress.load");
+        if (!string.IsNullOrWhiteSpace(saved))
+        {
+            foreach (var slug in saved.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                CompletedSlugs.Add(slug);
+        }
+
+        StateHasChanged();
+    }
+}
