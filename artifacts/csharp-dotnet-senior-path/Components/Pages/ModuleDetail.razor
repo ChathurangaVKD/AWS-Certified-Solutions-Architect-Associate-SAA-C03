@@ -1,0 +1,96 @@
+@page "/modulos/{Slug}"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+@if (Module is null)
+{
+    <PageTitle>Módulo não encontrado | Trilha Sênior</PageTitle>
+    <section class="empty-state"><p class="eyebrow">404</p><h1>Módulo não encontrado</h1><p>Volte ao roadmap e escolha uma etapa disponível.</p><a class="primary-button" href="/">Voltar ao roadmap</a></section>
+}
+else
+{
+    <PageTitle>@Module.Title | Trilha C#/.NET Sênior</PageTitle>
+    <article class="lesson-page">
+        <a class="back-link" href="/">← Voltar ao roadmap</a>
+        <header class="lesson-header">
+            <div class="module-number large" aria-hidden="true">@Module.Icon</div>
+            <div><p class="eyebrow">Módulo @Module.Number · @Module.Kicker · @Module.Duration</p><h1>@Module.Title</h1><p class="hero-lead">@Module.Description</p></div>
+        </header>
+        <div class="lesson-layout">
+            <div class="lesson-list">
+                <h2>Aulas e prática</h2>
+                @foreach (var (lesson, index) in Module.Lessons.Select((value, index) => (value, index)))
+                {
+                    <section class="lesson-block" aria-labelledby="lesson-@index">
+                        <div class="lesson-index">@(index + 1).@(Module.Number)</div>
+                        <div>
+                            <h3 id="lesson-@index">@lesson.Title</h3>
+                            <p>@lesson.Summary</p>
+                            <div class="lesson-columns">
+                                <div><h4>Objetivos</h4><ul>@foreach (var objective in lesson.Objectives) { <li>@objective</li> }</ul></div>
+                                <div><h4>Pratique</h4><ul>@foreach (var task in lesson.PracticeTasks) { <li>@task</li> }</ul></div>
+                            </div>
+                            <details class="code-disclosure"><summary>Ver exemplo em C#</summary><pre><code>@lesson.CodeExample</code></pre></details>
+                        </div>
+                    </section>
+                }
+            </div>
+            <aside class="self-check" aria-labelledby="self-check-title">
+                <p class="eyebrow">Pausa de 2 minutos</p><h2 id="self-check-title">Self-check</h2><p>@Module.SelfCheck.Question</p>
+                <fieldset><legend class="sr-only">Alternativas</legend>
+                    @for (var option = 0; option < Module.SelfCheck.Options.Count; option++)
+                    {
+                        var optionIndex = option;
+                        <label class="option @(SelectedOption == optionIndex ? "selected" : string.Empty)"><input type="radio" name="self-check" value="@optionIndex" checked="@(SelectedOption == optionIndex)" @onchange="() => SelectedOption = optionIndex" /><span>@Module.SelfCheck.Options[option]</span></label>
+                    }
+                </fieldset>
+                <button class="secondary-button" @onclick="CheckAnswer" disabled="@(SelectedOption is null)">Conferir resposta</button>
+                @if (AnswerChecked)
+                {
+                    <div class="feedback @(SelectedOption == Module.SelfCheck.CorrectOption ? "correct" : "try-again")" role="status"><strong>@(SelectedOption == Module.SelfCheck.CorrectOption ? "Boa leitura." : "Quase lá.")</strong><p>@Module.SelfCheck.Explanation</p></div>
+                }
+                <button class="complete-button @(IsComplete ? "completed" : string.Empty)" @onclick="ToggleComplete">@(IsComplete ? "Módulo concluído ✓" : "Marcar módulo como concluído")</button>
+                <p class="saved-note">Seu progresso é salvo apenas neste navegador.</p>
+            </aside>
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter] public string? Slug { get; set; }
+    private LearningModule? Module { get; set; }
+    private HashSet<string> CompletedSlugs { get; } = new(StringComparer.OrdinalIgnoreCase);
+    private int? SelectedOption { get; set; }
+    private bool AnswerChecked { get; set; }
+    private bool IsComplete => Module is not null && CompletedSlugs.Contains(Module.Slug);
+
+    protected override void OnParametersSet() => Module = Slug is null ? null : LearningCatalog.Find(Slug);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || Module is null)
+            return;
+
+        var saved = await JS.InvokeAsync<string?>("learningProgress.load");
+        if (!string.IsNullOrWhiteSpace(saved))
+        {
+            foreach (var slug in saved.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                CompletedSlugs.Add(slug);
+        }
+
+        StateHasChanged();
+    }
+
+    private void CheckAnswer() => AnswerChecked = true;
+
+    private async Task ToggleComplete()
+    {
+        if (Module is null)
+            return;
+
+        if (!CompletedSlugs.Add(Module.Slug))
+            CompletedSlugs.Remove(Module.Slug);
+
+        await JS.InvokeVoidAsync("learningProgress.save", string.Join(',', CompletedSlugs));
+    }
+}
