@@ -1,6 +1,13 @@
 namespace TrilhaCsharpDotnetSenior.Models;
 
-public sealed record Lesson(string Title, string Summary, IReadOnlyList<string> Objectives, IReadOnlyList<string> PracticeTasks, string CodeExample);
+public sealed record Lesson(
+    string Title,
+    string Summary,
+    IReadOnlyList<string> Objectives,
+    IReadOnlyList<string> PracticeTasks,
+    string CodeExample,
+    string? Scenario = null,
+    string? Resolution = null);
 
 public sealed record SelfCheck(string Question, IReadOnlyList<string> Options, int CorrectOption, string Explanation);
 
@@ -13,14 +20,56 @@ public sealed record LearningModule(
     string Duration,
     string Icon,
     IReadOnlyList<Lesson> Lessons,
-    SelfCheck SelfCheck);
+    SelfCheck SelfCheck,
+    string Track = "professional");
+
+public sealed record LearningTrack(string Slug, string Title, string Description);
 
 public static class LearningCatalog
 {
+    public static IReadOnlyList<LearningTrack> Tracks { get; } =
+    [
+        new("fast-track", "Fast track: júnior ao pleno", "A base essencial para escrever código confiável, entregar APIs e trabalhar bem em um time."),
+        new("professional", "Trilha profissional", "Aprofunde runtime, design, web, dados, qualidade e sistemas distribuídos."),
+        new("architecture", "Arquitetura e design", "Aprenda a escolher arquiteturas e patterns a partir do problema, não da moda.")
+    ];
+
     public static IReadOnlyList<LearningModule> Modules { get; } =
     [
         new(
             1,
+            "fast-track-junior-pleno",
+            "Fast track: júnior ao pleno",
+            "Base essencial",
+            "Uma sequência curta para consolidar o que um profissional júnior precisa dominar e o que diferencia uma atuação plena.",
+            "2 semanas",
+            "FT",
+            [
+                new("Como o código roda", "Tipos, memória, coleções e exceções para raciocinar sobre o comportamento do programa.",
+                    ["Escolher tipos e coleções adequados", "Explicar nullability e invariantes", "Ler uma exceção até a causa raiz"],
+                    ["Modele um pedido sem estados inválidos", "Compare List, HashSet e Dictionary", "Escreva um tratamento que preserve a causa original"],
+                    "public sealed record Order(Guid Id, decimal Total, OrderStatus Status);\n\nif (order.Total <= 0)\n    throw new ArgumentOutOfRangeException(nameof(order));"),
+                new("Async, HTTP e APIs", "O mínimo de web para construir endpoints previsíveis e não bloquear trabalho de I/O.",
+                    ["Propagar CancellationToken", "Diferenciar status codes", "Validar entrada na borda"],
+                    ["Adicione timeout a uma chamada HTTP", "Modele respostas 200, 400, 404 e 409", "Descreva o contrato de um endpoint de criação"],
+                    "app.MapGet(\"/orders/{id:guid}\", async (Guid id, IOrderReader reader, CancellationToken ct) =>\n{\n    var order = await reader.FindAsync(id, ct);\n    return order is null ? Results.NotFound() : Results.Ok(order);\n});"),
+                new("Dados e estado", "SQL, transações e concorrência para que a aplicação não perca nem duplique informação.",
+                    ["Ler uma consulta simples", "Definir uma fronteira transacional", "Projetar uma operação idempotente"],
+                    ["Escolha índices para uma busca de pedidos", "Desenhe o fluxo de pagamento repetido", "Explique quando consistência eventual é aceitável"],
+                    "await using var transaction = await db.Database.BeginTransactionAsync(ct);\nawait db.SaveChangesAsync(ct);\nawait transaction.CommitAsync(ct);"),
+                new("Testes e depuração", "Feedback rápido, logs úteis e investigação disciplinada de falhas.",
+                    ["Testar uma regra isolada", "Separar causa de sintoma", "Adicionar contexto sem vazar dados"],
+                    ["Cubra uma regra de desconto", "Reproduza um bug com um teste", "Transforme uma mensagem em log estruturado"],
+                    "[Fact]\npublic void Discount_never_goes_below_zero()\n{\n    Assert.Equal(0m, Discount.Apply(10m, 1.5m));\n}"),
+                new("Entrega profissional", "Git, revisão, comunicação e pequenos designs que tornam o trabalho previsível.",
+                    ["Fazer commits revisáveis", "Explicar trade-offs em uma PR", "Dividir trabalho em incrementos seguros"],
+                    ["Escreva uma checklist de PR", "Proponha um rollout com rollback", "Registre uma decisão curta em um ADR"],
+                    "public sealed record Decision(string Context, string Choice, string Consequence);"),
+            ],
+            new("Qual comportamento mais caracteriza uma entrega de nível pleno?", ["Explicitar trade-offs e reduzir risco", "Escrever a maior quantidade de código", "Evitar testes para ganhar velocidade", "Decidir sozinho sem comunicar"], 0, "Profissionais plenos conectam implementação, risco e impacto; eles tornam as decisões compreensíveis e reversíveis."),
+            "fast-track"),
+        new(
+            2,
             "fundamentos-runtime",
             "C# e o runtime",
             "Base sólida",
@@ -43,7 +92,7 @@ public static class LearningCatalog
             ],
             new("Qual recurso deve ser propagado até a camada de I/O?", ["CancellationToken", "Thread.CurrentThread", "Console.Out", "GCHandle"], 0, "O CancellationToken torna cancelamento parte do contrato e evita trabalho inútil quando a requisição termina.")),
         new(
-            2,
+            3,
             "oop-design",
             "Orientação a objetos e design",
             "Decisões melhores",
@@ -66,7 +115,7 @@ public static class LearningCatalog
             ],
             new("Qual é o melhor primeiro passo ao extrair uma abstração?", ["Identificar uma variação real e seu contrato", "Criar uma interface para toda classe", "Duplicar os métodos antes de decidir", "Esconder todos os campos"], 0, "Abstrações devem proteger uma variação ou fronteira real; interfaces universais aumentam acoplamento.")),
         new(
-            3,
+            4,
             "aspnet-web-apis",
             "ASP.NET Core e Web APIs",
             "Interfaces públicas",
@@ -89,7 +138,7 @@ public static class LearningCatalog
             ],
             new("Onde uma regra de autorização por capacidade deve ser aplicada?", ["Em uma policy no boundary da aplicação", "Somente no JavaScript", "Apenas no banco", "Em um comentário no endpoint"], 0, "Policies e handlers no boundary server-side garantem que a decisão não dependa do cliente.")),
         new(
-            4,
+            5,
             "dados-persistencia",
             "Dados e persistência",
             "Estado confiável",
@@ -112,7 +161,7 @@ public static class LearningCatalog
             ],
             new("Qual propriedade uma operação de reprocessamento precisa ter?", ["Idempotência", "Aleatoriedade", "Acoplamento", "Estado global"], 0, "Idempotência permite repetir uma operação sem produzir efeitos duplicados quando há retries ou mensagens repetidas.")),
         new(
-            5,
+            6,
             "qualidade-observabilidade",
             "Testes, qualidade e observabilidade",
             "Confiança para mudar",
@@ -135,7 +184,7 @@ public static class LearningCatalog
             ],
             new("Qual pergunta um teste de unidade deve responder?", ["Uma regra isolada funciona para seus cenários?", "O cluster está saudável?", "Qual é o custo do cloud?", "Quem aprovou o PR?"], 0, "Testes de unidade dão feedback rápido sobre comportamento isolado; saúde e custo pertencem a outros sinais.")),
         new(
-            6,
+            7,
             "distribuidos-seguranca-performance-lideranca",
             "Distribuídos, segurança, performance e liderança",
             "Visão sistêmica",
@@ -157,6 +206,66 @@ public static class LearningCatalog
                     "public sealed record Decision(\n    string Context,\n    string Choice,\n    IReadOnlyList<string> Consequences);"),
             ],
             new("Qual combinação é mais segura para chamadas entre serviços?", ["Timeout, retry limitado e idempotência", "Retry infinito sem timeout", "Ignorar erros de rede", "Compartilhar banco sem contrato"], 0, "Falhas devem ter limites e operações repetíveis; timeout, retry limitado e idempotência trabalham juntos."))
+        ,new(
+            8,
+            "arquitetura-por-cenarios",
+            "Arquitetura por cenários",
+            "Decisões contextualizadas",
+            "Aprenda a começar pelo cenário, explicitar restrições e escolher uma arquitetura que resolva o problema com o menor risco.",
+            "3 semanas",
+            "08",
+            [
+                new("Monólito modular", "Escolha um limite de simplicidade operacional antes de distribuir o sistema.",
+                    ["Reconhecer quando simplicidade operacional é uma vantagem", "Separar módulos sem criar rede prematuramente", "Definir regras de dependência entre contextos"],
+                    ["Desenhe módulos de pedidos, faturamento e catálogo", "Bloqueie uma referência direta entre módulos", "Liste o sinal que justificaria extrair um serviço depois"],
+                    "public sealed class OrdersModule(IOrderStore store)\n{\n    public Task<Order> PlaceAsync(PlaceOrder command, CancellationToken ct)\n        => store.AddAsync(command, ct);\n}",
+                    "Um time de quatro pessoas precisa entregar mudanças frequentes e não tem operação 24x7.",
+                    "Um monólito modular reduz latência organizacional e custo operacional; módulos bem delimitados preservam uma futura extração."),
+                new("Eventos e outbox", "Garanta entrega confiável quando uma operação precisa mudar o banco e publicar uma mensagem.",
+                    ["Explicar por que dual write perde mensagens", "Projetar outbox e reprocessamento", "Definir idempotência e observabilidade do consumidor"],
+                    ["Modele estados da outbox", "Defina a chave de idempotência do pagamento", "Descreva o que acontece após uma queda do broker"],
+                    "await db.SaveChangesAsync(ct);\nawait outbox.EnqueueAsync(new OrderPlaced(order.Id), ct);\nawait transaction.CommitAsync(ct);",
+                    "O pedido não pode desaparecer mesmo que o broker fique indisponível no momento da confirmação.",
+                    "A outbox torna a mudança de estado e a intenção de publicação atômicas; um worker publica depois e consumidores repetíveis toleram retries."),
+                new("CQRS e leitura", "Separe modelos quando escrita transacional e leitura analítica têm necessidades incompatíveis.",
+                    ["Distinguir separação de modelos de dois bancos obrigatórios", "Escolher projeções para consultas", "Comunicar o atraso aceitável ao produto"],
+                    ["Modele uma projeção de pedidos", "Defina um SLO de atualização do painel", "Liste telas que não podem ser eventualmente consistentes"],
+                    "public sealed record OrderSummary(Guid Id, string Status, decimal Total);\n\npublic Task<IReadOnlyList<OrderSummary>> SearchAsync(string query, CancellationToken ct)\n    => readDb.SearchAsync(query, ct);",
+                    "A equipe precisa de consultas flexíveis sem colocar relatórios pesados no caminho transacional.",
+                    "Uma projeção especializada deixa cada modelo eficiente e torna o trade-off de consistência explícito para quem consome a informação.")
+            ],
+            new("Qual é o primeiro passo de uma decisão arquitetural?", ["Descrever o cenário, restrições e forças", "Escolher microserviços por padrão", "Selecionar uma biblioteca", "Copiar a arquitetura de outra empresa"], 0, "Arquitetura é uma resposta a forças do cenário; sem restrições explícitas, a solução vira preferência pessoal."),
+            "architecture"),
+        new(
+            9,
+            "design-patterns-na-pratica",
+            "Design patterns na prática",
+            "Padrões com propósito",
+            "Use patterns como vocabulário para mudanças recorrentes, mantendo o foco no problema e no custo da abstração.",
+            "2 semanas",
+            "09",
+            [
+                new("Strategy e Factory", "Isole famílias de algoritmos que mudam com frequência e precisam ser escolhidos em runtime.",
+                    ["Identificar uma família de algoritmos", "Compor estratégias por injeção", "Evitar uma Factory que vire um switch gigante"],
+                    ["Implemente frete nacional e internacional", "Defina o contrato de uma estratégia", "Escolha o limite em que configuração substitui código"],
+                    "public interface IShippingStrategy\n{\n    Money Calculate(Shipment shipment);\n}\n\npublic sealed class ShippingCalculator(IEnumerable<IShippingStrategy> strategies)\n{\n    public Money Calculate(Shipment shipment)\n        => strategies.Single(x => x.CanHandle(shipment)).Calculate(shipment);\n}",
+                    "O cálculo de frete muda por região e transportadora, com regras novas todos os meses.",
+                    "Strategy mantém cada algoritmo isolado e Factory ou composição escolhe a regra sem espalhar condicionais pelo caso de uso."),
+                new("Decorator e Adapter", "Adicione comportamento transversal e integre contratos legados sem contaminar o caso de uso.",
+                    ["Separar comportamento transversal do caso de uso", "Encapsular uma API legada", "Evitar decorar tudo sem medir o custo"],
+                    ["Adicione métricas a um gateway", "Adapte um provedor que usa callbacks", "Defina quais retries são seguros"],
+                    "public sealed class MeasuredPaymentGateway(IPaymentGateway inner, IMeter meter) : IPaymentGateway\n{\n    public async Task<PaymentResult> PayAsync(Payment payment, CancellationToken ct)\n    {\n        using var timer = meter.StartTimer(\"payment\");\n        return await inner.PayAsync(payment, ct);\n    }\n}",
+                    "O gateway precisa de métricas e retry, mas o provedor legado expõe um contrato incompatível.",
+                    "Decorator adiciona comportamento transversal e Adapter traduz a API externa; o caso de uso continua dependente de um contrato estável."),
+                new("Observer e Mediator", "Coordene reações independentes a um fato de domínio sem acoplar o núcleo às integrações.",
+                    ["Distinguir evento de comando", "Manter handlers independentes", "Definir consistência e falhas de cada reação"],
+                    ["Modele OrderConfirmed", "Defina a política de retry do e-mail", "Explique quando usar uma fila em vez de evento síncrono"],
+                    "public sealed record OrderConfirmed(Guid OrderId);\n\npublic sealed class AuditHandler(IAuditLog log)\n{\n    public Task HandleAsync(OrderConfirmed message, CancellationToken ct)\n        => log.AppendAsync(message.OrderId, ct);\n}",
+                    "Confirmar um pedido precisa atualizar estoque, enviar e-mail e registrar auditoria sem acoplar o domínio a cada integração.",
+                    "Um evento de domínio publica o fato e handlers independentes reagem; um mediator organiza comandos sem transformar o núcleo em um coordenador de infraestrutura.")
+            ],
+            new("Quando um design pattern é uma boa escolha?", ["Quando nomeia e reduz uma complexidade recorrente", "Quando adiciona classes por precaução", "Quando elimina todo acoplamento", "Quando substitui testes"], 0, "Um pattern vale quando torna uma mudança recorrente mais explícita e barata; sua forma não é um objetivo isolado."),
+            "architecture")
     ];
 
     public static LearningModule? Find(string slug) => Modules.FirstOrDefault(module => module.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase));

@@ -26,11 +26,25 @@ else
                         <div>
                             <h3 id="lesson-@index">@lesson.Title</h3>
                             <p>@lesson.Summary</p>
+                            @if (lesson.Scenario is not null)
+                            {
+                                <div class="scenario-block">
+                                    <h4>Cenário</h4>
+                                    <p>@lesson.Scenario</p>
+                                </div>
+                            }
+                            @if (lesson.Resolution is not null)
+                            {
+                                <div class="resolution-block">
+                                    <h4>Como a arquitetura resolve</h4>
+                                    <p>@lesson.Resolution</p>
+                                </div>
+                            }
                             <div class="lesson-columns">
                                 <div><h4>Objetivos</h4><ul>@foreach (var objective in lesson.Objectives) { <li>@objective</li> }</ul></div>
                                 <div><h4>Pratique</h4><ul>@foreach (var task in lesson.PracticeTasks) { <li>@task</li> }</ul></div>
                             </div>
-                            <details class="code-disclosure"><summary>Ver exemplo em C#</summary><pre><code>@lesson.CodeExample</code></pre></details>
+                            <details class="code-disclosure"><summary>Ver exemplo em C#</summary><SyntaxHighlightedCode Code="@lesson.CodeExample" /></details>
                         </div>
                     </section>
                 }

@@ -17,7 +17,7 @@ dotnet restore
 dotnet run
 ```
 
-Abra a URL exibida pelo comando (por padrão, `http://localhost:5000` ou a porta informada pelo ASP.NET Core). Para iniciar em uma porta fixa:
+Abra a URL exibida pelo comando (por padrão, `http://localhost:5286`, conforme `Properties/launchSettings.json`). Para iniciar em uma porta fixa:
 
 ```bash
 dotnet run --urls http://localhost:5050
@@ -43,15 +43,18 @@ dotnet ./publish/TrilhaCsharpDotnetSenior.dll
 
 ## Sequência de aprendizagem
 
-1. **C# e o runtime** — tipos, memória, async/await, exceções e diagnóstico.
-2. **Orientação a objetos e design** — invariantes, SOLID, composição e fronteiras.
-3. **ASP.NET Core e Web APIs** — pipeline, contratos, validação e segurança web.
-4. **Dados e persistência** — SQL, transações, idempotência, cache e migrações.
-5. **Testes, qualidade e observabilidade** — testes no nível certo, sinais e entrega.
-6. **Distribuídos, segurança, performance e liderança** — resiliência, threat modeling, budgets e decisões técnicas.
-7. **Capstone** — plataforma de pedidos resiliente, com contrato, outbox, telemetria e ADR.
+1. **Fast track: júnior ao pleno** — fundamentos de runtime, APIs, dados, testes, depuração e entrega profissional.
+2. **C# e o runtime** — tipos, memória, async/await, exceções e diagnóstico.
+3. **Orientação a objetos e design** — invariantes, SOLID, composição e fronteiras.
+4. **ASP.NET Core e Web APIs** — pipeline, contratos, validação e segurança web.
+5. **Dados e persistência** — SQL, transações, idempotência, cache e migrações.
+6. **Testes, qualidade e observabilidade** — testes no nível certo, sinais e entrega.
+7. **Distribuídos, segurança, performance e liderança** — resiliência, threat modeling, budgets e decisões técnicas.
+8. **Arquitetura por cenários** — monólito modular, outbox, eventos e CQRS, sempre começando pelo problema.
+9. **Design patterns na prática** — Strategy, Factory, Decorator, Adapter, Observer e Mediator com cenários de uso.
+10. **Capstone** — plataforma de pedidos resiliente, com contrato, outbox, telemetria e ADR.
 
-Cada módulo possui três aulas com objetivos e tarefas, além de um self-check. A conclusão é marcada na página do módulo e aparece no roadmap.
+O fast track tem cinco aulas; os demais módulos possuem três aulas com objetivos e tarefas, além de um self-check. Nos módulos de arquitetura e patterns, cada aula apresenta primeiro um cenário e depois como a solução resolve suas forças. A conclusão é marcada na página do módulo e aparece no roadmap.
 
 ## Escopo e arquitetura
 
@@ -65,3 +68,7 @@ Cada módulo possui três aulas com objetivos e tarefas, além de um self-check.
 ## Acessibilidade e responsividade
 
 O layout usa landmarks semânticos, headings hierárquicos, labels para controles, estados `role="status"`/`role="progressbar"`, foco visível e contraste reforçado. O CSS adapta roadmap, aulas e self-check para telas menores sem depender de framework de UI.
+
+O destaque de sintaxe dos exemplos C# é renderizado localmente pelo componente Blazor, com classificação determinística em tokens sem CDN ou dependência de runtime de terceiros. O texto-fonte mantém `lang="en"` e a área de código expõe um rótulo acessível.
+
+O coral de texto (`#b54735`) tem contraste de 4,94:1 sobre o fundo claro (`#f5f6f2`). Nos controles escuros, o foco usa uma borda clara adicional para manter contraste AA; a razão entre branco (`#ffffff`) e tinta (`#17211f`) é 16,49:1.

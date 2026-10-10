@@ -25,32 +25,44 @@
 
 <section class="roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
     <div class="section-heading">
-        <div><p class="eyebrow">O caminho</p><h2 id="roadmap-title">Seis movimentos para crescer com consistência</h2></div>
+        <div><p class="eyebrow">O caminho</p><h2 id="roadmap-title">Nove movimentos para crescer com consistência</h2></div>
         <p class="section-note">Leia na ordem. Pratique antes de avançar.</p>
     </div>
-    <div class="roadmap" role="list" aria-label="Módulos da trilha">
-        @foreach (var module in LearningCatalog.Modules)
+    <div class="track-list">
+        @foreach (var track in LearningCatalog.Tracks)
         {
-            var isComplete = CompletedSlugs.Contains(module.Slug);
-            <article class="module-card @(isComplete ? "is-complete" : string.Empty)" role="listitem">
-                <div class="module-number" aria-hidden="true">@module.Icon</div>
-                <div class="module-card-body">
-                    <div class="module-meta"><span>@module.Kicker</span><span>@module.Duration</span></div>
-                    <h3><a href="/modulos/@module.Slug">@module.Title</a></h3>
-                    <p>@module.Description</p>
-                    <div class="module-footer">
-                        <span class="lesson-count">@module.Lessons.Count aulas · 1 self-check</span>
-                        @if (isComplete)
-                        {
-                            <span class="status-pill done">Concluído <span aria-hidden="true">✓</span></span>
-                        }
-                        else
-                        {
-                            <a class="text-link" href="/modulos/@module.Slug">Ver módulo <span aria-hidden="true">→</span></a>
-                        }
-                    </div>
+            var modules = LearningCatalog.Modules.Where(module => module.Track == track.Slug).ToList();
+            <section class="track-block" aria-labelledby="track-@track.Slug">
+                <div class="track-heading">
+                    <div><p class="eyebrow">Trilha</p><h3 id="track-@track.Slug">@track.Title</h3></div>
+                    <p>@track.Description</p>
                 </div>
-            </article>
+                <div class="roadmap" role="list" aria-label="Módulos: @track.Title">
+                    @foreach (var module in modules)
+                    {
+                        var isComplete = CompletedSlugs.Contains(module.Slug);
+                        <article class="module-card @(isComplete ? "is-complete" : string.Empty)" role="listitem">
+                            <div class="module-number" aria-hidden="true">@module.Icon</div>
+                            <div class="module-card-body">
+                                <div class="module-meta"><span>@module.Kicker</span><span>@module.Duration</span></div>
+                                <h3><a href="/modulos/@module.Slug">@module.Title</a></h3>
+                                <p>@module.Description</p>
+                                <div class="module-footer">
+                                    <span class="lesson-count">@module.Lessons.Count aulas · 1 self-check</span>
+                                    @if (isComplete)
+                                    {
+                                        <span class="status-pill done">Concluído <span aria-hidden="true">✓</span></span>
+                                    }
+                                    else
+                                    {
+                                        <a class="text-link" href="/modulos/@module.Slug">Ver módulo <span aria-hidden="true">→</span></a>
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
         }
     </div>
 </section>
