@@ -450,9 +450,9 @@ Begin with **Module 01: AWS Fundamentals** and work through systematically. Take
 
 ---
 
-**Start Here**: [Module 01: AWS Fundamentals](./01-AWS-Fundamentals/README.md)  
-**Quick Reference**: [Quick Reference Guide](./QUICK-REFERENCE.md)  
-**Practice**: [Module 14: Practice Questions](./14-Practice/README.md)
+**Start Here**: [Module 01: AWS Fundamentals](/01-AWS-Fundamentals/README.md)  
+**Quick Reference**: [Quick Reference Guide](/docs/reference/QUICK-REFERENCE.md)  
+**Practice**: [Module 14: Practice Questions](/14-Practice/PRACTICE-QUESTIONS.md)
 
 ---
 
