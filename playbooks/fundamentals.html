@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Fundamentals Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the other SAA playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600} td.m{color:var(--amber);font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+.work{font-family:var(--f-mono);font-size:.84rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;gap:2px;overflow-x:auto}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* infrastructure tiers */
+.tiers{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.tiers div{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:10px 8px;display:grid;gap:4px;align-content:start;transition:border-color .15s,box-shadow .15s}
+.tiers div.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tiers b{font-family:var(--f-display);font-size:.98rem}
+.tiers span{font-size:.76rem;color:var(--muted);line-height:1.35}
+.tiers .eff{font-family:var(--f-mono);font-size:.68rem;color:var(--accent)}
+@media (max-width:760px){.tiers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* scope sorter */
+.scopes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.scope{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:12px;display:grid;gap:6px;align-content:start}
+.scope b{font-family:var(--f-display)}
+.scope .sub{font-size:.78rem;color:var(--muted)}
+.scope ul{margin:0;padding-left:18px;font-size:.86rem;display:grid;gap:3px;min-height:20px}
+.scope li.new{color:var(--accent);font-weight:600}
+@media (max-width:640px){.scopes{grid-template-columns:1fr}}
+/* responsibility matrix */
+.who{font-family:var(--f-mono);font-size:.74rem;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.who.aws{background:var(--accent-soft);color:var(--accent)}
+.who.you{background:var(--amber-soft);color:var(--amber)}
+.who.na{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+/* arn */
+.arnin{width:100%;font-family:var(--f-mono);font-size:.88rem;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.arnparts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.arnparts div{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;display:grid;gap:2px;min-width:0}
+.arnparts .k{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.arnparts .v{font-family:var(--f-mono);font-size:.84rem;overflow-wrap:anywhere}
+.arnparts .v.empty{color:var(--muted);font-style:italic}
+@media (max-width:640px){.arnparts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* org tree */
+.tree{font-family:var(--f-mono);font-size:.84rem;padding:12px 14px;border-radius:8px;background:var(--bg);border:1px solid var(--line);white-space:pre;overflow-x:auto;line-height:1.6}
+.tree em{font-style:normal;color:var(--accent);font-weight:500}
+.tree i{font-style:normal;color:var(--muted)}
+
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>AWS Fundamentals <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Module 01 · Global infrastructure, service scope, shared responsibility, tools, accounts, Well-Architected</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+<!-- 1 GLOBAL INFRASTRUCTURE -->
+<section class="lesson" data-id="infra" data-name="Global infrastructure">
+  <div class="eyebrow">Lesson 1 · 12 min</div>
+  <h2>Where AWS runs: Regions, AZs and the edge</h2>
+  <p class="lede">Every resilience question comes back to this map. Know what each layer is, how far apart things are, and what fails together.</p>
+
+  <div class="tiers" id="tierStrip"></div>
+
+  <div class="cards">
+    <div class="c"><header><h3>Region</h3><span class="tag">isolated</span></header><ul><li>A geographic area with <b>at least three AZs</b></li><li>Fully independent of other Regions: data stays in the Region unless you copy it</li><li>Most services are Regional: you pick the Region per resource</li></ul></div>
+    <div class="c"><header><h3>Availability Zone</h3><span class="tag ok">fault boundary</span></header><ul><li>One or more data centers with their own power, cooling and networking</li><li>Physically separated (miles apart, within ~100 km) and linked by low-latency private fiber</li><li>Spread across ≥ 2 AZs to survive a data-center failure</li></ul></div>
+    <div class="c"><header><h3>AZ names vs AZ IDs</h3><span class="tag amb">trap</span></header><p><code>us-east-1a</code> maps to a <b>different</b> physical AZ in each account. The <b>AZ ID</b> (<code>use1-az1</code>) is the same everywhere. Use AZ IDs to line up resources across accounts.</p></div>
+    <div class="c"><header><h3>Edge locations</h3><span class="tag">600+ PoPs</span></header><p>Points of presence in many more cities than Regions. Run <b>CloudFront</b>, <b>Route 53</b>, <b>Global Accelerator</b> entry points, AWS WAF and Shield at the edge. You don't deploy servers there.</p></div>
+  </div>
+
+  <h3>Choosing a Region: four factors</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Factor</th><th>Question to ask</th><th>Exam wording</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td>Compliance / data residency</td><td>Is the data legally required to stay in a country?</td><td>"data must not leave the EU" → that wins over everything</td></tr>
+      <tr><td>Latency</td><td>Where are most users?</td><td>"users in Japan" → ap-northeast-1</td></tr>
+      <tr><td>Service availability</td><td>Is the service or feature launched there?</td><td>New services arrive Region by Region</td></tr>
+      <tr><td>Price</td><td>Same resource, different price per Region</td><td>Tie-breaker once the others are met</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Where should it run?</h3>
+  <div class="chips" id="tierQ"></div>
+  <p class="say" id="tierSay">Pick a requirement.</p>
+</section>
+
+<!-- 2 SCOPE -->
+<section class="lesson" data-id="scope" data-name="Service scope">
+  <div class="eyebrow">Lesson 2 · 12 min · heavily tested</div>
+  <h2>Global, Regional or zonal? Know what fails with what</h2>
+  <p class="lede">An AZ-scoped resource dies with its AZ. A Regional service already spreads across AZs. A global service has one control plane for every Region. Click each service to sort it.</p>
+
+  <div class="chips" id="scQ"></div>
+  <div class="scopes">
+    <div class="scope"><b>Global</b><span class="sub">One namespace / control plane for all Regions</span><ul id="scG"></ul></div>
+    <div class="scope"><b>Regional</b><span class="sub">Spans the AZs of one Region</span><ul id="scR"></ul></div>
+    <div class="scope"><b>Zonal (one AZ)</b><span class="sub">Lives in a single AZ</span><ul id="scZ"></ul></div>
+  </div>
+  <p class="say" id="scSay">Pick a service.</p>
+
+  <div class="remember"><b>Consequences the exam tests:</b> an EBS volume can only attach to instances in its own AZ (move it with a snapshot). AMIs and snapshots are Regional: copy them to another Region for DR. ACM certificates for CloudFront must be in <b>us-east-1</b>. S3 bucket names are global, but each bucket lives in one Region.</div>
+</section>
+
+<!-- 3 SHARED RESPONSIBILITY -->
+<section class="lesson" data-id="shared" data-name="Shared responsibility">
+  <div class="eyebrow">Lesson 3 · 10 min</div>
+  <h2>Who patches what? The shared responsibility model</h2>
+  <p class="lede">AWS secures <b>the cloud</b> (facilities, hardware, hypervisor, global network). You secure what you put <b>in the cloud</b>. The line moves up as the service gets more managed.</p>
+
+  <div class="box">
+    <div class="tg"><span class="t">Service</span><div class="seg" id="srSvc"></div></div>
+    <div class="tablewrap"><table><thead><tr><th>Layer</th><th>Who</th><th>Note</th></tr></thead><tbody id="srRows"></tbody></table></div>
+    <p class="say" id="srSay"></p>
+  </div>
+
+  <div class="cards">
+    <div class="c"><header><h3>Always yours</h3><span class="tag amb">every service</span></header><ul><li>Your data and how it's classified</li><li>IAM: who can access what</li><li>Choosing to encrypt, and managing keys you own</li><li>Configuration you set (bucket policies, security groups)</li></ul></div>
+    <div class="c"><header><h3>Always AWS</h3><span class="tag">every service</span></header><ul><li>Physical security of data centers</li><li>Hardware, storage devices, network infrastructure</li><li>Virtualization layer</li></ul></div>
+    <div class="c"><header><h3>Shared controls</h3><span class="tag">both</span></header><p><b>Patch management</b> (AWS patches infrastructure, you patch guest OS and apps), <b>configuration management</b>, and <b>awareness and training</b> are done by both, each in their own layer.</p></div>
+  </div>
+</section>
+
+<!-- 4 TOOLS -->
+<section class="lesson" data-id="tools" data-name="Tools & ARNs">
+  <div class="eyebrow">Lesson 4 · 12 min</div>
+  <h2>How you talk to AWS: tools, credentials and ARNs</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>Console</h3><span class="tag">browser</span></header><p>Web UI. Fine for learning and one-off tasks. Not repeatable.</p></div>
+    <div class="c"><header><h3>CLI &amp; SDKs</h3><span class="tag">API</span></header><p>Every action is an API call. CLI for scripts, SDKs (Python boto3, Java, JS…) inside apps. Both sign requests with your credentials.</p></div>
+    <div class="c"><header><h3>CloudShell</h3><span class="tag ok">no setup</span></header><p>Browser shell already signed in as your console identity, CLI preinstalled, small persistent home directory per Region.</p></div>
+    <div class="c"><header><h3>CloudFormation</h3><span class="tag ok">IaC</span></header><p>Templates (YAML/JSON) → <b>stacks</b>. Repeatable, versioned, rollback on failure. <b>StackSets</b> deploy to many accounts and Regions. CDK writes CloudFormation from code.</p></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Who / where</th><th>Credential to use</th><th>Avoid</th></tr></thead>
+    <tbody>
+      <tr><td>App on EC2</td><td><b>IAM role</b> via instance profile (temporary keys)</td><td>Access keys in code or on disk</td></tr>
+      <tr><td>Lambda / ECS task</td><td>Execution role / task role</td><td>Hard-coded keys</td></tr>
+      <tr><td>Human on a laptop</td><td>IAM Identity Center (SSO), <code>aws configure sso</code></td><td>Long-lived IAM user keys</td></tr>
+      <tr><td>Root user</td><td>MFA, used only for root-only tasks</td><td>Root access keys, daily use</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>ARN decoder</h3>
+  <div class="box">
+    <div class="chips" id="arnPre"></div>
+    <input class="arnin" id="arnIn" aria-label="ARN to decode" spellcheck="false" autocomplete="off">
+    <div class="arnparts" id="arnParts"></div>
+    <p class="say" id="arnSay"></p>
+    <p class="hint">Format: <code>arn:partition:service:region:account-id:resource</code>. Partition is <code>aws</code>, <code>aws-cn</code> or <code>aws-us-gov</code>. Global services (IAM) and S3 buckets leave some fields empty.</p>
+  </div>
+</section>
+
+<!-- 5 ACCOUNTS -->
+<section class="lesson" data-id="accounts" data-name="Accounts & support">
+  <div class="eyebrow">Lesson 5 · 12 min</div>
+  <h2>Accounts, Organizations, quotas and support</h2>
+
+  <div class="grid2">
+    <div class="box prose"><h3>The account is the boundary</h3><p>An AWS account is a hard boundary for security, billing and quotas. Separate accounts for prod, dev and security limit the blast radius of a mistake.</p>
+      <h3>Root user</h3><ul><li>Turn on MFA, delete root access keys, lock it away</li><li>Only for root-only tasks: change the account's root email or password, close the account, enable S3 MFA Delete, restore IAM access if everyone is locked out</li><li>Everyday admin work → an IAM Identity Center or IAM identity with admin permissions</li></ul></div>
+    <div class="box prose"><h3>AWS Organizations</h3>
+      <div class="tree">Root
+├─ <em>Management account</em>  <i>billing, SCPs not applied</i>
+├─ OU: Security   ── Log archive · Audit
+├─ OU: Prod       ── App-A prod · App-B prod
+└─ OU: Dev        ── Sandboxes</div>
+      <ul><li><b>Consolidated billing</b>: one bill, pooled volume discounts, shared RIs and Savings Plans</li><li><b>SCPs</b>: maximum permissions for accounts in an OU (don't grant anything)</li><li><b>Control Tower</b>: sets up a multi-account landing zone with guardrails</li><li><b>RAM</b>: share subnets, Transit Gateways and more across accounts</li></ul></div>
+  </div>
+
+  <div class="cards">
+    <div class="c"><header><h3>Service Quotas</h3><span class="tag amb">limits</span></header><p>Per account, per Region (e.g. vCPUs for On-Demand instances, Elastic IPs). Request increases in the Service Quotas console; alarm on usage with CloudWatch. "Can't launch more instances" with no other error → a quota.</p></div>
+    <div class="c"><header><h3>Pricing basics</h3><span class="tag">billing</span></header><p>Pay as you go, pay less when you commit (Savings Plans, RIs), pay less per unit at volume. Data <b>into</b> AWS is free; data <b>out</b> to the internet costs. Estimate with the Pricing Calculator.</p></div>
+    <div class="c"><header><h3>Support plans</h3><span class="tag">changing</span></header><p>Basic is free. Paid plans add 24/7 engineers, faster response and the full Trusted Advisor checks. AWS is retiring Developer, Business and Enterprise On-Ramp on <b>1 Jan 2027</b> in favour of <b>Business Support+</b> and <b>Enterprise Support</b> (designated TAM, 15-minute critical response). SAA-C03 rarely asks about plans.</p></div>
+  </div>
+</section>
+
+<!-- 6 WELL-ARCHITECTED -->
+<section class="lesson" data-id="wa" data-name="Well-Architected">
+  <div class="eyebrow">Lesson 6 · 10 min</div>
+  <h2>The six Well-Architected pillars</h2>
+  <p class="lede">The exam's four domains map onto these pillars. Answers that follow the design principles are usually the right ones.</p>
+
+  <div class="cards">
+    <div class="c"><header><h3>Operational excellence</h3><span class="tag">run it</span></header><p>Infrastructure as code, small reversible changes, runbooks, learn from failures.</p></div>
+    <div class="c"><header><h3>Security</h3><span class="tag warn">domain 1 · 30%</span></header><p>Strong identity, least privilege, traceability, security at every layer, encrypt data in transit and at rest.</p></div>
+    <div class="c"><header><h3>Reliability</h3><span class="tag ok">domain 2 · 26%</span></header><p>Recover automatically, scale horizontally, stop guessing capacity, test recovery.</p></div>
+    <div class="c"><header><h3>Performance efficiency</h3><span class="tag">domain 3 · 24%</span></header><p>Use managed and serverless services, go global in minutes, experiment, pick the right resource type.</p></div>
+    <div class="c"><header><h3>Cost optimization</h3><span class="tag amb">domain 4 · 20%</span></header><p>Pay only for what you use, measure efficiency, stop spending on undifferentiated heavy lifting.</p></div>
+    <div class="c"><header><h3>Sustainability</h3><span class="tag ok">newest</span></header><p>Maximize utilization, use managed services and efficient hardware (Graviton), reduce data you keep and move.</p></div>
+  </div>
+
+  <h3>Which pillar?</h3>
+  <div class="chips" id="waQ"></div>
+  <p class="say" id="waSay">Pick a practice.</p>
+  <div class="remember"><b>AWS Well-Architected Tool</b> (free, in the console) runs a review of a workload against the pillars and tracks the risks you find.</div>
+</section>
+
+<!-- 7 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the answer">
+  <div class="eyebrow">Lesson 7 · game</div>
+  <h2>Pick the right concept</h2>
+  <p class="lede">16 scenarios on infrastructure, scope, responsibility and accounts.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 8 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 8 · exam style</div>
+  <h2>SAA-style fundamentals questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('fndpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('fndpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+  const onSeg=(el,fn)=>el.addEventListener('click',e=>{const b=e.target.closest('button');if(b)fn(b.textContent)});
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab',lessons[0].dataset.id));
+
+  /* ---------- playbook widgets + data ---------- */
+  /* 1 tiers */
+  const TIERS=[
+    ['Region','Independent geographic area','30+ worldwide'],
+    ['Availability Zone','Isolated data centers in a Region','≥ 3 per Region'],
+    ['Local Zone','Extension of a Region into a metro area','single-digit ms'],
+    ['Wavelength Zone','Inside a telco 5G network','mobile edge'],
+    ['Outposts','AWS racks in your data center','on-prem, same APIs'],
+    ['Edge location','CloudFront / Route 53 PoP','caching, DNS, entry']
+  ];
+  const TQ=[
+    ['Survive the loss of one data center.',1,'Deploy across at least two Availability Zones in the Region.'],
+    ['Survive the loss of a whole Region.',0,'Copy data and run (or be able to start) the workload in a second Region.'],
+    ['Single-digit millisecond latency for users in a city with no Region nearby.',2,'Local Zones extend a parent Region with EC2, EBS, VPC subnets close to that city.'],
+    ['Ultra-low latency for apps on 5G mobile devices.',3,'Wavelength puts compute inside the carrier network; traffic reaches it through a carrier gateway.'],
+    ['Data must stay in our own building but we want AWS APIs and services.',4,'Outposts runs AWS infrastructure on premises, managed from a parent Region.'],
+    ['Cache static content close to users worldwide.',5,'CloudFront serves from edge locations; you don\'t run servers there.'],
+    ['Customer data must legally stay in Germany.',0,'Data residency decides the Region (eu-central-1). Regions don\'t replicate data on their own.']
+  ];
+  let tI=-1;
+  function tiers(){$('#tierStrip').innerHTML=TIERS.map((t,i)=>`<div class="${tI>=0&&TQ[tI][1]===i?'on':''}"><b>${t[0]}</b><span>${t[1]}</span><span class="eff">${t[2]}</span></div>`).join('')}
+  $('#tierQ').innerHTML=TQ.map((t,i)=>`<button type="button" class="chip" data-i="${i}">${t[0]}</button>`).join('');
+  $('#tierQ').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;tI=+b.dataset.i;
+    $('#tierQ').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===tI));
+    $('#tierSay').innerHTML='<b>'+TIERS[TQ[tI][1]][0]+'.</b> '+TQ[tI][2];tiers()});
+  tiers();
+
+  /* 2 scope sorter */
+  const SC=[
+    ['IAM users, roles, policies','G','IAM is global: a role works in every Region. Its control plane lives in us-east-1.'],
+    ['Route 53 hosted zones','G','DNS is a global service served from edge locations.'],
+    ['CloudFront distributions','G','Global; certificates for it must be in us-east-1.'],
+    ['AWS Organizations / SCPs','G','One organization spans all Regions.'],
+    ['S3 bucket','R','Bucket names are globally unique, but each bucket and its data live in one Region (across ≥ 3 AZs).'],
+    ['VPC','R','A VPC spans all AZs in its Region.'],
+    ['Application Load Balancer','R','Regional, with nodes in each AZ you enable.'],
+    ['DynamoDB table','R','Regional and replicated across AZs. Global tables add other Regions.'],
+    ['Lambda function','R','Runs in any AZ of its Region automatically.'],
+    ['AMI','R','Regional. Copy it to another Region to launch there.'],
+    ['EBS snapshot','R','Regional (stored in S3 behind the scenes). Restore it into any AZ in the Region.'],
+    ['KMS key','R','Regional. Multi-Region keys exist for cross-Region encryption.'],
+    ['Subnet','Z','A subnet lives in exactly one AZ.'],
+    ['EC2 instance','Z','Runs in one AZ. Use an Auto Scaling group across AZs for HA.'],
+    ['EBS volume','Z','Attaches only to instances in the same AZ.'],
+    ['RDS DB instance (Single-AZ)','Z','One AZ. Multi-AZ adds a standby in another AZ.']
+  ];
+  const placed={G:[],R:[],Z:[]};let last=-1;
+  $('#scQ').innerHTML=SC.map((s,i)=>`<button type="button" class="chip" data-i="${i}">${s[0]}</button>`).join('');
+  function scopes(){['G','R','Z'].forEach(k=>{$('#sc'+k).innerHTML=placed[k].map(i=>`<li class="${i===last?'new':''}">${SC[i][0]}</li>`).join('')})}
+  $('#scQ').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const i=+b.dataset.i,k=SC[i][1];
+    if(!placed[k].includes(i))placed[k].push(i);last=i;b.setAttribute('aria-pressed','true');
+    $('#scSay').innerHTML='<b>'+{G:'Global',R:'Regional',Z:'Zonal'}[k]+'.</b> '+SC[i][2];scopes()});
+  scopes();
+
+  /* 3 shared responsibility */
+  const LAY=['Physical data center & hardware','Virtualization / host OS','Guest operating system patches','Runtime / database engine patches','Network config (security groups)','Application code','Data encryption choice & keys','IAM access to the resource','Backups'];
+  const SR={
+    'EC2':['aws','aws','you','you','you','you','you','you','you'],
+    'RDS':['aws','aws','aws','aws','you','na','you','you','aws'],
+    'Lambda':['aws','aws','aws','aws','you','you','you','you','na'],
+    'S3':['aws','aws','aws','aws','na','na','you','you','aws']
+  };
+  const SRN={
+    'EC2':['','','You patch the OS (Systems Manager Patch Manager helps).','You install and patch your software.','Security groups and NACLs are yours.','','EBS encryption is your choice.','IAM roles and key pairs.','Snapshots or AWS Backup: you set them up.'],
+    'RDS':['','','AWS patches the OS.','AWS patches the engine in the maintenance window you choose.','You open the port only to the app tier.','No servers to put code on.','You choose encryption at creation (KMS).','DB users and IAM auth are yours.','Automated backups by AWS; you set the retention.'],
+    'Lambda':['','','No OS for you.','AWS patches managed runtimes.','Only if you attach the function to a VPC.','Your function code and its dependencies.','Environment variable encryption, data you write.','The execution role and resource policy.','Nothing to back up except your code and data stores.'],
+    'S3':['','','','','No security groups; use bucket policies and VPC endpoints.','','SSE-S3 is on by default; SSE-KMS or client-side is your choice.','Bucket policies, Block Public Access, ACLs.','AWS stores data durably; versioning and replication are your choice.']
+  };
+  let svc='EC2';
+  function sr(){
+    seg($('#srSvc'),Object.keys(SR),svc);
+    $('#srRows').innerHTML=LAY.map((l,i)=>{const w=SR[svc][i];return `<tr><td>${l}</td><td><span class="who ${w}">${w==='aws'?'AWS':w==='you'?'You':'n/a'}</span></td><td class="hint">${SRN[svc][i]}</td></tr>`}).join('');
+    const n=SR[svc].filter(x=>x==='you').length;
+    $('#srSay').innerHTML=`<b>${svc}:</b> you own ${n} of ${LAY.length} layers. `+({EC2:'IaaS: the most control and the most work.',RDS:'Managed: AWS runs the OS and engine; you still own access, network and data.',Lambda:'Serverless: you own code, permissions and data.',S3:'Fully managed storage: your job is access control and encryption choices.'})[svc];
+  }
+  onSeg($('#srSvc'),t=>{svc=t;sr()});sr();
+
+  /* 4 ARN decoder */
+  const ARNS=[
+    ['arn:aws:iam::123456789012:role/AppRole','IAM is global, so the Region field is empty.'],
+    ['arn:aws:s3:::my-report-bucket/2026/q4.csv','S3 bucket and object ARNs have no Region or account: bucket names are globally unique.'],
+    ['arn:aws:ec2:eu-west-1:123456789012:instance/i-0abc123def4567890','Regional resource: every field filled.'],
+    ['arn:aws:lambda:us-east-1:123456789012:function:resize:prod','The part after the function name is a version or alias (prod).'],
+    ['arn:aws:dynamodb:ap-south-1:123456789012:table/Orders','Table ARN; streams and indexes add /stream/… or /index/….'],
+    ['arn:aws-cn:s3:::china-bucket','The aws-cn partition: China Regions are separate from the standard partition.']
+  ];
+  $('#arnPre').innerHTML=ARNS.map((a,i)=>`<button type="button" class="chip" data-i="${i}">${a[0].split(':')[2]}${a[0].includes('aws-cn')?' (China)':''}</button>`).join('');
+  function arn(note){
+    const v=$('#arnIn').value.trim(),p=v.split(':');
+    const K=['arn','partition','service','region','account','resource'];
+    if(p.length<6||p[0]!=='arn'){$('#arnParts').innerHTML='';$('#arnSay').innerHTML='<b>Not an ARN.</b> It needs at least 6 parts separated by colons, starting with <code>arn</code>.';return}
+    const parts=p.slice(0,5).concat([p.slice(5).join(':')]);
+    $('#arnParts').innerHTML=parts.map((x,i)=>`<div><span class="k">${K[i]}</span><span class="v ${x?'':'empty'}">${x?esc(x):'(empty)'}</span></div>`).join('');
+    const bad=!['aws','aws-cn','aws-us-gov'].includes(parts[1]);
+    $('#arnSay').innerHTML=(bad?'<b>Unknown partition.</b> ':'')+(note||(parts[3]?'Regional resource in '+esc(parts[3])+'.':'No Region: a global service or an S3 resource.'));
+  }
+  $('#arnPre').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const a=ARNS[+b.dataset.i];$('#arnIn').value=a[0];
+    $('#arnPre').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));arn(a[1])});
+  $('#arnIn').addEventListener('input',()=>{$('#arnPre').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));arn()});
+  $('#arnIn').value=ARNS[0][0];arn(ARNS[0][1]);
+
+  /* 6 pillars */
+  const WA=[
+    ['Define infrastructure in CloudFormation and deploy small, reversible changes.','Operational excellence'],
+    ['Grant least privilege and enable CloudTrail in every account.','Security'],
+    ['Spread instances across three AZs with automatic replacement.','Reliability'],
+    ['Use DynamoDB with DAX instead of tuning a self-managed database.','Performance efficiency'],
+    ['Turn off dev environments at night and buy Savings Plans for the baseline.','Cost optimization'],
+    ['Move to Graviton and delete data nobody needs.','Sustainability'],
+    ['Test failover regularly with game days.','Reliability'],
+    ['Run post-incident reviews and update runbooks.','Operational excellence']
+  ];
+  $('#waQ').innerHTML=WA.map((w,i)=>`<button type="button" class="chip" data-i="${i}">${w[0]}</button>`).join('');
+  $('#waQ').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const w=WA[+b.dataset.i];
+    $('#waQ').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#waSay').innerHTML='<b>'+w[1]+'.</b>'});
+
+  /* game data */
+  const SVC=['Multiple AZs','Multiple Regions','Local Zone','Wavelength Zone','AWS Outposts','Edge location / CloudFront','AZ ID','Global service','Regional service','Copy the AMI','Customer responsibility','AWS responsibility','IAM role','Service Quotas','AWS Organizations SCP','CloudFormation StackSets'];
+  const G=[
+    ['An application must keep running if one data center loses power.','Multiple AZs','AZs are the data-center fault boundary.'],
+    ['The business needs the app to survive a full Regional outage.','Multiple Regions','Only a second Region protects against a Region failure.'],
+    ['Game servers need single-digit ms latency in a city far from any Region.','Local Zone','Region extension into a metro area.'],
+    ['An AR app for 5G phones needs the lowest possible latency.','Wavelength Zone','Compute inside the carrier network.'],
+    ['A factory must process data on site with AWS APIs because of residency rules.','AWS Outposts','AWS infrastructure on premises.'],
+    ['Cache images for users around the world.','Edge location / CloudFront','Edge PoPs serve cached content.'],
+    ['Two accounts must place subnets in the same physical AZ.','AZ ID','AZ names differ per account; AZ IDs don\'t.'],
+    ['An IAM role created once should be usable in every Region.','Global service','IAM is global.'],
+    ['A DynamoDB table is replicated across AZs automatically.','Regional service','Regional services spread across AZs for you.'],
+    ['Launch the same server image in another Region for DR.','Copy the AMI','AMIs are Regional.'],
+    ['Patching the guest OS on EC2 instances.','Customer responsibility','IaaS: the OS is yours.'],
+    ['Patching the database engine on RDS.','AWS responsibility','Managed service: AWS patches the engine.'],
+    ['An app on EC2 needs to call S3 without storing keys.','IAM role','Instance profile gives temporary credentials.'],
+    ['Launching more instances fails with a limit error.','Service Quotas','Request a quota increase.'],
+    ['No account in the Dev OU may ever leave eu-west-1, even admins.','AWS Organizations SCP','SCPs cap permissions for whole OUs.'],
+    ['Deploy the same baseline stack to 40 accounts and 3 Regions.','CloudFormation StackSets','Multi-account, multi-Region IaC.']
+  ];
+
+  /* quiz */
+  const Q=[
+    {q:'A company needs its web application to remain available if a single data center fails, at the lowest cost. What should a solutions architect recommend?',o:['Deploy instances in an Auto Scaling group across multiple Availability Zones','Deploy in two Regions','Use larger instances in one AZ','Use AWS Outposts'],c:0,e:'Multi-AZ handles data-center failure; multi-Region is for Region failure and costs more.'},
+    {q:'Regulations require customer data to remain within one country. What is the primary factor when choosing the Region?',o:['Compliance and data residency','Lowest price','Number of AZs','Largest service catalog'],c:0,e:'Legal requirements override latency and price.'},
+    {q:'A company wants to place resources in the same physical Availability Zone across two AWS accounts.',o:['Use AZ IDs such as use1-az2','Use the AZ name us-east-1a in both accounts','Use the same subnet CIDR','Use a placement group'],c:0,e:'AZ names are mapped differently per account; AZ IDs are consistent.'},
+    {q:'An application serving users in a large metro area needs single-digit millisecond latency, but the nearest Region is far away.',o:['AWS Local Zones','AWS Wavelength','CloudFront only','A second VPC'],c:0,e:'Local Zones extend a Region close to population centers.'},
+    {q:'A media company must run compute inside 5G networks for connected vehicles.',o:['AWS Wavelength Zones','AWS Local Zones','AWS Outposts','Edge locations'],c:0,e:'Wavelength embeds compute in telecom 5G networks.'},
+    {q:'A hospital needs AWS services on premises for data that cannot leave its data center, using the same APIs and tools as in the cloud.',o:['AWS Outposts','AWS Snowball Edge for every request','A VPN to the nearest Region','Local Zones'],c:0,e:'Outposts brings AWS infrastructure on premises.'},
+    {q:'An EBS volume in us-east-1a must be attached to an instance in us-east-1b.',o:['Create a snapshot and restore the volume in us-east-1b','Detach and attach it directly','Enable Multi-Attach','Copy the AMI'],c:0,e:'EBS volumes are zonal; snapshots are Regional.'},
+    {q:'A company must be able to launch its EC2 instances in a second Region during a disaster.',o:['Copy the AMIs and snapshots to the second Region','Share the AMI with another account','Use the same AMI ID in the other Region','Enable Multi-AZ'],c:0,e:'AMIs are Regional; copy them.'},
+    {q:'Under the shared responsibility model, which task is the customer\'s for Amazon EC2?',o:['Patching the guest operating system','Replacing failed disks','Securing the hypervisor','Physical access control'],c:0,e:'With IaaS, the OS and everything above it are yours.'},
+    {q:'Under the shared responsibility model, who patches the database engine of an Amazon RDS instance?',o:['AWS, during the maintenance window','The customer, by logging into the host','Nobody, engines are never patched','The customer\'s DBA through SSH'],c:0,e:'RDS is managed; AWS patches OS and engine.'},
+    {q:'Which is always the customer\'s responsibility, regardless of the service?',o:['Managing IAM permissions and classifying their data','Hardware maintenance','Data center security','Hypervisor patching'],c:0,e:'Access and data are always yours.'},
+    {q:'An application on EC2 needs to read from DynamoDB. What is the MOST secure way to give it credentials?',o:['Attach an IAM role through an instance profile','Store access keys in the AMI','Put access keys in environment variables in user data','Use the root user\'s keys'],c:0,e:'Roles give automatically rotated temporary credentials.'},
+    {q:'What should be done with the root user of a new AWS account?',o:['Enable MFA, remove any access keys and use it only for root-only tasks','Use it for daily administration','Share its password with the admin team','Create access keys for automation'],c:0,e:'Lock it away; use IAM Identity Center or IAM identities for daily work.'},
+    {q:'Which ARN belongs to a global service and therefore has no Region?',o:['arn:aws:iam::123456789012:role/Admin','arn:aws:ec2:us-east-1:123456789012:instance/i-1','arn:aws:lambda:eu-west-1:123456789012:function:f','arn:aws:sqs:us-west-2:123456789012:q'],c:0,e:'IAM is global, so the Region field is empty.'},
+    {q:'A company wants to deploy the same security baseline to every account and Region in its organization with one template.',o:['CloudFormation StackSets','A CloudFormation stack in each account by hand','AWS Config only','CloudShell scripts'],c:0,e:'StackSets deploy across accounts and Regions.'},
+    {q:'Developers keep receiving errors that they reached the maximum number of running instances.',o:['Request an increase in Service Quotas','Switch Regions permanently','Use larger instances','Enable detailed monitoring'],c:0,e:'Quotas are per account per Region and can be raised.'},
+    {q:'A company wants one bill for 25 accounts and shared volume discounts.',o:['AWS Organizations with consolidated billing','Separate payment methods','Cost Explorer only','Trusted Advisor'],c:0,e:'Consolidated billing pools usage.'},
+    {q:'A security team must prevent any account in the Sandbox OU from using Regions outside the EU, even for administrators.',o:['A service control policy on the Sandbox OU','IAM policies in each account','AWS Config rules','A permission boundary on the root user'],c:0,e:'SCPs set the maximum permissions for every principal in member accounts.'},
+    {q:'An ACM certificate for a CloudFront distribution must be requested in which Region?',o:['us-east-1 (N. Virginia)','The Region of the origin','Any Region','eu-west-1'],c:0,e:'CloudFront uses certificates from us-east-1.'},
+    {q:'Which Well-Architected pillar focuses on recovering from failure and scaling to meet demand?',o:['Reliability','Performance efficiency','Operational excellence','Sustainability'],c:0,e:'Reliability: recover automatically, scale horizontally, test recovery.'}
+  ];
+
+  const C=[
+    ['Survive a data-center failure','Multiple AZs'],['Survive a Region failure','Multiple Regions'],['Data must stay in a country','Pick that Region (residency first)'],['Same physical AZ across accounts','AZ ID'],['Metro low latency','Local Zones'],['5G mobile edge','Wavelength'],['AWS on premises','Outposts'],['Global caching','CloudFront edge locations'],
+    ['IAM, Route 53, CloudFront, Organizations','Global'],['S3, VPC, ELB, DynamoDB, Lambda, AMI, snapshot, KMS','Regional'],['Subnet, EC2 instance, EBS volume','Zonal'],['Move EBS to another AZ','Snapshot → restore'],['Launch in another Region','Copy the AMI'],['CloudFront certificate','ACM in us-east-1'],
+    ['EC2 guest OS patching','Customer'],['RDS engine patching','AWS'],['Data, IAM, encryption choice','Always the customer'],['Physical, hardware, hypervisor','Always AWS'],
+    ['App credentials on EC2','IAM role (instance profile)'],['Human CLI access','IAM Identity Center (SSO)'],['Root user','MFA, no keys, root-only tasks'],['Repeatable infrastructure','CloudFormation'],['Many accounts and Regions','StackSets'],['Shell without installing anything','CloudShell'],
+    ['Hit a limit','Service Quotas'],['One bill, shared discounts','Consolidated billing'],['Cap permissions for an OU','SCP'],['Multi-account landing zone','Control Tower'],['Review against best practice','Well-Architected Tool']
+  ];
+
+
+  /* game */
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=Math.ceil(G.length*0.8)?'Strong. You can map each scenario to its service.':'Review the lessons for the ones you missed, then play again.'}</p><div class="dots">${gr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* quiz */
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on this module.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s0=Q[qi],n=s0.o.length,rot=(qi*3)%n,s={q:s0.q,e:s0.e,o:s0.o.map((_,j)=>s0.o[(j+rot)%n]),c:(s0.c-rot+n)%n};
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+</body></html>

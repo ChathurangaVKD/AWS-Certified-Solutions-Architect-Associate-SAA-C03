@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Security Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive "consoles" inside lessons. Same system as the IAM Playbook. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --code-bg:#121A2E; --code-fg:#E4E9F3; --code-key:#F2B652; --code-str:#8FD3A8; --code-hi:#24325A;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --code-bg:#080C17; --code-hi:#1E2A4D; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --code-bg:#080C17; --code-hi:#1E2A4D; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600}
+
+pre.code{margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);padding:14px 16px;overflow-x:auto;font-family:var(--f-mono);font-size:.82rem;line-height:1.65;white-space:pre}
+.ck{color:var(--code-key)} .cs{color:var(--code-str)}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:r}
+.steps li{counter-increment:r;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start;padding:8px;border-radius:8px;transition:background .2s,opacity .2s}
+.steps li::before{content:counter(r);font-family:var(--f-display);font-weight:800;font-size:1.05rem;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--accent);color:#fff}
+.steps li div{padding-top:4px}
+.steps.play li{opacity:.4}
+.steps.play li.on{opacity:1;background:var(--accent-soft)}
+.steps.play li.done{opacity:1}
+
+/* sorter */
+.sorter{display:grid;gap:8px}
+.si{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.si .w{font-size:.92rem}
+.si .why{grid-column:1/-1;font-size:.85rem;color:var(--muted)}
+.si.good{border-color:var(--allow);background:var(--allow-soft)}
+.si.bad{border-color:var(--deny);background:var(--deny-soft)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg button:disabled{cursor:default}
+
+/* picker */
+.picks{display:flex;flex-wrap:wrap;gap:6px}
+.pick{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem}
+.pick[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+
+/* network sim */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px;align-items:start}
+@media (max-width:760px){.sim{grid-template-columns:1fr}}
+.toggles{display:grid;gap:8px}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.path{display:grid;gap:6px}
+.hop{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:.88rem}
+.hop::before{content:"→";width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--muted);font-size:.8rem}
+.hop.back::before{content:"←"}
+.hop b{display:block}
+.hop small{color:var(--muted)}
+.hop.pass::before{background:var(--allow-soft);color:var(--allow);content:"✓"}
+.hop.stop{border-color:var(--deny);background:var(--deny-soft)}
+.hop.stop::before{background:var(--deny);color:#fff;content:"✕"}
+.hop.skip{opacity:.4}
+.lbl{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.verdict{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r)}
+.verdict .big{font-family:var(--f-display);font-size:1.35rem;font-weight:800;white-space:nowrap}
+.verdict.allow{background:var(--allow-soft);color:var(--allow)}
+.verdict.deny{background:var(--deny-soft);color:var(--deny)}
+.verdict .why{color:var(--ink);font-size:.9rem}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.88rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Security <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Domain 1 Secure Architectures (30%)</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 SHARED RESPONSIBILITY -->
+<section class="lesson" data-id="shared" data-name="Who secures what">
+  <div class="eyebrow">Lesson 1 · 5 min</div>
+  <h2>AWS secures the cloud. You secure what you put in it.</h2>
+  <p class="lede">The shared responsibility model. The exam tests it with "who is responsible for…" questions.</p>
+
+  <div class="grid2">
+    <div class="box prose"><h3>AWS: security <i>of</i> the cloud</h3><p>Data centers, hardware, disk destruction, the global network, the hypervisor, and the software of managed services (RDS engine patches, Lambda runtime OS).</p></div>
+    <div class="box prose"><h3>You: security <i>in</i> the cloud</h3><p>Your data, IAM, encryption choices, security groups and NACLs, the EC2 guest OS and its patches, your application code.</p></div>
+  </div>
+  <div class="remember"><b>The more managed the service, the less you do.</b> EC2: you patch the OS. RDS: AWS patches the engine, you choose settings and access. Lambda / S3 / DynamoDB: you handle data, permissions and code only.</div>
+
+  <h3>Sort it: AWS or You?</h3>
+  <div class="sorter" id="sorter"></div>
+  <p class="hint" id="sortScore"></p>
+</section>
+
+<!-- 2 KMS -->
+<section class="lesson" data-id="kms" data-name="KMS & keys">
+  <div class="eyebrow">Lesson 2 · 12 min</div>
+  <h2>KMS: AWS's key safe</h2>
+  <p class="lede">KMS (Key Management Service) creates and guards encryption keys. The key never leaves KMS. You send data or small keys in, encrypted data comes out.</p>
+
+  <h3>Three kinds of KMS keys</h3>
+  <div class="cards">
+    <div class="c"><header><h3>AWS owned</h3><span class="tag">invisible</span></header><p>Used inside AWS services for you. You can't see, manage or audit them. Free.</p><p class="kw">e.g. DynamoDB default encryption, SSE-S3</p></div>
+    <div class="c"><header><h3>AWS managed</h3><span class="tag">aws/service</span></header><p>In your account, named <code>aws/s3</code>, <code>aws/ebs</code>, <code>aws/rds</code>. You can see and audit use. You can't edit the key policy.</p><ul><li>Rotated automatically every year</li><li>Can't be shared with other accounts</li></ul></div>
+    <div class="c"><header><h3>Customer managed</h3><span class="tag ok">full control</span></header><p>You create it, you write the key policy.</p><ul><li>Optional automatic rotation (yearly default)</li><li>Can share cross-account</li><li>Can disable, or delete after a 7–30 day wait</li></ul><p class="kw">Exam: "control over key", "cross-account", "audit"</p></div>
+  </div>
+
+  <h3>Envelope encryption, step by step</h3>
+  <p class="prose">KMS can encrypt only 4 KB directly. For bigger data, KMS gives you a <b>data key</b>, and you encrypt locally.</p>
+  <ol class="steps play" id="env">
+    <li><div><b>Ask KMS for a data key.</b> <code>GenerateDataKey</code> returns two copies: a plaintext data key and the same key encrypted by your KMS key.</div></li>
+    <li><div><b>Encrypt your data</b> on your side with the plaintext data key (fast, any size).</div></li>
+    <li><div><b>Throw away the plaintext key.</b> Store the encrypted data key next to the encrypted data.</div></li>
+    <li><div><b>To read it back,</b> send the encrypted data key to KMS <code>Decrypt</code>. You get the plaintext key, then decrypt the data locally.</div></li>
+  </ol>
+  <div class="choices"><button class="btn primary" id="envBtn">Show step 1</button></div>
+  <p class="hint">S3, EBS and RDS do this for you behind the scenes. You only choose the KMS key.</p>
+
+  <h3>KMS facts the exam loves</h3>
+  <div class="cards">
+    <div class="c"><h3>Key policy</h3><p>Every KMS key has one, and it's the main gate. IAM policies work for a key only if its key policy allows the account.</p></div>
+    <div class="c"><h3>Regional</h3><p>Keys live in one Region. Copying an encrypted snapshot to another Region means re-encrypting with a key there.</p></div>
+    <div class="c"><h3>Multi-Region keys</h3><p>Same key material and ID in several Regions. Encrypt in one, decrypt in another. For global apps and client-side encryption.</p></div>
+    <div class="c"><h3>Audited</h3><p>Every use of a KMS key is logged in CloudTrail. That's why "audit who used the key" points to SSE-KMS.</p></div>
+    <div class="c"><h3>Throttling</h3><p>KMS has request quotas. Heavy S3 traffic with SSE-KMS can be throttled. Fix: S3 Bucket Keys (up to 99% fewer KMS calls).</p></div>
+    <div class="c"><h3>Imported key material</h3><p>Bring your own key. No automatic rotation; you rotate manually. You can delete the material immediately.</p></div>
+  </div>
+
+  <h3>KMS vs CloudHSM</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>KMS</th><th>CloudHSM</th></tr></thead>
+    <tbody>
+      <tr><td>Tenancy</td><td>Multi-tenant, fully managed</td><td>Single-tenant HSM in your VPC</td></tr>
+      <tr><td>Who controls keys</td><td>AWS manages the hardware, you manage keys via API</td><td>Only you. AWS cannot recover your keys</td></tr>
+      <tr><td>Integration</td><td>Native with most AWS services</td><td>Via KMS custom key store, or apps (PKCS#11, JCE)</td></tr>
+      <tr><td>Exam keywords</td><td>"managed", "integrated", "audit"</td><td>"dedicated / single-tenant HSM", "full control", "SSL offload", "Oracle TDE"</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">Older questions say "FIPS 140-2 Level 3 → CloudHSM". KMS is now also validated at Level 3, so look for "single-tenant" or "you alone control the hardware".</p>
+</section>
+
+<!-- 3 ENCRYPT DATA -->
+<section class="lesson" data-id="encrypt" data-name="Encrypt data">
+  <div class="eyebrow">Lesson 3 · 12 min</div>
+  <h2>Encrypting S3, EBS, RDS and friends</h2>
+  <p class="lede">At rest = stored on disk. In transit = moving over the network (TLS/HTTPS).</p>
+
+  <h3>S3 encryption options</h3>
+  <p class="prose">Pick a requirement. The right option lights up.</p>
+  <div class="picks" id="s3picks"></div>
+  <div class="tablewrap"><table id="s3t">
+    <thead><tr><th>Option</th><th>Who holds the key</th><th>Key-use audit</th><th>Remember</th></tr></thead>
+    <tbody>
+      <tr data-o="sses3"><td>SSE-S3</td><td>S3 (AWS owned)</td><td class="n">No</td><td>Default for all new objects since 2023. AES-256. Free.</td></tr>
+      <tr data-o="ssekms"><td>SSE-KMS</td><td>KMS key (AWS managed or yours)</td><td class="y">Yes, CloudTrail</td><td>Separate permission on the key. Watch KMS quotas → Bucket Keys.</td></tr>
+      <tr data-o="dsse"><td>DSSE-KMS</td><td>KMS key</td><td class="y">Yes</td><td>Two layers of encryption, for strict compliance rules.</td></tr>
+      <tr data-o="ssec"><td>SSE-C</td><td>You, sent in every request</td><td class="n">No</td><td>AWS never stores your key. HTTPS required.</td></tr>
+      <tr data-o="cse"><td>Client-side</td><td>You, before upload</td><td>Your choice</td><td>Data is already encrypted when it reaches AWS.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="say" id="s3say"></p>
+
+  <h3>Encrypting something that already exists</h3>
+  <div class="grid2">
+    <div class="box" style="display:grid;gap:10px"><h3>EBS volume</h3>
+      <ol class="steps"><li><div>Snapshot the unencrypted volume</div></li><li><div>Copy the snapshot with encryption turned on</div></li><li><div>Create a new volume from the copy and swap it in</div></li></ol>
+      <p class="hint">Turn on "EBS encryption by default" per Region to avoid this. Snapshots of encrypted volumes are encrypted.</p>
+    </div>
+    <div class="box" style="display:grid;gap:10px"><h3>RDS / Aurora database</h3>
+      <ol class="steps"><li><div>Take a snapshot of the unencrypted DB</div></li><li><div>Copy the snapshot with encryption on</div></li><li><div>Restore a new DB from it, then switch the app</div></li></ol>
+      <p class="hint">You can't turn encryption on for a running DB. Read replicas have the same encryption as the primary.</p>
+    </div>
+  </div>
+  <div class="remember"><b>Sharing an encrypted snapshot with another account?</b> It must use a <b>customer managed</b> key, and you must share that key too. Snapshots encrypted with an AWS managed key can't be shared.</div>
+
+  <h3>Other services, in one line each</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Service</th><th>At rest</th><th>In transit</th></tr></thead>
+    <tbody>
+      <tr><td>DynamoDB</td><td>Always encrypted (choose AWS owned, AWS managed or your key)</td><td>HTTPS</td></tr>
+      <tr><td>EFS</td><td>Choose at creation</td><td>TLS via the EFS mount helper</td></tr>
+      <tr><td>RDS</td><td>KMS, set at creation</td><td>SSL/TLS; can force it with a parameter group setting</td></tr>
+      <tr><td>RDS login</td><td colspan="2">IAM database authentication (MySQL, MariaDB, PostgreSQL): a token instead of a password</td></tr>
+      <tr><td>Redshift / ElastiCache</td><td>KMS</td><td>TLS. ElastiCache Redis/Valkey: AUTH token for access</td></tr>
+      <tr><td>Site-to-Site VPN</td><td>—</td><td>IPsec encrypted</td></tr>
+      <tr><td>Direct Connect</td><td>—</td><td><b>Not encrypted by default.</b> Use a VPN over DX, or MACsec</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 4 SECRETS & CERTS -->
+<section class="lesson" data-id="secrets" data-name="Secrets & certs">
+  <div class="eyebrow">Lesson 4 · 8 min</div>
+  <h2>Passwords, parameters, certificates, directories</h2>
+
+  <h3>Secrets Manager vs Parameter Store</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Secrets Manager</th><th>SSM Parameter Store</th></tr></thead>
+    <tbody>
+      <tr><td>Built for</td><td>Secrets: DB passwords, API keys</td><td>Config values and secrets</td></tr>
+      <tr><td>Automatic rotation</td><td class="y">Yes, with Lambda. Built-in for RDS, Aurora, Redshift, DocumentDB</td><td class="n">No native rotation</td></tr>
+      <tr><td>Encryption</td><td>Always KMS</td><td>SecureString with KMS (optional)</td></tr>
+      <tr><td>Cross-Region replication</td><td class="y">Yes</td><td class="n">No</td></tr>
+      <tr><td>Cost</td><td>Per secret per month</td><td>Standard tier free</td></tr>
+      <tr><td>Exam keyword</td><td>"rotate automatically"</td><td>"cheapest", "configuration", "hierarchy"</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>AWS Certificate Manager (ACM)</h3>
+  <div class="cards">
+    <div class="c"><h3>What it does</h3><p>Free public TLS certificates that renew automatically. Imported certificates don't auto-renew.</p></div>
+    <div class="c"><h3>Where they go</h3><p>ALB, NLB, CloudFront, API Gateway. On the exam, not installed directly on EC2.</p></div>
+    <div class="c"><h3>The Region trap</h3><p><b>CloudFront needs the certificate in us-east-1.</b> An ALB needs it in the ALB's own Region.</p></div>
+    <div class="c"><h3>Private CA</h3><p>AWS Private CA issues internal certificates for private apps and mTLS.</p></div>
+  </div>
+
+  <h3>Who signs in: directories and users</h3>
+  <div class="cards">
+    <div class="c"><h3>AWS Managed Microsoft AD</h3><p>Real AD run by AWS. Can trust your on-prem AD. Use when apps need AD features in AWS.</p></div>
+    <div class="c"><h3>AD Connector</h3><p>A proxy to your on-prem AD. Stores nothing in AWS. Needs VPN/DX.</p></div>
+    <div class="c"><h3>Simple AD</h3><p>Small, cheap, standalone AD-compatible directory. Can't trust on-prem AD.</p></div>
+    <div class="c"><h3>Cognito</h3><p>Your app's users. User pool = sign-up/sign-in. Identity pool = temporary AWS credentials.</p></div>
+    <div class="c"><h3>IAM Identity Center</h3><p>Your employees, single sign-on to many AWS accounts.</p></div>
+  </div>
+</section>
+
+<!-- 5 NETWORK -->
+<section class="lesson" data-id="network" data-name="Network security">
+  <div class="eyebrow">Lesson 5 · 12 min</div>
+  <h2>Security groups and NACLs</h2>
+  <p class="lede">Two firewalls in every VPC. The difference is a guaranteed exam question.</p>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Security group</th><th>Network ACL</th></tr></thead>
+    <tbody>
+      <tr><td>Protects</td><td>An instance (its network interface)</td><td>A whole subnet</td></tr>
+      <tr><td>State</td><td><b>Stateful</b>: replies are allowed automatically</td><td><b>Stateless</b>: replies need their own rule</td></tr>
+      <tr><td>Rules</td><td>Allow only</td><td>Allow <b>and Deny</b></td></tr>
+      <tr><td>Order</td><td>All rules checked together</td><td>Lowest rule number first, first match wins</td></tr>
+      <tr><td>Default</td><td>Deny all in, allow all out</td><td>Default NACL allows all. A new custom NACL denies all</td></tr>
+      <tr><td>Special</td><td>Can reference another security group</td><td>Needs ephemeral ports 1024–65535 for replies</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><b>"Block one bad IP address"</b> → NACL deny rule. Security groups can't deny.</div>
+
+  <h3>Packet simulator</h3>
+  <p class="prose">A visitor opens your website on HTTPS (port 443) on an EC2 instance in a public subnet. Change the rules and follow the packet.</p>
+  <div class="sim">
+    <div class="toggles" id="netToggles"></div>
+    <div style="display:grid;gap:10px;min-width:0">
+      <div class="verdict" id="netVerdict"></div>
+      <div class="path" id="netPath"></div>
+    </div>
+  </div>
+
+  <h3>Other network tools</h3>
+  <div class="cards">
+    <div class="c"><header><h3>VPC endpoints</h3></header><p><b>Gateway</b>: S3 and DynamoDB only, free, added to route tables. <b>Interface</b> (PrivateLink): most services, an ENI with a private IP, costs per hour.</p><p class="kw">Private subnet, no internet, reach S3 → gateway endpoint</p></div>
+    <div class="c"><h3>Endpoint policies</h3><p>A resource policy on the endpoint. Limits which buckets or actions pass through. Pair with <code>aws:SourceVpce</code> in the bucket policy.</p></div>
+    <div class="c"><h3>Session Manager</h3><p>Shell access to EC2 with no SSH keys, no port 22, no bastion host. Sessions logged to S3 / CloudWatch.</p></div>
+    <div class="c"><h3>AWS Network Firewall</h3><p>Managed stateful firewall for a whole VPC. Filters domains, IDS/IPS rules. Layer 3–7.</p></div>
+    <div class="c"><h3>Route 53 Resolver DNS Firewall</h3><p>Blocks DNS lookups to bad domains from your VPC.</p></div>
+    <div class="c"><h3>VPC Flow Logs</h3><p>Records who talked to whom (IPs, ports, accept/reject). Not packet contents. To CloudWatch Logs, S3 or Firehose.</p></div>
+  </div>
+</section>
+
+<!-- 6 EDGE -->
+<section class="lesson" data-id="edge" data-name="WAF, Shield, edge">
+  <div class="eyebrow">Lesson 6 · 8 min</div>
+  <h2>Stopping attacks before they reach you</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>AWS WAF</h3><span class="tag">layer 7</span></header><p>Web application firewall. Rules on HTTP requests.</p><ul><li>SQL injection, XSS (managed rule groups)</li><li>Rate-based rules (block floods from one IP)</li><li>IP sets, geo match, header/string match</li></ul><p class="kw">Attaches to: CloudFront, ALB, API Gateway, AppSync, Cognito user pools. <b>Not NLB, not EC2 directly.</b></p></div>
+    <div class="c"><header><h3>Shield Standard</h3><span class="tag ok">free</span></header><p>Automatic for every customer. Protects against common layer 3/4 DDoS (SYN floods, UDP reflection).</p></div>
+    <div class="c"><header><h3>Shield Advanced</h3><span class="tag amb">paid</span></header><ul><li>24/7 Shield Response Team (SRT)</li><li>DDoS cost protection (refund of scaling costs)</li><li>Advanced detection and WAF included for protected resources</li></ul><p class="kw">Protects CloudFront, Route 53, Global Accelerator, ELB, Elastic IPs</p></div>
+    <div class="c"><header><h3>Firewall Manager</h3><span class="tag">many accounts</span></header><p>Set WAF, Shield Advanced, security groups, Network Firewall and DNS Firewall rules once, across all accounts in an Organization. New accounts get them automatically.</p></div>
+  </div>
+
+  <h3>A DDoS-resilient design</h3>
+  <ol class="steps">
+    <li><div><b>Route 53</b> for DNS (absorbs DNS floods at the edge).</div></li>
+    <li><div><b>CloudFront</b> in front, with <b>WAF</b> rate-based rules and <b>Shield</b>.</div></li>
+    <li><div><b>ALB</b> as the origin, in public subnets; instances in private subnets.</div></li>
+    <li><div><b>Auto Scaling</b> to absorb what gets through.</div></li>
+  </ol>
+
+  <h3>Protecting the origin</h3>
+  <div class="cards">
+    <div class="c"><h3>CloudFront + S3: OAC</h3><p>Origin Access Control lets only your CloudFront distribution read the bucket. Bucket stays private. (OAI is the older version.)</p></div>
+    <div class="c"><h3>CloudFront + ALB</h3><p>Add a secret custom header in CloudFront, and have the ALB (or WAF) reject requests without it. Or allow only the CloudFront managed prefix list in the ALB security group.</p></div>
+    <div class="c"><h3>Geo restriction</h3><p>CloudFront can allow or block whole countries.</p></div>
+    <div class="c"><h3>Signed URLs / cookies</h3><p>CloudFront signed URL = one file. Signed cookies = many files (a members area).</p></div>
+  </div>
+</section>
+
+<!-- 7 S3 LOCKDOWN -->
+<section class="lesson" data-id="s3" data-name="Lock down S3">
+  <div class="eyebrow">Lesson 7 · 8 min</div>
+  <h2>S3 data protection</h2>
+  <p class="lede">S3 is in many security questions. These are the controls to know.</p>
+
+  <div class="cards">
+    <div class="c"><h3>Block Public Access</h3><p>Account-level and bucket-level switch that overrides any public policy or ACL. On by default for new buckets.</p></div>
+    <div class="c"><h3>Object Ownership</h3><p>"Bucket owner enforced" turns ACLs off. Default for new buckets. Control access with policies only.</p></div>
+    <div class="c"><h3>Pre-signed URLs</h3><p>Temporary link to get or put one object, with the creator's permissions. Up to 12 h from the console, up to 7 days with the CLI/SDK.</p></div>
+    <div class="c"><h3>Versioning + MFA Delete</h3><p>Keep every version. MFA Delete requires MFA to delete versions or turn versioning off. Only the root user can enable it, via CLI.</p></div>
+    <div class="c"><h3>Object Lock (WORM)</h3><p>Write once, read many. Needs versioning.</p><ul><li><b>Governance</b>: users with special permission can override</li><li><b>Compliance</b>: nobody, not even root, can delete until retention ends</li><li><b>Legal hold</b>: no end date, until removed</li></ul></div>
+    <div class="c"><h3>Glacier Vault Lock</h3><p>A WORM policy on a Glacier vault. Once locked, it can never be changed.</p></div>
+    <div class="c"><h3>Access Points</h3><p>Many named entry points to one bucket, each with its own policy. Simplifies shared datasets.</p></div>
+    <div class="c"><h3>Access logs / CloudTrail data events</h3><p>Server access logs or CloudTrail data events show who read or wrote which object.</p></div>
+  </div>
+
+  <h3>Bucket policy conditions to recognise</h3>
+  <pre class="code" id="s3pol"></pre>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Condition key</th><th>Use it to</th></tr></thead>
+    <tbody>
+      <tr><td><code>aws:SecureTransport</code></td><td>Deny if false → force HTTPS</td></tr>
+      <tr><td><code>aws:SourceVpce</code></td><td>Allow only via a specific VPC endpoint</td></tr>
+      <tr><td><code>aws:PrincipalOrgID</code></td><td>Allow only principals in your AWS Organization</td></tr>
+      <tr><td><code>aws:SourceIp</code></td><td>Allow only from an IP range (public IPs, not via VPC endpoints)</td></tr>
+      <tr><td><code>s3:x-amz-server-side-encryption</code></td><td>Deny uploads without the required encryption</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 8 DETECT -->
+<section class="lesson" data-id="detect" data-name="Detect & audit">
+  <div class="eyebrow">Lesson 8 · 12 min</div>
+  <h2>The detective services</h2>
+  <p class="lede">Many look alike. Learn one sentence each, then play the matching game below.</p>
+
+  <div class="cards">
+    <div class="c"><header><h3>CloudTrail</h3><span class="tag">who did what</span></header><p>Logs API calls: who, what, when, from where. Management events on by default (90-day history). Data events (S3 objects, Lambda invokes) are extra.</p><p class="kw">Trail to S3 for long retention · organization trail · log file integrity validation</p></div>
+    <div class="c"><header><h3>AWS Config</h3><span class="tag">what changed</span></header><p>Records resource configurations over time and checks them against rules. Can auto-remediate with SSM Automation.</p><p class="kw">"compliance", "configuration history", "non-compliant security group". Detects, doesn't prevent.</p></div>
+    <div class="c"><header><h3>GuardDuty</h3><span class="tag warn">threats</span></header><p>ML threat detection from CloudTrail, VPC Flow Logs and DNS logs (no setup of those needed). Plus S3, EKS, RDS logins, malware scans.</p><p class="kw">"crypto mining", "compromised instance", "unusual API calls"</p></div>
+    <div class="c"><header><h3>Inspector</h3><span class="tag warn">vulnerabilities</span></header><p>Scans EC2, ECR container images and Lambda for known CVEs and unintended network exposure.</p><p class="kw">"vulnerabilities", "CVE", "patch level"</p></div>
+    <div class="c"><header><h3>Macie</h3><span class="tag warn">sensitive data</span></header><p>ML scans S3 for PII and sensitive data (names, card numbers, credentials).</p><p class="kw">"PII in S3", "GDPR data discovery"</p></div>
+    <div class="c"><header><h3>Security Hub</h3><span class="tag">one dashboard</span></header><p>Collects findings from GuardDuty, Inspector, Macie and others across accounts. Runs best-practice checks (CIS, AWS Foundational).</p><p class="kw">"single view", "aggregate findings", "multi-account"</p></div>
+    <div class="c"><header><h3>Detective</h3><span class="tag">root cause</span></header><p>Builds a graph from logs to investigate a finding: which IPs, users and resources were involved, over time.</p><p class="kw">"investigate", "root cause", "visualize"</p></div>
+    <div class="c"><header><h3>IAM Access Analyzer</h3><span class="tag">external access</span></header><p>Finds resources shared outside your account or organization, and unused access.</p></div>
+    <div class="c"><header><h3>Trusted Advisor</h3><span class="tag">advice</span></header><p>Best-practice checks: cost, security (open ports, root MFA), performance, limits. Full checks need Business support or higher.</p></div>
+    <div class="c"><header><h3>AWS Artifact</h3><span class="tag">compliance docs</span></header><p>Download AWS's compliance reports (SOC, PCI, ISO) and accept agreements (e.g. HIPAA BAA).</p><p class="kw">Audit Manager = collect evidence for <i>your</i> audits</p></div>
+  </div>
+
+  <div class="remember"><b>Auto-response pattern:</b> GuardDuty / Config / Security Hub finding → EventBridge rule → Lambda or SSM Automation fixes it, SNS notifies the team.</div>
+
+  <h3>Match the service</h3>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 9 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 9 · exam style</div>
+  <h2>SAA-style security questions</h2>
+  <p class="lede">17 questions. Find the keyword, then pick.</p>
+  <div class="card" id="quizBox"></div>
+
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('secpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('secpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab','shared'));
+
+  /* 1 sorter */
+  const SR=[
+    ['Physical security of the data centers','AWS','AWS owns and guards the buildings.'],
+    ['Patching the operating system on an EC2 instance','You','EC2 is infrastructure. The guest OS is yours.'],
+    ['Patching the database engine of RDS','AWS','RDS is managed. AWS patches it in the maintenance window you choose.'],
+    ['Security group and NACL rules','You','Network configuration is always yours.'],
+    ['The hypervisor that runs EC2','AWS','Virtualization layer = AWS.'],
+    ['Choosing to encrypt data in S3 and who can read it','You','Your data and its access are always yours.'],
+    ['IAM users, roles and permissions','You','Identity and access configuration is yours.'],
+    ['Patching the OS that runs Lambda functions','AWS','Serverless: AWS runs and patches the runtime host.'],
+    ['Destroying old hard disks','AWS','Hardware lifecycle is AWS.'],
+    ['Security of your application code','You','Your code, your bugs.'],
+    ['Enabling MFA on the root user','You','Account configuration is yours.'],
+    ['The global network between AWS Regions','AWS','Infrastructure of the cloud.']
+  ];
+  let sAns=store.get('sort',{});
+  function drawSort(){
+    $('#sorter').innerHTML=SR.map((r,i)=>{const a=sAns[i];const st=a?(a===r[1]?' good':' bad'):'';
+      return `<div class="si${st}"><span class="w">${r[0]}</span><div class="seg" data-i="${i}">${['AWS','You'].map(o=>`<button type="button" aria-pressed="${a===o}" ${a?'disabled':''}>${o}</button>`).join('')}</div>${a?`<span class="why">${a===r[1]?'Correct.':'Answer: '+r[1]+'.'} ${r[2]}</span>`:''}</div>`}).join('');
+    const n=Object.keys(sAns).length,ok=Object.entries(sAns).filter(([i,a])=>SR[i][1]===a).length;
+    $('#sortScore').innerHTML=n?`${ok} / ${n} correct${n===SR.length?' · <button class="btn" id="sReset" style="padding:4px 10px">Reset</button>':''}`:'';
+    const r=$('#sReset');if(r)r.onclick=()=>{sAns={};store.set('sort',sAns);drawSort()};
+  }
+  $('#sorter').addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b||b.disabled)return;sAns[b.parentNode.dataset.i]=b.textContent;store.set('sort',sAns);drawSort()});
+  drawSort();
+
+  /* 2 envelope */
+  let envStep=-1;const envLis=[...document.querySelectorAll('#env li')];
+  $('#envBtn').onclick=()=>{
+    envStep=(envStep+1)%(envLis.length+1);
+    if(envStep===envLis.length){envLis.forEach(l=>l.className='done');$('#envBtn').textContent='Start again';envStep=-1;$('#env').classList.remove('play');return}
+    $('#env').classList.add('play');
+    envLis.forEach((l,i)=>l.className=i<envStep?'done':i===envStep?'on':'');
+    $('#envBtn').textContent=envStep<envLis.length-1?`Show step ${envStep+2}`:'Show all';
+  };
+
+  /* 3 S3 picker */
+  const PK=[
+    ['Simplest, no key management','sses3','SSE-S3. Nothing to manage, already the default.'],
+    ['Must audit every use of the key','ssekms','SSE-KMS. Each key use is logged in CloudTrail.'],
+    ['Must control and rotate our own key in AWS','ssekms','SSE-KMS with a customer managed key.'],
+    ['Compliance needs two layers of encryption','dsse','DSSE-KMS. Dual-layer server-side encryption.'],
+    ['We manage keys on-prem; AWS must never store them','ssec','SSE-C. You send the key with every request; S3 discards it after use.'],
+    ['Data must be encrypted before leaving our app','cse','Client-side encryption (for example with the AWS Encryption SDK and KMS).'],
+    ['SSE-KMS uploads are being throttled','ssekms','Keep SSE-KMS and turn on S3 Bucket Keys to cut KMS requests.']
+  ];
+  $('#s3picks').innerHTML=PK.map((p,i)=>`<button type="button" class="pick" data-i="${i}" aria-pressed="false">${p[0]}</button>`).join('');
+  function pick(i){
+    document.querySelectorAll('#s3picks .pick').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));
+    document.querySelectorAll('#s3t tbody tr').forEach(r=>r.classList.toggle('hi',r.dataset.o===PK[i][1]));
+    $('#s3say').innerHTML='<b>Answer:</b> '+PK[i][2];
+  }
+  $('#s3picks').addEventListener('click',e=>{const b=e.target.closest('.pick');if(b)pick(+b.dataset.i)});
+  pick(1);
+
+  /* 5 network sim */
+  const NT=[
+    {k:'who',t:'Who is sending the request?',o:['Normal visitor','Attacker 198.51.100.7'],v:'Normal visitor'},
+    {k:'block',t:'NACL rule to block the attacker IP',o:['None','#90 DENY','#200 DENY'],v:'#90 DENY'},
+    {k:'nin',t:'NACL inbound rule #100: allow TCP 443',o:['Yes','No'],v:'Yes'},
+    {k:'sgin',t:'Security group inbound: allow 443 from 0.0.0.0/0',o:['Yes','No'],v:'Yes'},
+    {k:'sgout',t:'Security group outbound rules',o:['Allow all','None'],v:'None'},
+    {k:'nout',t:'NACL outbound: allow TCP 1024–65535 (ephemeral)',o:['Yes','No'],v:'Yes'}
+  ];
+  const ns=Object.fromEntries(NT.map(x=>[x.k,x.v]));
+  function drawNet(){
+    $('#netToggles').innerHTML=NT.map(x=>`<div class="tg"><span class="t">${x.t}</span><div class="seg" data-k="${x.k}">${x.o.map(o=>`<button type="button" aria-pressed="${ns[x.k]===o}">${o}</button>`).join('')}</div></div>`).join('');
+    const hops=[
+      ['NACL inbound','Rules checked by number, lowest first.'],
+      ['Security group inbound','Needs an allow rule for 443.'],
+      ['EC2 web server','Builds the response.'],
+      ['Security group outbound','Stateful: the reply is allowed automatically.'],
+      ['NACL outbound','Stateless: the reply needs its own rule.'],
+      ['Back to the visitor','Page loads.']
+    ];
+    const c=Array(6).fill('skip');let res='allow',why='Request in, reply out. The page loads.';
+    const attacker=ns.who!=='Normal visitor';
+    let stop=-1;
+    if(attacker&&ns.block==='#90 DENY'){stop=0;why='Rule #90 DENY matches first (lower number than the #100 allow). Blocked at the subnet edge.'}
+    else if(ns.nin==='No'){stop=0;why=attacker&&ns.block==='#200 DENY'?'No allow for 443, and nothing else matches before the final * deny.':'No NACL inbound rule allows 443, so the default * rule denies it.'}
+    else if(ns.sgin==='No'){stop=1;why=attacker&&ns.block==='#200 DENY'?'The #100 allow matched before #200, so the attacker passed the NACL, then the security group dropped it.':'The security group has no inbound rule for 443. Traffic dropped.'}
+    else if(ns.nout==='No'){stop=4;why='The request got in, but the NACL is stateless and has no outbound rule for ephemeral ports. The reply is blocked.'}
+    else if(attacker&&ns.block==='#200 DENY'){why='Trap: the #100 ALLOW matched before the #200 DENY, so the attacker gets in. Put deny rules at a lower number.'}
+    else if(attacker&&ns.block==='None'){why='Nothing blocks the attacker. A security group cannot deny an IP; use a NACL deny or WAF.'}
+    if(stop>=0){res='deny';for(let i=0;i<6;i++)c[i]=i<stop?'pass':i===stop?'stop':'skip'}else c.fill('pass');
+    if(stop<0&&ns.sgout==='None')hops[3][1]='No outbound rules, but stateful: replies always go out.';
+    if(attacker&&stop<0)res='deny';
+    $('#netPath').innerHTML='<span class="lbl">Request</span>'+hops.map((hp,i)=>(i===3?'<span class="lbl">Reply</span>':'')+`<div class="hop ${c[i]}${i>=3?' back':''}"><div><b>${hp[0]}</b><small>${hp[1]}</small></div></div>`).join('');
+    const v=$('#netVerdict');
+    const label=stop>=0?(attacker?'BLOCKED':'BROKEN'):(attacker?'ATTACKER IN':'WORKS');
+    v.className='verdict '+(stop>=0?(attacker?'allow':'deny'):(attacker?'deny':'allow'));
+    v.innerHTML=`<span class="big">${label}</span><span class="why">${why}</span>`;
+  }
+  $('#netToggles').addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;ns[b.parentNode.dataset.k]=b.textContent;drawNet()});
+  drawNet();
+
+  /* 7 S3 policy */
+  const pol=['{','  "Version": "2012-10-17",','  "Statement": [{','    "Sid": "DenyHttp",','    "Effect": "Deny",','    "Principal": "*",','    "Action": "s3:*",','    "Resource": [','      "arn:aws:s3:::payroll",','      "arn:aws:s3:::payroll/*"','    ],','    "Condition": {','      "Bool": { "aws:SecureTransport": "false" }','    }','  }]','}'];
+  $('#s3pol').innerHTML=pol.map(l=>esc(l).replace(/(&quot;[^&]*?&quot;)(\s*:)/g,'<span class="ck">$1</span>$2').replace(/(:\s*|^\s*)(&quot;[^&]*?&quot;)(?!\s*:)/g,'$1<span class="cs">$2</span>')).join('\n');
+
+  /* 8 game */
+  const SVC=['CloudTrail','AWS Config','GuardDuty','Inspector','Macie','Security Hub','Detective','Access Analyzer','Trusted Advisor','AWS Artifact'];
+  const G=[
+    ['Which IAM user deleted the production DynamoDB table yesterday?','CloudTrail','API call history = CloudTrail.'],
+    ['Alert when an EC2 instance talks to a known crypto-mining domain.','GuardDuty','Threat detection from DNS and flow logs.'],
+    ['Find credit card numbers and passport numbers stored in S3.','Macie','Sensitive data discovery in S3.'],
+    ['Scan ECR container images for known CVEs.','Inspector','Vulnerability scanning: EC2, ECR, Lambda.'],
+    ['Flag any security group that allows SSH from 0.0.0.0/0 as non-compliant.','AWS Config','Config rules check configuration compliance.'],
+    ['One place to see GuardDuty, Inspector and Macie findings from 30 accounts, plus CIS checks.','Security Hub','Aggregation + best-practice checks.'],
+    ['Investigate the root cause of a finding by visualizing the IPs and users involved over time.','Detective','Investigation and graphs.'],
+    ['Your auditor asks for AWS’s SOC 2 and PCI DSS reports.','AWS Artifact','AWS compliance documents on demand.'],
+    ['Find S3 buckets and IAM roles that can be accessed from outside your organization.','Access Analyzer','External access findings.'],
+    ['Get recommendations on cost, open ports and service limits.','Trusted Advisor','Best-practice advice across five pillars.'],
+    ['Detect an IAM access key used from an unusual country making odd API calls.','GuardDuty','Anomalous API activity = GuardDuty finding.'],
+    ['If a bucket becomes public, automatically make it private again.','AWS Config','Config rule + SSM Automation remediation.'],
+    ['See the full history of changes to one EC2 instance’s settings.','AWS Config','Configuration timeline per resource.'],
+    ['Log every S3 GetObject call on a sensitive bucket.','CloudTrail','CloudTrail data events for S3.']
+  ];
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=12?'Strong. You can tell them apart.':'Re-read the service cards above, then play again.'}</p><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* 9 quiz */
+  const Q=[
+    {q:'A company has an unencrypted RDS for MySQL database in production. It must be encrypted at rest. What should the architect do?',o:['Turn on encryption in the DB instance settings','Take a snapshot, copy it with encryption enabled, and restore a new DB from the copy','Create an encrypted read replica and keep using the primary','Enable SSL on the DB parameter group'],c:1,e:'Encryption can only be set at creation. Snapshot → encrypted copy → restore.'},
+    {q:'An app uploads millions of objects per hour to S3 with SSE-KMS and gets throttling errors from KMS. What is the MOST cost-effective fix?',o:['Switch to SSE-C','Enable S3 Bucket Keys','Use CloudHSM','Upload through CloudFront'],c:1,e:'Bucket Keys reduce KMS requests by up to 99%, and cost.'},
+    {q:'The security team must audit every time an encryption key was used to decrypt S3 objects. Which option meets this?',o:['SSE-S3','SSE-C','SSE-KMS','S3 default encryption with AES-256'],c:2,e:'Only KMS-based options log key usage in CloudTrail.'},
+    {q:'Database credentials must rotate automatically every 30 days with minimal operational effort. What should be used?',o:['Parameter Store SecureString','AWS Secrets Manager with rotation enabled','A Lambda cron job that writes to an S3 file','IAM access keys'],c:1,e:'"Rotate automatically" = Secrets Manager. Native rotation for RDS.'},
+    {q:'A web app behind an ALB is receiving SQL injection attacks. What should be used to block them?',o:['Security groups','Network ACLs','AWS WAF with managed rules on the ALB','AWS Shield Standard'],c:2,e:'Layer 7 attack (SQLi, XSS) = WAF. SGs and NACLs only see IPs and ports.'},
+    {q:'A company wants to detect EC2 instances that may be compromised and mining cryptocurrency. Least effort?',o:['Amazon Inspector','Amazon GuardDuty','AWS Config','Amazon Macie'],c:1,e:'Threat detection from DNS and network activity = GuardDuty.'},
+    {q:'A company must discover which S3 buckets contain personally identifiable information. Which service?',o:['Amazon Macie','Amazon GuardDuty','AWS Security Hub','Amazon Inspector'],c:0,e:'PII in S3 = Macie.'},
+    {q:'A single malicious IP address is attacking instances in a subnet. How do you block it quickly?',o:['Add a deny rule in the security group','Add a deny rule with a low rule number in the subnet’s network ACL','Remove the internet gateway','Enable GuardDuty'],c:1,e:'Security groups cannot deny. NACL deny rule, numbered before the allow rules.'},
+    {q:'A CloudFront distribution needs HTTPS on a custom domain with an ACM certificate. Where must the certificate be requested?',o:['In the Region of the origin','In us-east-1 (N. Virginia)','In any Region','In every Region where users are'],c:1,e:'CloudFront only uses ACM certificates from us-east-1.'},
+    {q:'S3 content must be reachable only through CloudFront, not directly through S3 URLs. What should be configured?',o:['A pre-signed URL for each object','Origin Access Control (OAC) and a bucket policy that allows only the distribution','Make the bucket public and enable WAF','S3 Transfer Acceleration'],c:1,e:'OAC + bucket policy restricted to the CloudFront distribution. Bucket stays private.'},
+    {q:'Regulators require financial records be kept for 7 years and that NO user, including root, can delete or change them. What should be used?',o:['S3 Object Lock in governance mode','S3 Object Lock in compliance mode','Versioning with MFA Delete','A bucket policy that denies DeleteObject'],c:1,e:'Compliance mode: no one can delete or shorten retention, not even root. Governance can be bypassed.'},
+    {q:'A company needs a dedicated, single-tenant hardware security module where only it controls the keys. Which service?',o:['AWS KMS with customer managed keys','AWS CloudHSM','AWS Secrets Manager','KMS multi-Region keys'],c:1,e:'"Single-tenant", "dedicated HSM", "only we control" = CloudHSM.'},
+    {q:'Administrators need shell access to EC2 instances in private subnets without opening port 22 or running a bastion host. What should they use?',o:['EC2 Instance Connect through a public IP','AWS Systems Manager Session Manager','A NAT gateway','Site-to-Site VPN'],c:1,e:'Session Manager: no inbound ports, no SSH keys, logged sessions.'},
+    {q:'An architect must continuously check that all EBS volumes are encrypted and record configuration changes. Which service?',o:['AWS CloudTrail','AWS Config','Amazon Inspector','AWS Trusted Advisor'],c:1,e:'Config rules (e.g. encrypted-volumes) + configuration history.'},
+    {q:'A public-facing app needs DDoS protection with a 24/7 response team and protection from scaling costs during an attack. What should be used?',o:['AWS Shield Standard','AWS Shield Advanced','AWS WAF only','Amazon GuardDuty'],c:1,e:'SRT access and cost protection are Shield Advanced features.'},
+    {q:'EC2 instances in a private subnet with no internet access must read from S3. What is the MOST cost-effective option?',o:['NAT gateway','Gateway VPC endpoint for S3','Interface VPC endpoint for S3','Internet gateway with public IPs'],c:1,e:'Gateway endpoints (S3, DynamoDB) are free and keep traffic private.'},
+    {q:'You must share an encrypted EBS snapshot with another AWS account. The snapshot uses the default aws/ebs key. What must you do?',o:['Share the snapshot directly','Re-encrypt the snapshot copy with a customer managed key, share the key, then share the snapshot','Make the snapshot public','Share the aws/ebs key with the other account'],c:1,e:'AWS managed keys can’t be shared. Use a customer managed key and grant the other account access.'}
+  ];
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on security.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s=Q[qi];
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  const C=[
+    ['Audit key usage / control the key','SSE-KMS (customer managed key)'],
+    ['Dedicated, single-tenant HSM','CloudHSM'],
+    ['Encrypt existing EBS or RDS','Snapshot → encrypted copy → restore'],
+    ['Rotate DB passwords automatically','Secrets Manager'],
+    ['Cheap config values / parameters','SSM Parameter Store'],
+    ['HTTPS cert for CloudFront','ACM in us-east-1'],
+    ['SQL injection, XSS, rate limiting','AWS WAF'],
+    ['DDoS + response team + cost protection','Shield Advanced'],
+    ['Same firewall rules in every account','Firewall Manager'],
+    ['Block one IP address','NACL deny rule'],
+    ['Allow traffic from another tier','Security group referencing a security group'],
+    ['Private S3 / DynamoDB access, no internet','Gateway VPC endpoint'],
+    ['Private access to other AWS services','Interface endpoint (PrivateLink)'],
+    ['No SSH, no bastion','Session Manager'],
+    ['S3 only via CloudFront','Origin Access Control (OAC)'],
+    ['Temporary link to one S3 object','Pre-signed URL'],
+    ['WORM, nobody can delete','Object Lock compliance mode'],
+    ['Force HTTPS to S3','Deny when aws:SecureTransport = false'],
+    ['Who made this API call','CloudTrail'],
+    ['Configuration compliance and history','AWS Config'],
+    ['Threats, compromised instances','GuardDuty'],
+    ['CVEs in EC2 / ECR / Lambda','Inspector'],
+    ['PII in S3','Macie'],
+    ['All findings in one place','Security Hub'],
+    ['Root-cause investigation','Detective'],
+    ['AWS compliance reports','AWS Artifact'],
+    ['Direct Connect must be encrypted','VPN over DX, or MACsec']
+  ];
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+
+</body></html>

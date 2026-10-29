@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Storage Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the IAM, Security and Networking playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --k-std:#2446C6; --k-ia:#1F7F77; --k-gl:#7150C2; --k-da:#3A4766; --seg-fg:#FFFFFF;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --k-std:#8299FF; --k-ia:#4FC1B4; --k-gl:#B39BFF; --k-da:#9AA8C7; --seg-fg:#0C111E; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --k-std:#8299FF; --k-ia:#4FC1B4; --k-gl:#B39BFF; --k-da:#9AA8C7; --seg-fg:#0C111E; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:r}
+.steps li{counter-increment:r;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start}
+.steps li::before{content:counter(r);font-family:var(--f-display);font-weight:800;font-size:1.05rem;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--accent);color:#fff}
+.steps li div{padding-top:4px}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.tg.dim{opacity:.45}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.15rem}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+
+/* cost bars */
+.ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--accent)}
+.big{font-family:var(--f-mono);font-size:1.3rem;font-weight:500}
+.big b{color:var(--accent)}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:150px minmax(0,1fr) 84px;gap:10px;align-items:center;font-size:.88rem}
+.bar .track{height:16px;border-radius:4px;background:var(--bg);overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);border-radius:4px;min-width:2px;transition:width .25s}
+.bar .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+@media (max-width:520px){.bar{grid-template-columns:minmax(0,1fr) 76px}.bar .track{grid-column:1/-1;grid-row:2}}
+
+/* lifecycle */
+.lc{display:grid;gap:14px;min-width:0}
+.lc>*{min-width:0}
+section.lesson>*{min-width:0}
+.lcin{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.lcin label{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.86rem;font-weight:500}
+.lcin .h{display:flex;align-items:center;gap:8px}
+.lcin .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.lcin input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-variant-numeric:tabular-nums}
+.lcin input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.timeline{display:flex;height:40px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.timeline div{flex:none;min-width:0;display:flex;align-items:center;padding:0 8px;font-size:.78rem;font-weight:600;color:var(--seg-fg);white-space:nowrap;overflow:hidden}
+.timeline .gone{background:repeating-linear-gradient(45deg,var(--bg),var(--bg) 6px,var(--line) 6px,var(--line) 12px);color:var(--muted)}
+.ticks{position:relative;height:20px;font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:none}
+.msgs{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.msgs li{font-size:.9rem;padding:8px 12px;border-radius:8px}
+.msgs .err{background:var(--deny-soft);color:var(--deny);font-weight:500}
+.msgs .warn{background:var(--amber-soft)}
+.msgs .ok{background:var(--allow-soft)}
+
+/* versioning */
+.vsim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:720px){.vsim{grid-template-columns:1fr}}
+.vstack{display:grid;gap:6px}
+.ver{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:.88rem}
+.ver code{color:var(--muted)}
+.ver .ico{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.ver.mk .ico{background:var(--deny-soft);color:var(--deny)}
+.ver.top{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.ver .lt{font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.empty{padding:16px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:.9rem;text-align:center}
+.get{font-family:var(--f-mono);font-size:.86rem;padding:10px 12px;border-radius:8px}
+.get.okg{background:var(--allow-soft);color:var(--allow)}
+.get.nf{background:var(--deny-soft);color:var(--deny)}
+.log{font-size:.9rem;padding:10px 12px;border-radius:8px;background:var(--amber-soft)}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.sm{padding:7px 12px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Storage <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · S3, EBS, EFS, FSx, Storage Gateway, DataSync, Snow</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 BASICS -->
+<section class="lesson" data-id="basics" data-name="S3 basics">
+  <div class="eyebrow">Lesson 1 · 8 min</div>
+  <h2>S3 is a giant key → file store</h2>
+  <p class="lede">No folders, no disks. You put an object (a file) into a bucket under a key (its full name), and get it back with an HTTP request.</p>
+
+  <div class="cards">
+    <div class="c"><header><h3>Bucket</h3><span class="tag">one Region</span></header><p>A container. The name is <b>globally unique</b> across all AWS accounts (3–63 chars, lowercase). Data stays in the Region you choose.</p></div>
+    <div class="c"><header><h3>Object</h3><span class="tag">max 5 TB</span></header><p>The file plus metadata, tags and a version ID. Any type of data.</p></div>
+    <div class="c"><header><h3>Key</h3><span class="tag">full name</span></header><p><code>reports/2026/q3.pdf</code>. "Folders" in the console are only key <b>prefixes</b>. The namespace is flat.</p></div>
+  </div>
+
+  <h3>Numbers to memorise</h3>
+  <div class="stats">
+    <div class="stat"><div class="v">5 TB</div><div class="k">Max object size</div></div>
+    <div class="stat"><div class="v">5 GB</div><div class="k">Max single PUT. Bigger needs multipart</div></div>
+    <div class="stat"><div class="v">100 MB</div><div class="k">Use multipart upload from here</div></div>
+    <div class="stat"><div class="v">11 nines</div><div class="k">Durability, 99.999999999%</div></div>
+    <div class="stat"><div class="v">3,500</div><div class="k">PUT/COPY/POST/DELETE per second per prefix</div></div>
+    <div class="stat"><div class="v">5,500</div><div class="k">GET/HEAD per second per prefix</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="box prose"><h3>Strong consistency</h3><p>After a successful write, overwrite or delete, the next read returns the latest data, everywhere. No more "eventual consistency" answers.</p></div>
+    <div class="box prose"><h3>Durability ≠ availability</h3><p><b>Durability</b>: will my data be lost? (11 nines for every class.) <b>Availability</b>: can I read it right now? (99.99% for Standard, lower for IA classes.)</p></div>
+  </div>
+
+  <div class="remember"><b>Data transfer.</b> Uploading into S3 is free. You pay for storage, requests, retrievals (IA and Glacier) and data transfer <i>out</i> to the internet or other Regions.</div>
+</section>
+
+<!-- 2 CLASSES -->
+<section class="lesson" data-id="classes" data-name="Storage classes">
+  <div class="eyebrow">Lesson 2 · 15 min · heavily tested</div>
+  <h2>Storage classes: pay less for data you touch less</h2>
+  <p class="lede">Cheaper storage always comes with a catch: a retrieval fee, a minimum duration, slower access, or only one AZ.</p>
+
+  <div class="tablewrap"><table id="classT">
+    <thead><tr><th>Class</th><th>Best for</th><th>First byte</th><th>AZs</th><th>Min days</th><th>Retrieval fee</th></tr></thead>
+    <tbody>
+      <tr data-o="std"><td>S3 Standard</td><td>Frequently accessed, default</td><td>ms</td><td>≥ 3</td><td>—</td><td class="y">None</td></tr>
+      <tr data-o="it"><td>Intelligent-Tiering</td><td>Unknown or changing access</td><td>ms*</td><td>≥ 3</td><td>—</td><td class="y">None (small monitoring fee per object)</td></tr>
+      <tr data-o="sia"><td>Standard-IA</td><td>Monthly access, needs ms</td><td>ms</td><td>≥ 3</td><td class="num">30</td><td class="n">Per GB</td></tr>
+      <tr data-o="oz"><td>One Zone-IA</td><td>Infrequent, easy to recreate</td><td>ms</td><td>1</td><td class="num">30</td><td class="n">Per GB</td></tr>
+      <tr data-o="gir"><td>Glacier Instant Retrieval</td><td>Quarterly access, still ms</td><td>ms</td><td>≥ 3</td><td class="num">90</td><td class="n">Per GB (higher)</td></tr>
+      <tr data-o="gfr"><td>Glacier Flexible Retrieval</td><td>Archive, 1–2× a year</td><td>Minutes to 12 h</td><td>≥ 3</td><td class="num">90</td><td>Bulk free</td></tr>
+      <tr data-o="gda"><td>Glacier Deep Archive</td><td>Keep 7–10 years, rarely read</td><td>12–48 h</td><td>≥ 3</td><td class="num">180</td><td class="n">Per GB</td></tr>
+      <tr data-o="exp"><td>Express One Zone</td><td>Highest speed, ML / analytics next to compute</td><td>single-digit ms</td><td>1</td><td>—</td><td class="y">None</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">* Intelligent-Tiering's optional Archive Access and Deep Archive Access tiers are not instant. IA and Glacier IR bill objects smaller than 128 KB as 128 KB. Express One Zone uses a special "directory bucket".</p>
+
+  <h3>Glacier retrieval speeds</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Class</th><th>Expedited</th><th>Standard</th><th>Bulk</th></tr></thead>
+    <tbody>
+      <tr><td>Glacier Flexible Retrieval</td><td class="num">1–5 min</td><td class="num">3–5 hours</td><td class="num">5–12 hours (free)</td></tr>
+      <tr><td>Glacier Deep Archive</td><td>—</td><td class="num">within 12 hours</td><td class="num">within 48 hours</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">A restored Glacier object is a temporary copy for the days you ask for. Need expedited retrievals guaranteed? Buy provisioned capacity.</p>
+
+  <h3>Find the class</h3>
+  <div class="box" style="display:grid;gap:10px">
+    <div class="tg"><span class="t">How often is the data read?</span><div class="seg" data-k="acc"></div></div>
+    <div class="tg" id="tgSpeed"><span class="t">How fast must it come back?</span><div class="seg" data-k="spd"></div></div>
+    <div class="tg" id="tgRec"><span class="t">Can you recreate it if one AZ is lost?</span><div class="seg" data-k="rec"></div></div>
+    <p class="say" id="finderSay"></p>
+  </div>
+
+  <h3>What 1 TB costs per month (storage only)</h3>
+  <div class="box" style="display:grid;gap:14px">
+    <div class="ctrl"><span class="big"><b id="tbV">10</b> TB stored</span><input type="range" id="tbR" min="1" max="500" value="10" aria-label="Terabytes stored"></div>
+    <div class="bars" id="bars"></div>
+    <p class="hint">Approximate us-east-1 list prices per GB-month. Excludes requests, retrieval and transfer fees, which is where IA and Glacier get more expensive if you read often.</p>
+  </div>
+</section>
+
+<!-- 3 LIFECYCLE -->
+<section class="lesson" data-id="lifecycle" data-name="Lifecycle rules">
+  <div class="eyebrow">Lesson 3 · 12 min</div>
+  <h2>Lifecycle rules move and delete data for you</h2>
+  <p class="lede">Two kinds of actions: <b>transition</b> (move to a cheaper class after N days) and <b>expiration</b> (delete after N days). Data only moves down to colder classes.</p>
+
+  <h3>Build a rule</h3>
+  <div class="box lc">
+    <div class="lcin" id="lcin"></div>
+    <div><div class="timeline" id="tl"></div><div class="ticks" id="ticks"></div></div>
+    <ul class="msgs" id="lcMsgs"></ul>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Filters</h3><p>A rule can target the whole bucket, a prefix (<code>logs/</code>), object tags, or object size.</p></div>
+    <div class="c"><h3>Versioned buckets</h3><p>Separate actions for <b>noncurrent versions</b>: move or delete old versions N days after they were replaced. Also remove expired delete markers.</p></div>
+    <div class="c"><h3>Clean-up rule</h3><p>"Abort incomplete multipart uploads after N days." Unfinished parts cost money and are invisible in the console.</p></div>
+    <div class="c"><h3>Not sure of the days?</h3><p><b>Storage Class Analysis</b> watches access and recommends when to move data to Standard-IA.</p></div>
+  </div>
+
+  <h3>Intelligent-Tiering: automatic, no rules needed</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Tier</th><th>Object moves here after</th><th>Access</th></tr></thead>
+    <tbody>
+      <tr><td>Frequent Access</td><td>Upload, or any access</td><td>ms</td></tr>
+      <tr><td>Infrequent Access</td><td class="num">30 days without access</td><td>ms</td></tr>
+      <tr><td>Archive Instant Access</td><td class="num">90 days without access</td><td>ms</td></tr>
+      <tr><td>Archive Access (opt-in)</td><td class="num">90+ days, you choose</td><td>Minutes to hours</td></tr>
+      <tr><td>Deep Archive Access (opt-in)</td><td class="num">180+ days, you choose</td><td>Hours</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><b>Read one object in an infrequent tier and it moves back to Frequent automatically, with no retrieval fee.</b> That is why "unknown access pattern" + "no operational overhead" = Intelligent-Tiering.</div>
+</section>
+
+<!-- 4 VERSIONING -->
+<section class="lesson" data-id="versioning" data-name="Versioning & replication">
+  <div class="eyebrow">Lesson 4 · 15 min</div>
+  <h2>Versioning keeps every copy. Replication copies to another bucket.</h2>
+
+  <h3>Versioning simulator</h3>
+  <p class="prose">One object, <code>report.pdf</code>. Upload, delete, and watch what S3 really stores.</p>
+  <div class="vsim">
+    <div style="display:grid;gap:10px;min-width:0">
+      <div class="tg"><span class="t">Bucket versioning</span><div class="seg" id="vMode"></div></div>
+      <div class="choices" id="vBtns"></div>
+      <div class="log" id="vLog"></div>
+    </div>
+    <div style="display:grid;gap:8px;min-width:0">
+      <div class="get" id="vGet"></div>
+      <div class="vstack" id="vStack"></div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Three states</h3><p>Unversioned → Enabled ⇄ Suspended. <b>Once enabled, never unversioned again.</b> Suspending keeps the old versions.</p></div>
+    <div class="c"><h3>Delete marker</h3><p>A normal delete on a versioned bucket adds a marker. Older versions are still there. Remove the marker to "undelete".</p></div>
+    <div class="c"><h3>Cost</h3><p>Every version is billed as a full object. Use lifecycle noncurrent-version rules to clean up.</p></div>
+    <div class="c"><h3>MFA Delete</h3><p>MFA needed to permanently delete a version or suspend versioning. Root user only, via CLI.</p></div>
+  </div>
+
+  <h3>Replication: CRR and SRR</h3>
+  <div class="grid2">
+    <div class="box prose"><h3>Cross-Region (CRR)</h3><p>Compliance copies, lower latency for users in another Region, DR.</p></div>
+    <div class="box prose"><h3>Same-Region (SRR)</h3><p>Combine logs into one bucket, copy prod data to a test account, keep a copy under another account.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Rule</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Versioning</td><td>Must be <b>on in both</b> source and destination</td></tr>
+      <tr><td>Permissions</td><td>An IAM role that S3 assumes to copy objects</td></tr>
+      <tr><td>Existing objects</td><td>Not copied automatically. Use <b>S3 Batch Replication</b></td></tr>
+      <tr><td>Deletes</td><td>Delete markers can be replicated (optional). Deleting a specific version is never replicated</td></tr>
+      <tr><td>Chaining</td><td>No. A → B → C does not copy A's objects to C</td></tr>
+      <tr><td>Accounts</td><td>Cross-account works; destination can use a different storage class and owner</td></tr>
+      <tr><td>Speed SLA</td><td><b>Replication Time Control (RTC)</b>: 99.99% of objects within 15 minutes</td></tr>
+    </tbody>
+  </table></div>
+  <div class="c"><h3>Multi-Region Access Points</h3><p>One global endpoint for buckets in several Regions. Requests go to the nearest bucket; combine with replication for active-active and failover.</p></div>
+</section>
+
+<!-- 5 FEATURES -->
+<section class="lesson" data-id="features" data-name="Speed & features">
+  <div class="eyebrow">Lesson 5 · 12 min</div>
+  <h2>Performance and everyday features</h2>
+
+  <h3>Make S3 faster</h3>
+  <div class="cards">
+    <div class="c"><header><h3>Multipart upload</h3><span class="tag">upload</span></header><p>Split into parts (up to 10,000), upload in parallel, retry only failed parts. Recommended above 100 MB, required above 5 GB.</p></div>
+    <div class="c"><header><h3>Transfer Acceleration</h3><span class="tag">upload, far away</span></header><p>Users upload to the nearest edge location; AWS carries it to the bucket over its backbone.</p></div>
+    <div class="c"><header><h3>Byte-range fetches</h3><span class="tag">download</span></header><p>Download parts of an object in parallel, or only the header bytes you need.</p></div>
+    <div class="c"><header><h3>More prefixes</h3><span class="tag">request rate</span></header><p>Limits are per prefix. 4 prefixes ≈ 22,000 GET/s. Getting 503 Slow Down? Spread keys across prefixes.</p></div>
+    <div class="c"><header><h3>CloudFront</h3><span class="tag">read-heavy</span></header><p>Cache popular objects at the edge and offload the bucket.</p></div>
+    <div class="c"><header><h3>SSE-KMS throttling</h3><span class="tag warn">trap</span></header><p>Every object = a KMS call. At high rates turn on S3 Bucket Keys.</p></div>
+  </div>
+
+  <h3>Features the exam names</h3>
+  <div class="cards">
+    <div class="c"><h3>Event notifications</h3><p>On create/delete/restore events, send to <b>SQS, SNS or Lambda</b>. Send to <b>EventBridge</b> for advanced filters and many targets.</p><p class="kw">"Generate a thumbnail when an image is uploaded"</p></div>
+    <div class="c"><h3>Static website hosting</h3><p>Endpoint <code>http://bucket.s3-website-region.amazonaws.com</code>. HTTP only, needs public read. For HTTPS and a custom domain: CloudFront + ACM + OAC.</p></div>
+    <div class="c"><h3>CORS</h3><p>A browser page from one origin loading files from a bucket on another origin needs a CORS rule on that bucket.</p></div>
+    <div class="c"><h3>Pre-signed URLs</h3><p>Temporary link to GET or PUT one object, using the signer's permissions. Up to 7 days with the SDK/CLI.</p></div>
+    <div class="c"><h3>Requester Pays</h3><p>The downloader pays request and transfer costs, not the bucket owner. Requester must be an authenticated AWS user.</p></div>
+    <div class="c"><h3>Batch Operations</h3><p>One job on billions of objects: copy, tag, change ACLs, restore from Glacier, invoke Lambda. Input from S3 Inventory.</p></div>
+    <div class="c"><h3>Inventory & Storage Lens</h3><p><b>Inventory</b>: daily/weekly CSV or Parquet list of objects and their settings. <b>Storage Lens</b>: usage and activity dashboard across accounts.</p></div>
+    <div class="c"><h3>Access Points & Object Lambda</h3><p>Access Points: named endpoints with their own policy. Object Lambda: transform data on GET (for example redact PII).</p></div>
+    <div class="c"><h3>Query in place</h3><p>Use <b>Athena</b> to run SQL on files in S3. S3 Select is closed to new customers but can appear in older questions.</p></div>
+  </div>
+  <p class="hint">Access control, encryption, Object Lock and Block Public Access are in the Security Playbook, lessons 3 and 7.</p>
+</section>
+
+<!-- 6 BLOCK & FILE -->
+<section class="lesson" data-id="blockfile" data-name="EBS, EFS, FSx">
+  <div class="eyebrow">Lesson 6 · 15 min</div>
+  <h2>Block and file storage</h2>
+  <p class="lede">S3 = objects over HTTP. EBS = a disk for one instance. EFS and FSx = shared file systems.</p>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>S3</th><th>EBS</th><th>EFS</th><th>FSx</th></tr></thead>
+    <tbody>
+      <tr><td>Type</td><td>Object</td><td>Block (a disk)</td><td>File (NFS)</td><td>File (SMB, Lustre, NFS, iSCSI)</td></tr>
+      <tr><td>Attach to</td><td>Anything via HTTPS</td><td>One EC2 in the same AZ</td><td>Thousands of Linux clients</td><td>Many clients</td></tr>
+      <tr><td>Scope</td><td>Regional</td><td>One AZ</td><td>Regional (multi-AZ) or One Zone</td><td>Single- or Multi-AZ</td></tr>
+      <tr><td>Size</td><td>Unlimited</td><td>You provision</td><td>Grows and shrinks automatically</td><td>You provision</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>EBS volume types</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Type</th><th>Disk</th><th>Use it for</th><th>Remember</th></tr></thead>
+    <tbody>
+      <tr><td>gp3</td><td>SSD</td><td>Default: boot, most apps</td><td>Baseline 3,000 IOPS and 125 MiB/s at any size; raise IOPS and throughput separately</td></tr>
+      <tr><td>gp2</td><td>SSD</td><td>Older default</td><td>IOPS tied to size (3 per GB), burst credits</td></tr>
+      <tr><td>io2 Block Express / io1</td><td>SSD</td><td>Databases needing sustained high IOPS</td><td>io2 BX up to 256,000 IOPS, 99.999% durability; Multi-Attach</td></tr>
+      <tr><td>st1</td><td>HDD</td><td>Big sequential data: logs, Kafka, data warehouse</td><td>Throughput optimised, <b>can't be a boot volume</b></td></tr>
+      <tr><td>sc1</td><td>HDD</td><td>Cold data, cheapest</td><td>Lowest cost, can't be a boot volume</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cards">
+    <div class="c"><h3>Snapshots</h3><p>Incremental, stored in S3 (managed by AWS). Copy to other Regions for DR. Automate with Data Lifecycle Manager. Recycle Bin protects against accidental deletes. Archive tier is about 75% cheaper.</p></div>
+    <div class="c"><h3>Multi-Attach</h3><p>io1/io2 only, same AZ, up to 16 Nitro instances. Needs a cluster-aware file system.</p></div>
+    <div class="c"><h3>Instance store</h3><p>Disks physically on the host. Highest IOPS, free with the instance. <b>Data lost on stop, terminate or hardware failure.</b> Use for cache, buffers, scratch.</p></div>
+    <div class="c"><h3>Fast Snapshot Restore</h3><p>Volumes from a snapshot are fully fast on first read, with no warm-up.</p></div>
+  </div>
+
+  <h3>EFS: shared Linux file system</h3>
+  <div class="cards">
+    <div class="c"><h3>Basics</h3><ul><li>NFS v4, <b>Linux only</b> (not Windows)</li><li>A mount target in each AZ, protected by security groups</li><li>Works with EC2, ECS, EKS, Lambda, on-prem via VPN/DX</li></ul></div>
+    <div class="c"><h3>Storage classes</h3><ul><li>Standard, Infrequent Access, Archive</li><li>Lifecycle moves unused files automatically</li><li>Regional or One Zone (cheaper)</li></ul></div>
+    <div class="c"><h3>Performance</h3><ul><li>Throughput: <b>Elastic</b> (default, scales with load), Provisioned, Bursting</li><li>Performance mode: General Purpose (default), Max I/O (older, high parallelism)</li></ul></div>
+  </div>
+
+  <h3>FSx: four managed file systems</h3>
+  <div class="cards">
+    <div class="c"><header><h3>FSx for Windows File Server</h3><span class="tag">SMB</span></header><p>Windows shares with Active Directory, NTFS permissions, DFS. Multi-AZ option.</p><p class="kw">"Windows", "SMB", "AD integration"</p></div>
+    <div class="c"><header><h3>FSx for Lustre</h3><span class="tag">HPC</span></header><p>Very fast parallel file system for HPC, ML, video rendering. Links to an S3 bucket: reads it as files, writes results back. <b>Scratch</b> (temporary, cheap) or <b>Persistent</b> (replicated).</p><p class="kw">"HPC", "sub-millisecond", "process S3 data"</p></div>
+    <div class="c"><header><h3>FSx for NetApp ONTAP</h3><span class="tag">multi-protocol</span></header><p>NFS, SMB and iSCSI at once. Snapshots, cloning, compression. Move NetApp workloads to AWS.</p></div>
+    <div class="c"><header><h3>FSx for OpenZFS</h3><span class="tag">NFS</span></header><p>Move ZFS or Linux NFS workloads. Low latency, snapshots, cloning.</p></div>
+  </div>
+
+  <div class="c"><h3>AWS Backup</h3><p>One place to schedule and manage backups for EBS, EC2, EFS, FSx, RDS, Aurora, DynamoDB, S3 and more. Cross-Region and cross-account copies. <b>Backup Vault Lock</b> makes backups undeletable (WORM).</p></div>
+</section>
+
+<!-- 7 MOVE DATA -->
+<section class="lesson" data-id="move" data-name="Moving data">
+  <div class="eyebrow">Lesson 7 · 12 min</div>
+  <h2>Getting data from on-prem into AWS</h2>
+  <p class="lede">Online for ongoing or moderate amounts. Offline (a device by courier) when the network would take too long.</p>
+
+  <h3>Network or Snowball?</h3>
+  <div class="box" style="display:grid;gap:14px">
+    <div class="ctrl"><span class="big"><b id="mvTb">100</b> TB</span><input type="range" id="mvR" min="0" max="9" value="5" aria-label="Data size"></div>
+    <div class="tg"><span class="t">Your internet link</span><div class="seg" id="mvBw"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="mvDays"></div><div class="k">Over the network at 80% of the link</div></div>
+      <div class="stat"><div class="v">≈ 1 week</div><div class="k">Snowball, door to door</div></div>
+    </div>
+    <p class="say" id="mvSay"></p>
+  </div>
+
+  <div class="cards">
+    <div class="c"><header><h3>DataSync</h3><span class="tag ok">online</span></header><p>Moves files online, fast. An agent reads NFS, SMB, HDFS or object storage and writes to S3, EFS or FSx. Also between AWS storage services.</p><ul><li>Schedules, bandwidth limits</li><li>Keeps metadata and permissions</li><li>Encrypts and verifies data</li></ul><p class="kw">"migrate", "scheduled sync", "NFS to EFS"</p></div>
+    <div class="c"><header><h3>Snowball Edge</h3><span class="tag amb">offline</span></header><p>A rugged device shipped to you. Copy data locally, ship back, AWS imports into S3. Storage Optimized or Compute Optimized (edge processing, no connectivity).</p><p class="kw">"slow / no network", "petabytes", "weeks would be too long"</p></div>
+    <div class="c"><header><h3>Transfer Family</h3><span class="tag">SFTP</span></header><p>Managed SFTP, FTPS, FTP and AS2 servers that store into S3 or EFS. Partners keep their current tools.</p></div>
+  </div>
+  <p class="hint">Snowcone and Snowmobile are retired but may still appear in older practice questions. Snowmobile was for exabyte-scale moves.</p>
+
+  <h3>Storage Gateway: hybrid storage that stays in use</h3>
+  <p class="prose">A VM (or hardware appliance) on-prem that gives local apps normal storage protocols, backed by AWS. Unlike DataSync, it is for <b>ongoing</b> use, not a one-time move.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Type</th><th>Protocol on-prem</th><th>Stored in AWS as</th><th>Use case</th></tr></thead>
+    <tbody>
+      <tr><td>S3 File Gateway</td><td>NFS / SMB</td><td>S3 objects (one file = one object)</td><td>File shares backed by S3, local cache of recent files</td></tr>
+      <tr><td>Volume Gateway: cached</td><td>iSCSI</td><td>S3, recent data cached locally</td><td>Extend local block storage into AWS</td></tr>
+      <tr><td>Volume Gateway: stored</td><td>iSCSI</td><td>Full copy local, async backup to S3 (EBS snapshots)</td><td>Low-latency access to all data, backups in AWS</td></tr>
+      <tr><td>Tape Gateway</td><td>iSCSI virtual tape library</td><td>S3, archive to Glacier / Deep Archive</td><td>Replace physical tapes, keep backup software</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">FSx File Gateway (SMB cache for FSx for Windows) is closed to new customers but can appear in questions.</p>
+  <div class="remember"><b>One-time move</b> → DataSync (online) or Snowball (offline). <b>Keep using on-prem with cloud storage behind it</b> → Storage Gateway. <b>Ongoing big traffic, consistent latency</b> → Direct Connect.</div>
+</section>
+
+<!-- 8 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the storage">
+  <div class="eyebrow">Lesson 8 · game</div>
+  <h2>Pick the storage</h2>
+  <p class="lede">16 scenarios. Find the keyword, choose the class or service.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 9 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 9 · exam style</div>
+  <h2>SAA-style storage questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('stopb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('stopb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab','basics'));
+
+  /* 2 class finder */
+  const F={acc:['Every day','Unknown / changes','About monthly','A few times a year','Once a year or less'],spd:['Milliseconds','Minutes to hours','12–48 hours is fine'],rec:['Yes, easy to recreate','No, must survive']};
+  const fs={acc:'About monthly',spd:'Milliseconds',rec:'No, must survive'};
+  const NAMES={std:'S3 Standard',it:'S3 Intelligent-Tiering',sia:'S3 Standard-IA',oz:'S3 One Zone-IA',gir:'S3 Glacier Instant Retrieval',gfr:'S3 Glacier Flexible Retrieval',gda:'S3 Glacier Deep Archive'};
+  function finder(){
+    document.querySelectorAll('.seg[data-k]').forEach(s=>{const k=s.dataset.k;s.innerHTML=F[k].map(o=>`<button type="button" aria-pressed="${fs[k]===o}">${o}</button>`).join('')});
+    const a=fs.acc,s=fs.spd,r=fs.rec;let k,why;
+    const dimS=(a==='Every day'||a==='Unknown / changes'||a==='About monthly'),dimR=a!=='About monthly';
+    $('#tgSpeed').classList.toggle('dim',dimS);$('#tgRec').classList.toggle('dim',dimR);
+    if(a==='Every day'){k='std';why='Frequent access: no retrieval fees, no minimum duration. (Need single-digit ms next to your compute? S3 Express One Zone.)'}
+    else if(a==='Unknown / changes'){k='it';why='S3 moves each object between tiers by itself. No retrieval fees, no rules to write.'}
+    else if(a==='About monthly'){k=r.startsWith('Yes')?'oz':'sia';why=k==='oz'?'Infrequent, and losing one AZ is acceptable because you can recreate it. About 20% cheaper than Standard-IA.':'Infrequent but must stay in 3+ AZs and return in milliseconds.'}
+    else{
+      if(s==='Milliseconds'){k='gir';why='Rare access but still instant. Archive price, 90-day minimum.'}
+      else if(s==='Minutes to hours'||a==='A few times a year'){k='gfr';why='Cheap archive. Expedited 1–5 min, standard 3–5 h, bulk free in 5–12 h.'}
+      else{k='gda';why='Cheapest storage in AWS. Restore within 12 h (standard) or 48 h (bulk). 180-day minimum.'}
+    }
+    $('#finderSay').innerHTML=`<b>${NAMES[k]}</b><br>${why}`;
+    document.querySelectorAll('#classT tbody tr').forEach(tr=>tr.classList.toggle('hi',tr.dataset.o===k));
+  }
+  document.querySelectorAll('.seg[data-k]').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;fs[s.dataset.k]=b.textContent;finder()}));
+  finder();
+
+  /* 2 cost bars */
+  const PR=[['Standard',.023],['Intelligent-Tiering*',.023],['Standard-IA',.0125],['One Zone-IA',.01],['Glacier Instant',.004],['Glacier Flexible',.0036],['Glacier Deep Archive',.00099]];
+  function bars(){
+    const tb=+$('#tbR').value;$('#tbV').textContent=fmt(tb);
+    const max=PR[0][1];
+    $('#bars').innerHTML=PR.map(p=>{const v=p[1]*1024*tb;return `<div class="bar"><span>${p[0]}</span><div class="track"><div class="fill" style="width:${(p[1]/max*100).toFixed(2)}%"></div></div><span class="val">$${fmt(v,v<100?2:0)}</span></div>`}).join('')+`<p class="hint">* Intelligent-Tiering starts at the Standard price, then drops to IA and archive prices as objects go unused, plus a monitoring fee per object.</p>`;
+  }
+  $('#tbR').addEventListener('input',bars);bars();
+
+  /* 3 lifecycle */
+  const ST=[
+    {k:'ia',n:'Standard-IA',c:'--k-ia',d:30,min:30},
+    {k:'gl',n:'Glacier Flexible',c:'--k-gl',d:90,min:90},
+    {k:'da',n:'Deep Archive',c:'--k-da',d:180,min:180},
+    {k:'ex',n:'Expire (delete)',c:'',d:365}
+  ];
+  const lcs=store.get('lc',{ia:[1,30],gl:[1,90],da:[1,180],ex:[1,365]});
+  $('#lcin').innerHTML=ST.map(s=>`<label><span class="h"><input type="checkbox" id="lc-${s.k}-on" ${lcs[s.k][0]?'checked':''}>${s.c?`<span class="sw" style="background:var(${s.c})"></span>`:''}${s.n}</span><input type="number" id="lc-${s.k}" min="0" max="3650" value="${lcs[s.k][1]}" aria-label="${s.n} after days"><span class="hint">days after upload</span></label>`).join('');
+  function lifecycle(){
+    ST.forEach(s=>{lcs[s.k]=[$('#lc-'+s.k+'-on').checked?1:0,Math.max(0,Math.round(+$('#lc-'+s.k).value||0))]});
+    store.set('lc',lcs);
+    const msgs=[],seq=[{n:'Standard',c:'--k-std',d:0,min:0}];
+    ST.slice(0,3).forEach(s=>{if(lcs[s.k][0])seq.push({n:s.n,c:s.c,d:lcs[s.k][1],min:s.min,k:s.k})});
+    const ex=lcs.ex[0]?lcs.ex[1]:null;
+    let bad=false;
+    for(let i=1;i<seq.length;i++){
+      if(seq[i].k==='ia'&&seq[i].d<30){msgs.push(['err','A lifecycle rule can\'t move objects to Standard-IA before day 30.']);bad=true}
+      if(seq[i].d<=seq[i-1].d&&i>1){msgs.push(['err',`${seq[i].n} must come after ${seq[i-1].n}.`]);bad=true}
+    }
+    if(ex!==null&&ex<=seq[seq.length-1].d&&seq.length>1){msgs.push(['err','Expiration must come after the last transition.']);bad=true}
+    if(!bad){
+      for(let i=1;i<seq.length;i++){
+        const end=i+1<seq.length?seq[i+1].d:ex;
+        if(end!==null&&end-seq[i].d<seq[i].min)msgs.push(['warn',`Objects stay in ${seq[i].n} only ${end-seq[i].d} days. You are still billed for its ${seq[i].min}-day minimum.`]);
+      }
+      if(seq.length===1&&ex===null)msgs.push(['warn','No actions. Objects stay in Standard forever.']);
+      if(!msgs.length)msgs.push(['ok','Valid rule with no early-deletion charges.']);
+    }
+    $('#lcMsgs').innerHTML=msgs.map(m=>`<li class="${m[0]}">${m[1]}</li>`).join('');
+    const last=seq[seq.length-1].d,total=ex!==null?Math.max(ex,last)+Math.round(Math.max(ex,last)*.12+20):last+Math.max(180,seq[seq.length-1].min);
+    if(bad){$('#tl').innerHTML='';$('#ticks').innerHTML='';return}
+    let html='',ticks='<span style="left:0">day 0</span>';
+    seq.forEach((s,i)=>{const end=i+1<seq.length?seq[i+1].d:(ex!==null?ex:total);const w=(end-s.d)/total*100;html+=`<div style="width:${w}%;background:var(${s.c})" title="${s.n}: day ${s.d}–${end}">${s.n}</div>`;if(i>0)ticks+=`<span style="left:${s.d/total*100}%">${s.d}</span>`});
+    if(ex!==null){html+=`<div class="gone" style="width:${(total-ex)/total*100}%">deleted</div>`;ticks+=`<span style="left:${ex/total*100}%">${ex}</span>`}
+    $('#tl').innerHTML=html;$('#ticks').innerHTML=ticks;
+  }
+  $('#lcin').addEventListener('input',lifecycle);lifecycle();
+
+  /* 4 versioning */
+  let vs={mode:'Unversioned',left:false,list:[{id:'null',mk:false,ed:1}],ed:1};
+  const rid=()=>Math.random().toString(36).slice(2,10).replace(/^./,c=>c.toUpperCase());
+  let vlog='Bucket is unversioned. One object stored with version ID null.';
+  function vDraw(){
+    $('#vMode').innerHTML=['Unversioned','Enabled','Suspended'].map(m=>`<button type="button" aria-pressed="${vs.mode===m}" ${m==='Unversioned'&&vs.left?'disabled':''}>${m}</button>`).join('');
+    const top=vs.list[0];
+    $('#vBtns').innerHTML=`<button class="btn sm primary" data-a="up">Upload new version</button><button class="btn sm" data-a="del">Delete report.pdf</button><button class="btn sm" data-a="unm" ${top&&top.mk?'':'disabled'}>Remove delete marker</button><button class="btn sm" data-a="old" ${vs.mode!=='Unversioned'&&vs.list.length>1?'':'disabled'}>Permanently delete oldest version</button><button class="btn sm" data-a="reset">Reset</button>`;
+    $('#vLog').textContent=vlog;
+    const g=$('#vGet');
+    if(!top){g.className='get nf';g.textContent='GET report.pdf → 404 Not Found (nothing stored)'}
+    else if(top.mk){g.className='get nf';g.textContent='GET report.pdf → 404 Not Found (latest is a delete marker)'}
+    else{g.className='get okg';g.textContent=`GET report.pdf → 200 OK · edit ${top.ed} · version ${top.id}`}
+    $('#vStack').innerHTML=vs.list.length?vs.list.map((v,i)=>`<div class="ver${v.mk?' mk':''}${i===0?' top':''}"><span class="ico">${v.mk?'✕':'v'}</span><span>${v.mk?'Delete marker':'report.pdf · edit '+v.ed}<br><code>${v.id}</code></span>${i===0?'<span class="lt">latest</span>':''}</div>`).join(''):'<div class="empty">No versions. The object is gone for good.</div>';
+  }
+  $('#vMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const m=b.textContent;if(m===vs.mode)return;
+    if(m!=='Unversioned')vs.left=true;vs.mode=m;
+    vlog=m==='Enabled'?'Versioning enabled. Existing objects keep version ID null. New uploads get unique IDs.':'Versioning suspended. Old versions stay. New uploads and deletes use version ID null.';vDraw()});
+  $('#vBtns').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const a=b.dataset.a;
+    if(a==='reset'){vs={mode:'Unversioned',left:false,list:[{id:'null',mk:false,ed:1}],ed:1};vlog='Reset. Unversioned bucket with one object.';vDraw();return}
+    if(a==='up'){vs.ed++;
+      if(vs.mode==='Unversioned'){vs.list=[{id:'null',mk:false,ed:vs.ed}];vlog='Overwritten. Without versioning the old file is gone forever.'}
+      else if(vs.mode==='Enabled'){vs.list.unshift({id:rid(),mk:false,ed:vs.ed});vlog='New version added on top. The older versions are kept (and billed).'}
+      else{vs.list=vs.list.filter(v=>v.id!=='null');vs.list.unshift({id:'null',mk:false,ed:vs.ed});vlog='Suspended: the new upload replaces any existing "null" version. Versions with real IDs stay.'}}
+    if(a==='del'){
+      if(vs.mode==='Unversioned'){vs.list=[];vlog='Deleted permanently. No way back.'}
+      else if(vs.mode==='Enabled'){vs.list.unshift({id:rid(),mk:true});vlog='No data deleted. S3 added a delete marker, so GET now returns 404. Old versions are still there.'}
+      else{vs.list=vs.list.filter(v=>v.id!=='null');vs.list.unshift({id:'null',mk:true});vlog='Suspended: a delete marker with ID null replaces any null version.'}}
+    if(a==='unm'){vs.list.shift();vlog='Delete marker removed. The previous version is the latest again: the object is "undeleted".'}
+    if(a==='old'){const v=vs.list.pop();vlog=`Deleted version ${v.id} by its version ID. That one is gone for good. (MFA Delete would require MFA here.)`}
+    vDraw()});
+  vDraw();
+
+  /* 7 transfer calc */
+  const SZ=[1,5,10,20,50,100,200,500,1000,5000];
+  const BW=[['100 Mbps',100],['1 Gbps',1000],['10 Gbps',10000]];let bw=1;
+  function mv(){
+    const tb=SZ[+$('#mvR').value];$('#mvTb').textContent=fmt(tb);
+    $('#mvBw').innerHTML=BW.map((b,i)=>`<button type="button" aria-pressed="${i===bw}">${b[0]}</button>`).join('');
+    const sec=tb*8e12/(BW[bw][1]*1e6*0.8),days=sec/86400;
+    $('#mvDays').textContent=days<1?fmt(sec/3600,1)+' hours':fmt(days,days<10?1:0)+' days';
+    let s;
+    if(days<1)s='<b>Network.</b> Use DataSync over the internet or Direct Connect.';
+    else if(days<=7)s='<b>Network is still fine.</b> DataSync can schedule and throttle the copy. A Snowball would not be faster.';
+    else s='<b>Snowball.</b> The network would take longer than about a week. Order several devices in parallel for very large sets.';
+    $('#mvSay').innerHTML=s+(days>7&&BW[bw][1]<10000?' Exam pattern: "slow or shared link, many TB" = Snowball.':'');
+  }
+  $('#mvR').addEventListener('input',mv);
+  $('#mvBw').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;bw=[...b.parentNode.children].indexOf(b);mv()});
+  mv();
+
+  /* 8 game */
+  const SVC=['S3 Standard','Intelligent-Tiering','Standard-IA','One Zone-IA','Glacier Instant Retrieval','Glacier Flexible Retrieval','Glacier Deep Archive','EBS io2','Instance store','EFS','FSx for Windows','FSx for Lustre','S3 File Gateway','Tape Gateway','DataSync','Snowball Edge'];
+  const G=[
+    ['Medical images read a few times a year, must open in milliseconds when a doctor asks.','Glacier Instant Retrieval','Rare access + ms = Glacier IR.'],
+    ['Data lake with unpredictable access patterns. Minimise cost with no lifecycle management.','Intelligent-Tiering','Unknown pattern, automatic tiering.'],
+    ['Thumbnails that can be regenerated from originals, read rarely, lowest cost with ms access.','One Zone-IA','Recreatable + infrequent = One Zone-IA.'],
+    ['Financial records kept 10 years for regulators, retrieval within 48 hours is fine.','Glacier Deep Archive','Cheapest, 12–48 h restore.'],
+    ['Backups read about once a month, must survive the loss of an AZ.','Standard-IA','Monthly + multi-AZ = Standard-IA.'],
+    ['Frequently read website images, the default choice.','S3 Standard','Frequent access, no retrieval fee.'],
+    ['An Oracle database on EC2 needs 150,000 sustained IOPS.','EBS io2','Provisioned IOPS SSD (Block Express).'],
+    ['A temporary cache on EC2 that needs the highest IOPS; losing it on stop is fine.','Instance store','Ephemeral, fastest.'],
+    ['Hundreds of Linux containers across 3 AZs share the same files.','EFS','Shared NFS, Linux, multi-AZ.'],
+    ['Windows apps need SMB file shares joined to Active Directory.','FSx for Windows','SMB + AD.'],
+    ['An HPC job must read a 50 TB dataset from S3 with sub-millisecond latency.','FSx for Lustre','HPC, linked to S3.'],
+    ['On-prem apps write files over NFS; files must land as S3 objects, with a local cache.','S3 File Gateway','NFS/SMB in front of S3.'],
+    ['Replace physical backup tapes without changing the backup software.','Tape Gateway','Virtual tape library.'],
+    ['Migrate 30 TB from an on-prem NAS to EFS over a 1 Gbps link, with verification.','DataSync','Online migration with integrity checks.'],
+    ['Move 2 PB from a data center with a 200 Mbps shared link within one month.','Snowball Edge','Network would take far longer than a month.'],
+    ['Archive data read once or twice a year; standard retrieval in hours is acceptable.','Glacier Flexible Retrieval','Hours retrieval, cheap.']
+  ];
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=13?'Strong. You can pick the right storage.':'Review Lessons 2, 6 and 7, then play again.'}</p><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* 9 quiz */
+  const Q=[
+    {q:'Logs are read often for 30 days, rarely after that, and must be kept 7 years. After year 1, retrieval within 12 hours is fine. What is the MOST cost-effective plan?',o:['Keep everything in S3 Standard','Lifecycle: Standard → Standard-IA at 30 days → Glacier Deep Archive at 365 days → expire at 7 years','Lifecycle: Standard → One Zone-IA at 7 days → delete at 365 days','Intelligent-Tiering with no expiration'],c:1,e:'Match each phase to a class, then expire. IA needs at least 30 days; Deep Archive fits 12-hour restores.'},
+    {q:'A data lake has unpredictable access patterns. The team wants to cut storage cost with no operational overhead.',o:['S3 Standard-IA','S3 Intelligent-Tiering','Lifecycle rules to Glacier after 30 days','S3 One Zone-IA'],c:1,e:'Unknown or changing access + no management = Intelligent-Tiering.'},
+    {q:'Thumbnails can be regenerated from originals. They are read rarely but must load instantly. Cheapest option?',o:['S3 Standard','S3 Standard-IA','S3 One Zone-IA','S3 Glacier Deep Archive'],c:2,e:'Recreatable data can live in one AZ. Still millisecond access.'},
+    {q:'Archived images are needed a few times a year and must be available in milliseconds.',o:['Glacier Flexible Retrieval with expedited retrieval','Glacier Instant Retrieval','Glacier Deep Archive','Standard'],c:1,e:'Expedited is still minutes. Glacier IR is milliseconds at archive prices.'},
+    {q:'An application uploads 20 GB video files to S3 and uploads fail over unreliable networks.',o:['Use a single PUT with a longer timeout','Use multipart upload','Enable versioning','Use S3 Select'],c:1,e:'Single PUT max is 5 GB. Multipart uploads parts in parallel and retries only failed parts.'},
+    {q:'Users worldwide upload large files to one bucket in eu-west-1 and complain about slow uploads.',o:['S3 Transfer Acceleration','CloudFront with caching','Cross-Region Replication','A larger bucket'],c:0,e:'Uploads go to the nearest edge, then over the AWS backbone.'},
+    {q:'A company must protect S3 objects from accidental overwrite and deletion and be able to restore earlier versions.',o:['Enable S3 Versioning','Enable Transfer Acceleration','Use One Zone-IA','Enable static website hosting'],c:0,e:'Versioning keeps every version; deletes create a delete marker. Add MFA Delete for extra protection.'},
+    {q:'A company enabled Cross-Region Replication, but objects uploaded before the rule are missing in the destination.',o:['CRR copies existing objects after 24 hours','Use S3 Batch Replication for existing objects','Enable Transfer Acceleration','Turn on Requester Pays'],c:1,e:'Replication only applies to new objects. Batch Replication handles existing ones.'},
+    {q:'What is required on both buckets before configuring S3 replication?',o:['Same storage class','Versioning enabled','SSE-C encryption','Same AWS account'],c:1,e:'Versioning on source and destination. Accounts and classes can differ.'},
+    {q:'A thumbnail must be generated every time an image is uploaded to S3, with the least infrastructure.',o:['Poll the bucket from EC2 every minute','S3 Event Notification that invokes a Lambda function','S3 Inventory report','CloudTrail Insights'],c:1,e:'Event-driven, serverless.'},
+    {q:'A static website on S3 needs HTTPS on a custom domain.',o:['Enable HTTPS in S3 website hosting settings','Put CloudFront in front, with an ACM certificate (us-east-1) and OAC','Use an ALB in front of S3','Use S3 Transfer Acceleration'],c:1,e:'S3 website endpoints are HTTP only. CloudFront adds HTTPS.'},
+    {q:'An app gets 503 Slow Down errors when reading many objects under one prefix.',o:['Switch to One Zone-IA','Spread objects across multiple prefixes','Enable versioning','Use a bigger EC2 instance'],c:1,e:'Request rate limits are per prefix. More prefixes = more requests per second.'},
+    {q:'Many Linux EC2 instances in multiple AZs must read and write the same files concurrently.',o:['EBS with Multi-Attach','Amazon EFS','Instance store','S3 Glacier'],c:1,e:'Shared NFS across AZs. Multi-Attach is one AZ only and needs a cluster file system.'},
+    {q:'A Windows application needs shared storage using SMB with Active Directory permissions.',o:['Amazon EFS','FSx for Windows File Server','FSx for Lustre','EBS gp3'],c:1,e:'SMB + AD = FSx for Windows. EFS is Linux NFS.'},
+    {q:'A genomics HPC workload must process data stored in S3 with sub-millisecond latency, and write results back to S3.',o:['FSx for Lustre linked to the S3 bucket','EFS Max I/O','S3 Express One Zone only','Storage Gateway'],c:0,e:'Lustre is built for HPC and integrates directly with S3.'},
+    {q:'On-prem servers need NFS access to files that are stored as objects in S3, with low-latency access to recent files.',o:['Volume Gateway stored mode','S3 File Gateway','Tape Gateway','DataSync'],c:1,e:'File Gateway: NFS/SMB to S3 with a local cache.'},
+    {q:'A company must migrate 500 TB to S3 within 3 weeks. Its internet link is 100 Mbps.',o:['DataSync over the internet','Snowball Edge devices','S3 Transfer Acceleration','Site-to-Site VPN'],c:1,e:'500 TB at 100 Mbps takes over a year. Ship devices.'},
+    {q:'A company needs a scheduled, verified transfer of files from on-prem NFS to Amazon EFS.',o:['AWS DataSync','Snowball Edge','S3 File Gateway','AWS Transfer Family'],c:0,e:'DataSync: online, scheduled, encryption and integrity checks, writes to EFS.'},
+    {q:'A temporary processing job needs the highest possible disk IOPS on EC2. Data loss on stop is acceptable.',o:['EBS gp3','EBS io2','Instance store','EFS'],c:2,e:'Physically attached, fastest, ephemeral.'},
+    {q:'A company shares a large dataset in S3 with research partners and wants the partners to pay for downloads.',o:['Pre-signed URLs','Requester Pays bucket','CloudFront signed cookies','S3 Object Lock'],c:1,e:'Requester Pays moves request and transfer costs to the requester.'}
+  ];
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on storage.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s=Q[qi];
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  const C=[
+    ['Frequent access, default','S3 Standard'],
+    ['Unknown / changing access, no management','Intelligent-Tiering'],
+    ['Monthly access, multi-AZ, ms','Standard-IA'],
+    ['Infrequent, recreatable','One Zone-IA'],
+    ['Rare access but milliseconds','Glacier Instant Retrieval'],
+    ['Archive, minutes to hours','Glacier Flexible Retrieval'],
+    ['Cheapest, 12–48 h, years of retention','Glacier Deep Archive'],
+    ['Single-digit ms, next to compute','S3 Express One Zone'],
+    ['Move or delete data by age','Lifecycle rules'],
+    ['When to move to IA?','Storage Class Analysis'],
+    ['Files > 5 GB / unreliable uploads','Multipart upload'],
+    ['Slow long-distance uploads','Transfer Acceleration'],
+    ['503 Slow Down','Spread across prefixes'],
+    ['Recover deleted / overwritten objects','Versioning (+ MFA Delete)'],
+    ['Copy to another Region','Cross-Region Replication'],
+    ['Replicate existing objects','S3 Batch Replication'],
+    ['Replication within 15 minutes, SLA','Replication Time Control'],
+    ['One global endpoint for many buckets','Multi-Region Access Points'],
+    ['React to uploads','Event notifications → Lambda / SQS / SNS / EventBridge'],
+    ['HTTPS static site','CloudFront + ACM + OAC'],
+    ['Partners pay for downloads','Requester Pays'],
+    ['Act on billions of objects','S3 Batch Operations'],
+    ['SQL on files in S3','Athena'],
+    ['Boot / general disk','EBS gp3'],
+    ['Highest sustained IOPS on EBS','io2 Block Express'],
+    ['Big sequential throughput, cheap','st1 (not boot)'],
+    ['Fastest, temporary disk','Instance store'],
+    ['Shared Linux files, multi-AZ','EFS'],
+    ['Windows SMB + AD','FSx for Windows File Server'],
+    ['HPC / ML on S3 data','FSx for Lustre'],
+    ['NFS + SMB + iSCSI, NetApp','FSx for NetApp ONTAP'],
+    ['On-prem NFS/SMB backed by S3','S3 File Gateway'],
+    ['Replace tapes','Tape Gateway'],
+    ['Online migration, scheduled, verified','DataSync'],
+    ['Too much data for the network','Snowball Edge'],
+    ['SFTP into S3','Transfer Family'],
+    ['Central backups across services','AWS Backup (+ Vault Lock)']
+  ];
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Serverless Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the other SAA playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600} td.m{color:var(--amber);font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+.work{font-family:var(--f-mono);font-size:.84rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;gap:2px;overflow-x:auto}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* compute picker */
+.pick{display:grid;gap:8px}
+.answer{border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft);padding:14px 16px;display:grid;gap:6px}
+.answer b{font-family:var(--f-display);font-size:1.3rem}
+.answer span{font-size:.9rem}
+/* concurrency gauge */
+.gauge{height:20px;border-radius:6px;background:var(--bg);border:1px solid var(--line);overflow:hidden;position:relative}
+.gauge i{display:block;height:100%;background:var(--allow);transition:width .25s}
+.gauge.warn i{background:var(--amber)}
+.gauge.over i{background:var(--deny)}
+.gauge .mark{position:absolute;top:-2px;bottom:-2px;border-left:2px dashed var(--ink)}
+/* role sorter */
+.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.role{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:12px;display:grid;gap:6px;align-content:start}
+.role b{font-family:var(--f-display)}
+.role ul{margin:0;padding-left:18px;font-size:.86rem;display:grid;gap:3px;min-height:20px}
+.role li.new{color:var(--accent);font-weight:600}
+@media (max-width:560px){.roles{grid-template-columns:1fr}}
+
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Serverless &amp; Containers <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Module 03 · Lambda, ECS, Fargate, EKS, ECR, App Runner, Beanstalk, Batch</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+<!-- 1 CHOOSE -->
+<section class="lesson" data-id="choose" data-name="Choose compute">
+  <div class="eyebrow">Lesson 1 · 8 min</div>
+  <h2>Pick the compute from four facts</h2>
+  <p class="lede">How long does it run, does it need Kubernetes, does anyone need the OS, and what shape is the work? Those four answers decide almost every compute question.</p>
+
+  <div class="box pick">
+    <div class="tg"><span class="t">How long does one run / request take?</span><div class="seg" id="kLen"></div></div>
+    <div class="tg"><span class="t">Kubernetes required?</span><div class="seg" id="kK8s"></div></div>
+    <div class="tg"><span class="t">Who manages servers?</span><div class="seg" id="kOs"></div></div>
+    <div class="tg"><span class="t">Workload shape</span><div class="seg" id="kShape"></div></div>
+    <div class="answer" id="kAns"></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Service</th><th>You manage</th><th>Keyword</th></tr></thead>
+    <tbody>
+      <tr><td>EC2</td><td>OS, patching, scaling</td><td>"full control", "custom OS", GPU, licensing</td></tr>
+      <tr><td>ECS on EC2</td><td>Container hosts (cluster capacity)</td><td>containers + EC2 pricing options / GPUs</td></tr>
+      <tr><td>ECS on Fargate</td><td>Only task CPU/memory</td><td>"containers without managing servers"</td></tr>
+      <tr><td>EKS</td><td>Kubernetes workloads (nodes unless Fargate)</td><td>"Kubernetes", "already uses kubectl / Helm"</td></tr>
+      <tr><td>Lambda</td><td>Only code</td><td>"event-driven", "under 15 minutes", "least operational overhead"</td></tr>
+      <tr><td>App Runner</td><td>Only code or image</td><td>"simplest way to run a web app / API from a container or repo"</td></tr>
+      <tr><td>Elastic Beanstalk</td><td>App code; AWS runs EC2, ASG, ELB for you</td><td>"upload code, keep EC2 control", deployment policies</td></tr>
+      <tr><td>AWS Batch</td><td>Job definitions</td><td>"batch jobs", "hours long", Spot</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 2 LAMBDA -->
+<section class="lesson" data-id="lambda" data-name="Lambda limits">
+  <div class="eyebrow">Lesson 2 · 14 min · heavily tested</div>
+  <h2>Lambda: the numbers the exam uses</h2>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Limit</th><th>Value</th><th>Exam consequence</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td>Max timeout</td><td class="num">15 minutes</td><td>Longer jobs → Fargate, Batch, or Step Functions splitting the work</td></tr>
+      <tr><td>Memory</td><td class="num">128 MB – 10,240 MB</td><td>CPU scales with memory; more memory can make it faster <i>and</i> cheaper</td></tr>
+      <tr><td>/tmp storage</td><td class="num">512 MB – 10,240 MB</td><td>Big files → S3 or EFS mount</td></tr>
+      <tr><td>Package size</td><td class="num">50 MB zipped upload, 250 MB unzipped</td><td>Bigger → container image (up to 10 GB) or layers</td></tr>
+      <tr><td>Concurrency</td><td class="num">1,000 per Region (default, raisable)</td><td>Shared by all functions → reserved concurrency protects critical ones</td></tr>
+      <tr><td>Sync request/response payload</td><td class="num">6 MB</td><td>Large data → pass an S3 key, not the data</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><header><h3>Reserved concurrency</h3><span class="tag">cap + guarantee</span></header><p>Sets aside N for one function <b>and</b> caps it at N. Protects a database from being overwhelmed and protects other functions from starvation.</p></div>
+    <div class="c"><header><h3>Provisioned concurrency</h3><span class="tag ok">no cold starts</span></header><p>Keeps N environments initialized. "Consistent low latency", "cold starts are a problem" → provisioned concurrency (or SnapStart for Java, Python, .NET).</p></div>
+    <div class="c"><header><h3>Configuration</h3><span class="tag">ops</span></header><p>Environment variables (encrypt with KMS), layers for shared libraries, versions and aliases for safe rollouts (weighted alias = canary).</p></div>
+  </div>
+
+  <h3>Concurrency calculator</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="lRps"><span>Requests per second <b id="lRpsV"></b></span><input type="range" id="lRps" min="10" max="5000" step="10" value="400"></label>
+      <label for="lDur"><span>Average duration <b id="lDurV"></b></span><input type="range" id="lDur" min="0" max="8" value="3"></label>
+      <label for="lRes"><span>Reserved for other functions <b id="lResV"></b></span><input type="range" id="lRes" min="0" max="900" step="50" value="100"></label>
+    </div>
+    <div class="stats"><div class="stat"><div class="v" id="lConc"></div><div class="k">Concurrent executions needed</div></div><div class="stat"><div class="v" id="lAvail"></div><div class="k">Available to this function</div></div></div>
+    <div class="gauge" id="lGauge"><i></i><span class="mark" id="lMark"></span></div>
+    <p class="say" id="lSay"></p>
+    <p class="hint">Concurrency = requests per second × duration in seconds. The default Regional limit is 1,000 shared by every function in the account.</p>
+  </div>
+</section>
+
+<!-- 3 INVOKE -->
+<section class="lesson" data-id="invoke" data-name="Invocation & VPC">
+  <div class="eyebrow">Lesson 3 · 12 min</div>
+  <h2>How Lambda is invoked, and what happens on failure</h2>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Model</th><th>Sources</th><th>On error</th></tr></thead>
+    <tbody>
+      <tr><td>Synchronous</td><td>API Gateway, ALB, function URL, SDK invoke, Cognito</td><td>Error returns to the caller; caller retries</td></tr>
+      <tr><td>Asynchronous</td><td>S3 events, SNS, EventBridge, CloudWatch Logs</td><td>Lambda retries <b>2 more times</b>, then sends to a <b>DLQ</b> or <b>on-failure destination</b></td></tr>
+      <tr><td>Event source mapping (polling)</td><td>SQS, Kinesis, DynamoDB Streams, MSK</td><td>SQS: message returns after visibility timeout, then DLQ on the queue. Streams: retries block the shard until success or expiry</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><header><h3>SQS + Lambda</h3><span class="tag amb">tuning</span></header><ul><li>Queue visibility timeout ≥ <b>6× the function timeout</b></li><li>Report partial batch failures so good messages aren't retried</li><li>Redrive policy on the queue → DLQ</li><li>FIFO queue keeps order per message group</li></ul></div>
+    <div class="c"><header><h3>Lambda in a VPC</h3><span class="tag warn">trap</span></header><ul><li>Attach to private subnets to reach RDS, ElastiCache</li><li>It then has <b>no internet</b> unless the subnets route to a NAT gateway</li><li>Reach S3/DynamoDB through VPC endpoints</li><li>Many short connections to RDS → <b>RDS Proxy</b></li></ul></div>
+    <div class="c"><header><h3>At the edge</h3><span class="tag">CloudFront</span></header><p><b>CloudFront Functions</b>: tiny JavaScript, viewer request/response, header rewrites, URL redirects. <b>Lambda@Edge</b>: Node/Python, all four triggers, network calls, longer runtime.</p></div>
+    <div class="c"><header><h3>Orchestration</h3><span class="tag">beyond 15 min</span></header><p><b>Step Functions</b> chain Lambdas with retries, branches, waits up to a year, and human approval. Distributed Map fans out over millions of S3 objects.</p></div>
+  </div>
+</section>
+
+<!-- 4 ECS -->
+<section class="lesson" data-id="ecs" data-name="ECS, Fargate, ECR">
+  <div class="eyebrow">Lesson 4 · 14 min · heavily tested</div>
+  <h2>Containers on ECS</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>Task definition</h3><span class="tag">blueprint</span></header><p>Image, CPU/memory, ports, environment, secrets, log config, IAM roles, network mode. A <b>task</b> is a running copy.</p></div>
+    <div class="c"><header><h3>Service</h3><span class="tag">keeps N running</span></header><p>Maintains the desired count, replaces failed tasks, registers them with an ALB/NLB target group, scales with Application Auto Scaling (CPU, memory, ALB requests per target).</p></div>
+    <div class="c"><header><h3>Launch types</h3><span class="tag">who runs hosts</span></header><ul><li><b>EC2</b>: you run the container instances (ASG via capacity provider)</li><li><b>Fargate</b>: no hosts; pay per task vCPU/GB</li><li><b>Fargate Spot</b>: up to ~70% off, interruptible</li></ul></div>
+    <div class="c"><header><h3>Networking</h3><span class="tag">awsvpc</span></header><p>In <code>awsvpc</code> mode (required on Fargate) every task gets its own ENI and private IP, so <b>security groups apply per task</b>.</p></div>
+    <div class="c"><header><h3>Storage</h3><span class="tag">state</span></header><p>Containers are ephemeral. Shared persistent files → mount <b>EFS</b> (works with Fargate). Put state in RDS/DynamoDB/S3.</p></div>
+    <div class="c"><header><h3>ECR</h3><span class="tag ok">registry</span></header><p>Private image registry: image scanning, lifecycle policies to delete old images, immutable tags, cross-Region and cross-account replication.</p></div>
+  </div>
+
+  <h3>Task role or task execution role?</h3>
+  <p>The execution role is used by the <b>ECS agent</b> to start the task. The task role is used by <b>your code</b> inside the container. Click each permission to sort it.</p>
+  <div class="chips" id="rPerm"></div>
+  <div class="roles">
+    <div class="role"><b>Task execution role</b><ul id="rExec"></ul></div>
+    <div class="role"><b>Task role</b><ul id="rTask"></ul></div>
+  </div>
+  <p class="say" id="rSay">Pick a permission.</p>
+</section>
+
+<!-- 5 MORE -->
+<section class="lesson" data-id="more" data-name="EKS & PaaS">
+  <div class="eyebrow">Lesson 5 · 10 min</div>
+  <h2>EKS, App Runner, Beanstalk, Batch</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>EKS</h3><span class="tag">Kubernetes</span></header><ul><li>AWS runs the control plane</li><li>Workers: managed node groups, self-managed nodes, or <b>Fargate profiles</b> (no nodes)</li><li>Pods get AWS permissions via IAM roles for service accounts / Pod Identity</li><li>Choose it when the team already uses Kubernetes or needs portability</li></ul></div>
+    <div class="c"><header><h3>App Runner</h3><span class="tag ok">simplest web app</span></header><p>Point it at a container image or source repo; get an HTTPS URL with automatic scaling and load balancing. No cluster, no ALB to configure.</p></div>
+    <div class="c"><header><h3>Elastic Beanstalk</h3><span class="tag">PaaS on EC2</span></header><p>Upload code; it creates EC2, ASG, ELB and monitoring. Deployment policies: all at once, rolling, rolling with additional batch, <b>immutable</b>, traffic splitting; <b>blue/green</b> by swapping environment URLs.</p></div>
+    <div class="c"><header><h3>AWS Batch</h3><span class="tag">jobs</span></header><p>Queues and runs batch jobs on EC2, Spot or Fargate; sizes compute automatically. No 15-minute limit.</p></div>
+    <div class="c"><header><h3>Step Functions</h3><span class="tag">workflow</span></header><p>Standard workflows (long, exactly-once) vs Express (high-volume, short). Integrates with 200+ services directly.</p></div>
+    <div class="c"><header><h3>Lightsail</h3><span class="tag">simple VPS</span></header><p>Fixed monthly price bundles for simple sites and small apps; little AWS knowledge needed.</p></div>
+  </div>
+  <div class="remember"><b>Least operational overhead ladder:</b> Lambda / App Runner / Fargate &lt; Beanstalk &lt; ECS or EKS on EC2 &lt; plain EC2. If the question says "Kubernetes", stay on EKS even if Fargate seems simpler.</div>
+</section>
+
+<!-- 6 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the compute">
+  <div class="eyebrow">Lesson 6 · game</div>
+  <h2>Pick the compute service</h2>
+  <p class="lede">16 scenarios. Use the four facts from lesson 1.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 7 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 7 · exam style</div>
+  <h2>SAA-style serverless & container questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('srvpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('srvpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+  const onSeg=(el,fn)=>el.addEventListener('click',e=>{const b=e.target.closest('button');if(b)fn(b.textContent)});
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab',lessons[0].dataset.id));
+
+  /* ---------- playbook widgets + data ---------- */
+  /* 1 compute picker */
+  const K={len:'Under 15 minutes',k8s:'No',os:'Nobody (serverless)',shape:'Event-driven / spiky'};
+  function pick(){
+    seg($('#kLen'),['Under 15 minutes','Longer / always on'],K.len);
+    seg($('#kK8s'),['No','Yes'],K.k8s);
+    seg($('#kOs'),['Nobody (serverless)','We need OS access / special hardware'],K.os);
+    seg($('#kShape'),['Event-driven / spiky','Web service / API','Batch jobs'],K.shape);
+    const short=K.len.startsWith('Under'),k8s=K.k8s==='Yes',sl=K.os.startsWith('Nobody');let a,w;
+    if(k8s){a=sl?'EKS with Fargate profiles':'EKS with managed node groups';w=sl?'Kubernetes is required, and Fargate removes the nodes.':'Kubernetes on EC2 nodes you can tune (GPUs, custom AMIs).'}
+    else if(!sl){
+      if(K.shape==='Batch jobs'){a='AWS Batch on EC2 / Spot';w='Batch picks instance types for you; Spot keeps it cheap.'}
+      else{a='EC2 Auto Scaling group (or ECS on EC2)';w='OS access, custom software or special hardware means you run the instances.'}
+    }else if(K.shape==='Batch jobs'){a=short?'Lambda (or Step Functions Map)':'AWS Batch on Fargate';w=short?'Short jobs fit Lambda; fan out with Step Functions.':'Long jobs without servers: Batch schedules containers on Fargate.'}
+    else if(K.shape==='Web service / API'){a=short?'API Gateway + Lambda':'ECS on Fargate behind an ALB (or App Runner)';w=short?'Request/response under 15 min, pay per request, no servers.':'Always-on containers without hosts. App Runner is the simplest if it is a plain web app.'}
+    else{a=short?'Lambda':'ECS Fargate task triggered by EventBridge (or Step Functions)';w=short?'Event-driven, short, scales to zero.':'Over 15 minutes rules out Lambda; run a container task per event.'}
+    $('#kAns').innerHTML=`<b>${a}</b><span>${w}</span>`;
+  }
+  onSeg($('#kLen'),t=>{K.len=t;pick()});onSeg($('#kK8s'),t=>{K.k8s=t;pick()});onSeg($('#kOs'),t=>{K.os=t;pick()});onSeg($('#kShape'),t=>{K.shape=t;pick()});pick();
+
+  /* 2 concurrency */
+  const DUR=[50,100,250,500,1000,2000,5000,10000,30000];
+  function conc(){
+    const rps=+$('#lRps').value,ms=DUR[+$('#lDur').value],res=+$('#lRes').value;
+    $('#lRpsV').textContent=fmt(rps);$('#lDurV').textContent=ms>=1000?(ms/1000)+' s':ms+' ms';$('#lResV').textContent=res;
+    const need=Math.ceil(rps*ms/1000),avail=1000-res;
+    $('#lConc').textContent=fmt(need);$('#lAvail').textContent=fmt(avail);
+    const g=$('#lGauge');g.className='gauge'+(need>avail?' over':need>avail*0.8?' warn':'');
+    g.querySelector('i').style.width=Math.min(100,need/1000*100)+'%';$('#lMark').style.left=(avail/1000*100)+'%';
+    let s;
+    if(need>avail)s=`<b>Throttled.</b> ${fmt(need)} needed but only ${fmt(avail)} available. Sync callers get 429 errors; async events are retried. Ask for a quota increase, cut duration, or buffer with SQS.`;
+    else if(need>avail*0.8)s=`<b>Close to the limit.</b> A traffic spike will throttle. Raise the quota or add reserved concurrency for this function.`;
+    else s=`<b>Fine.</b> ${fmt(need)} concurrent executions fit. If cold starts hurt latency, add provisioned concurrency.`;
+    if(ms>=30000)s+=' 30 s per request is long: for an API, check the integration timeout of the caller too.';
+    $('#lSay').innerHTML=s;
+  }
+  ['#lRps','#lDur','#lRes'].forEach(id=>$(id).addEventListener('input',conc));conc();
+
+  /* 4 role sorter */
+  const PERM=[
+    ['Pull the image from ECR','e','The agent pulls the image before your code exists.'],
+    ['Send container logs to CloudWatch (awslogs)','e','The agent ships logs.'],
+    ['Inject a Secrets Manager secret as an env variable','e','Secrets referenced in the task definition are fetched by the agent at start.'],
+    ['App reads objects from S3','t','Your code calls S3 → task role.'],
+    ['App writes items to DynamoDB','t','Your code calls DynamoDB → task role.'],
+    ['App publishes to an SNS topic','t','Runtime API call from your code.'],
+    ['App fetches a secret at runtime with the SDK','t','If the code calls Secrets Manager itself, it is the task role.']
+  ];
+  const placed={e:[],t:[]};let last=-1;
+  $('#rPerm').innerHTML=PERM.map((p,i)=>`<button type="button" class="chip" data-i="${i}">${p[0]}</button>`).join('');
+  function roles(){
+    $('#rExec').innerHTML=placed.e.map(i=>`<li class="${i===last?'new':''}">${PERM[i][0]}</li>`).join('');
+    $('#rTask').innerHTML=placed.t.map(i=>`<li class="${i===last?'new':''}">${PERM[i][0]}</li>`).join('');
+  }
+  $('#rPerm').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const i=+b.dataset.i;
+    if(!placed.e.includes(i)&&!placed.t.includes(i))placed[PERM[i][1]].push(i);last=i;b.setAttribute('aria-pressed','true');
+    $('#rSay').innerHTML='<b>'+(PERM[i][1]==='e'?'Task execution role.':'Task role.')+'</b> '+PERM[i][2];roles()});
+  roles();
+
+  /* game data */
+  const SVC=['Lambda','Lambda + provisioned concurrency','Lambda reserved concurrency','Step Functions','ECS on Fargate','Fargate Spot','ECS on EC2','EKS','EKS on Fargate','App Runner','Elastic Beanstalk','AWS Batch','EC2','RDS Proxy','CloudFront Functions','Lambda@Edge'];
+  const G=[
+    ['Resize each image uploaded to S3; takes 3 seconds.','Lambda','Event-driven, short.'],
+    ['An API must respond in under 100 ms consistently; cold starts cause spikes.','Lambda + provisioned concurrency','Pre-initialized environments.'],
+    ['A function writing to a small database must never run more than 50 copies at once.','Lambda reserved concurrency','Reserved concurrency caps the function.'],
+    ['Order workflow with retries, a 2-day wait for payment, and parallel steps.','Step Functions','Orchestration beyond 15 minutes.'],
+    ['Run containerized microservices without managing servers or clusters of instances.','ECS on Fargate','Serverless containers.'],
+    ['Cheap, interruptible containerized test jobs.','Fargate Spot','Up to ~70% off, can be interrupted.'],
+    ['Containers need GPU instances and specific instance types.','ECS on EC2','You choose the container hosts.'],
+    ['The company already runs Kubernetes on-prem and wants the same tooling on AWS.','EKS','Managed Kubernetes.'],
+    ['Kubernetes workloads, but nobody wants to manage worker nodes.','EKS on Fargate','Fargate profiles remove nodes.'],
+    ['A developer wants to deploy a containerized web app from a repo with the least setup; HTTPS and scaling included.','App Runner','Simplest managed web app service.'],
+    ['Upload a Java web app and let AWS create EC2, ASG and ELB, keeping access to the instances.','Elastic Beanstalk','PaaS on EC2.'],
+    ['Thousands of genomics jobs that run 3–6 hours each, cheaply.','AWS Batch','Batch on Spot, no time limit.'],
+    ['Software needs a custom kernel module and root access.','EC2','Full OS control.'],
+    ['Lambda functions exhaust RDS connections during spikes.','RDS Proxy','Pools and shares connections.'],
+    ['Add security headers to every CloudFront response, at very low cost and latency.','CloudFront Functions','Lightweight viewer-response code.'],
+    ['Call an external auth service from the CloudFront origin-request stage.','Lambda@Edge','Network calls and origin triggers.']
+  ];
+
+  /* quiz */
+  const Q=[
+    {q:'A data processing task takes about 40 minutes and runs whenever a file lands in S3. The company wants no servers to manage.',o:['Lambda with maximum timeout','ECS task on Fargate started by an EventBridge rule','EC2 instance always running','Lambda@Edge'],c:1,e:'Lambda stops at 15 minutes; Fargate runs long tasks without servers.'},
+    {q:'A Lambda function behind API Gateway shows high latency on the first requests after idle periods.',o:['Increase the timeout','Configure provisioned concurrency','Reserve concurrency','Move to a larger Region'],c:1,e:'Provisioned concurrency removes cold starts.'},
+    {q:'A critical Lambda function is throttled when other functions in the account spike.',o:['Configure reserved concurrency for the critical function','Increase its memory','Use provisioned concurrency on all functions','Use a DLQ'],c:0,e:'Reserved concurrency guarantees (and caps) capacity.'},
+    {q:'A Lambda function in a private subnet must call an external HTTPS API. It times out.',o:['Add a NAT gateway route for the private subnets','Attach an Elastic IP to the function','Add an internet gateway route to the private subnets','Increase memory'],c:0,e:'VPC-attached Lambda needs NAT for internet access.'},
+    {q:'Many Lambda invocations open new connections and exhaust the RDS database connection limit.',o:['Use RDS Proxy','Increase Lambda timeout','Use a bigger Lambda memory','Enable Multi-AZ'],c:0,e:'RDS Proxy pools connections.'},
+    {q:'A Lambda function consumes messages from SQS. Messages are processed twice because they reappear before the function finishes.',o:['Set the queue visibility timeout to at least 6× the function timeout','Reduce the batch size to 1','Use SNS instead','Increase retention'],c:0,e:'Visibility timeout must exceed processing time with margin.'},
+    {q:'Failed asynchronous invocations of a Lambda function must be kept for later analysis.',o:['Configure an on-failure destination or DLQ','Use synchronous invocation','Enable X-Ray','Increase retries to 10'],c:0,e:'Async events go to a DLQ/destination after retries.'},
+    {q:'A deployment package with large ML libraries is 3 GB.',o:['Package the function as a container image','Use layers to exceed 250 MB','Split into many zip files','Use /tmp only'],c:0,e:'Container images up to 10 GB.'},
+    {q:'A company wants to run Docker containers with the LEAST operational overhead and no EC2 instances to manage.',o:['Amazon ECS on Fargate','Amazon ECS on EC2','Self-managed Docker on EC2','EKS with self-managed nodes'],c:0,e:'Fargate removes hosts.'},
+    {q:'An ECS task must read objects from an S3 bucket. Where should the permission go?',o:['Task role','Task execution role','Container instance role only','S3 bucket ACL'],c:0,e:'Your application code uses the task role.'},
+    {q:'ECS tasks fail to start with an error pulling the image from a private ECR repository.',o:['Grant ECR pull permissions to the task execution role','Grant ECR permissions to the task role','Make the repository public','Add an S3 gateway endpoint only'],c:0,e:'The agent pulls images using the execution role.'},
+    {q:'Containers on Fargate need a shared, persistent file system.',o:['Mount Amazon EFS','Use instance store','Use the container writable layer','Use EBS Multi-Attach on Fargate'],c:0,e:'EFS works with Fargate for shared persistent files.'},
+    {q:'Each ECS task must have its own security group rules.',o:['Use awsvpc network mode','Use bridge mode','Use host mode','Use one security group on the cluster ASG'],c:0,e:'awsvpc gives each task an ENI.'},
+    {q:'A company runs Kubernetes on-premises and wants a managed AWS service with the same tools, without managing worker nodes.',o:['Amazon EKS with Fargate','Amazon ECS on Fargate','Elastic Beanstalk','AWS Batch'],c:0,e:'Kubernetes requirement → EKS; Fargate removes nodes.'},
+    {q:'Thousands of scientific simulations run for several hours each and can tolerate interruption. Cost must be minimal.',o:['AWS Batch with Spot Instances','Lambda','On-Demand EC2 fleet','App Runner'],c:0,e:'Long batch + interruptible = Batch on Spot.'},
+    {q:'Developers want to deploy a web application by uploading code while AWS provisions load balancing and Auto Scaling, and they want immutable deployments.',o:['Elastic Beanstalk','Lambda','ECS on EC2 manual','EC2 with user data'],c:0,e:'Beanstalk provides managed environments and immutable deploy policy.'},
+    {q:'A team wants the simplest way to run a containerized web API from an image, with HTTPS and automatic scaling, without configuring a cluster or load balancer.',o:['AWS App Runner','Amazon EKS','ECS on EC2','EC2 Auto Scaling'],c:0,e:'App Runner is fully managed for web apps.'},
+    {q:'A workflow must call several Lambda functions in sequence with retries, wait up to 3 days for approval, and run steps in parallel.',o:['AWS Step Functions','Chain Lambdas directly','SQS FIFO','EventBridge Scheduler only'],c:0,e:'Step Functions orchestrates long workflows.'},
+    {q:'Simple header manipulation must run on every CloudFront viewer request at the lowest cost.',o:['CloudFront Functions','Lambda@Edge','Lambda in us-east-1 behind API Gateway','EC2 proxy'],c:0,e:'CloudFront Functions are cheapest for lightweight viewer logic.'},
+    {q:'An ECS service must scale based on the number of requests each task receives from the ALB.',o:['Target tracking on ALBRequestCountPerTarget with Service Auto Scaling','Scheduled scaling only','Increase task CPU','Use a bigger ALB'],c:0,e:'Application Auto Scaling supports ALB request count per target.'}
+  ];
+
+  const C=[
+    ['Event-driven, < 15 min','Lambda'],['> 15 min, no servers','ECS on Fargate / Batch'],['Cold starts','Provisioned concurrency / SnapStart'],['Protect or cap one function','Reserved concurrency'],['Throttling 429','Concurrency limit (1,000 default)'],['Big dependencies','Container image (10 GB)'],['Lambda needs internet from VPC','NAT gateway'],['Too many DB connections','RDS Proxy'],['SQS duplicates with Lambda','Visibility timeout ≥ 6× function timeout'],['Failed async events','DLQ / on-failure destination'],['Long workflow, retries, waits','Step Functions'],
+    ['Containers, no hosts','ECS on Fargate'],['Cheap interruptible containers','Fargate Spot'],['GPU / instance choice for containers','ECS on EC2'],['App calls AWS APIs','Task role'],['Pull image / ship logs','Task execution role'],['SG per task','awsvpc mode'],['Shared files for tasks','EFS'],['Private images','ECR'],
+    ['Kubernetes','EKS'],['Kubernetes, no nodes','EKS on Fargate'],['Simplest web app from image/repo','App Runner'],['Upload code, keep EC2','Elastic Beanstalk'],['Immutable / blue-green deploys','Beanstalk policies / URL swap'],['Hours-long batch jobs','AWS Batch'],['Full OS control','EC2'],['Light edge logic','CloudFront Functions'],['Edge with network calls','Lambda@Edge']
+  ];
+
+
+  /* game */
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=Math.ceil(G.length*0.8)?'Strong. You can map each scenario to its service.':'Review the lessons for the ones you missed, then play again.'}</p><div class="dots">${gr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* quiz */
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on this module.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s0=Q[qi],n=s0.o.length,rot=(qi*3)%n,s={q:s0.q,e:s0.e,o:s0.o.map((_,j)=>s0.o[(j+rot)%n]),c:(s0.c-rot+n)%n};
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+</body></html>

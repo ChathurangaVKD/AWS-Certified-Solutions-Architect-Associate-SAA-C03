@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Architecture Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the other SAA playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+
+/* pillars */
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.pillar{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--surface);display:grid;gap:4px}
+.pillar b{font-family:var(--f-display);font-size:1rem}
+.pillar span{font-size:.86rem;color:var(--muted)}
+
+/* failure sim */
+.cfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.ladder{display:grid;gap:6px}
+.lrow{display:grid;grid-template-columns:minmax(120px,170px) 74px minmax(0,1fr);gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:.88rem}
+.lrow .nm{font-weight:600}
+.st{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-align:center;padding:3px 0;border-radius:999px}
+.st.ok{background:var(--allow-soft);color:var(--allow)}
+.st.warn{background:var(--amber-soft);color:var(--amber)}
+.st.down{background:var(--deny-soft);color:var(--deny)}
+.lrow.down{border-color:var(--deny)}
+.lrow.warn{border-color:var(--amber)}
+@media (max-width:560px){.lrow{grid-template-columns:minmax(0,1fr) 70px}.lrow .nt{grid-column:1/-1}}
+.verdict{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r)}
+.verdict .big{font-family:var(--f-display);font-size:1.35rem;font-weight:800;white-space:nowrap}
+.verdict.ok{background:var(--allow-soft);color:var(--allow)}
+.verdict.warn{background:var(--amber-soft);color:var(--amber)}
+.verdict.down{background:var(--deny-soft);color:var(--deny)}
+.verdict .why{color:var(--ink);font-size:.9rem}
+
+/* DR */
+.dr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:640px){.dr{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.drc{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);display:grid;gap:6px;align-content:start;transition:opacity .2s}
+.drc h3{font-size:1rem}
+.drc p{font-size:.84rem}
+.drc .cost{font-family:var(--f-mono);font-size:.85rem;color:var(--amber);font-weight:600}
+.drc .rt{font-size:.78rem;color:var(--muted)}
+.drc.pick{border-color:var(--allow);background:var(--allow-soft);box-shadow:inset 0 3px 0 var(--allow)}
+.drc.over{opacity:.55}
+.drc.under{opacity:.4}
+
+/* chart */
+.chart{width:100%;height:auto;display:block}
+.chart .ax{stroke:var(--line);stroke-width:1}
+.chart .lbl{fill:var(--muted);font:11px var(--f-body)}
+.chart .ln-in{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 3}
+.chart .ln-out{fill:none;stroke:var(--accent);stroke-width:2.5}
+.chart .ar-q{fill:var(--accent);fill-opacity:.25;stroke:var(--accent);stroke-width:1.5}
+.chart .ar-d{fill:var(--deny);fill-opacity:.25;stroke:var(--deny);stroke-width:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;background:var(--accent)}
+.legend i.in{background:var(--muted)}
+.legend i.q{height:10px;background:var(--accent);opacity:.4}
+.legend i.d{height:10px;background:var(--deny);opacity:.4}
+
+/* compare chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Architecture <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Well-Architected, HA, DR, decoupling, serverless, caching</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 PRINCIPLES -->
+<section class="lesson" data-id="principles" data-name="Design principles">
+  <div class="eyebrow">Lesson 1 · 8 min</div>
+  <h2>Every exam question is really asking one of five things</h2>
+  <p class="lede">Most SAA questions end with "MOST cost-effective", "LEAST operational overhead", "highly available", "most secure" or "best performance". That last phrase decides the answer.</p>
+
+  <h3>Well-Architected Framework: 6 pillars</h3>
+  <div class="pillars">
+    <div class="pillar"><b>Operational Excellence</b><span>Automate, infrastructure as code, small reversible changes, learn from failures.</span></div>
+    <div class="pillar"><b>Security</b><span>Least privilege, traceability, security at every layer, encrypt in transit and at rest.</span></div>
+    <div class="pillar"><b>Reliability</b><span>Recover automatically, scale horizontally, test recovery, stop guessing capacity.</span></div>
+    <div class="pillar"><b>Performance Efficiency</b><span>Use managed and serverless services, go global in minutes, experiment.</span></div>
+    <div class="pillar"><b>Cost Optimization</b><span>Pay for what you use, measure, use the cheapest model that fits.</span></div>
+    <div class="pillar"><b>Sustainability</b><span>Use only what you need, right-size, use efficient hardware like Graviton.</span></div>
+  </div>
+
+  <h3>Principles behind the right answers</h3>
+  <div class="cards">
+    <div class="c"><h3>Design for failure</h3><p>Everything fails eventually. Spread across at least 2 AZs and remove single points of failure.</p></div>
+    <div class="c"><h3>Stateless tiers</h3><p>Keep sessions and files outside instances (ElastiCache, DynamoDB, S3, EFS). Then any instance can be replaced or added.</p></div>
+    <div class="c"><h3>Loose coupling</h3><p>Put a queue or event bus between components so one slow or failed part doesn't break the others.</p></div>
+    <div class="c"><h3>Scale out, not up</h3><p>Many small instances behind a load balancer beat one big instance: no downtime to resize, no single failure.</p></div>
+    <div class="c"><h3>Managed beats self-managed</h3><p>"Least operational overhead" almost always means a managed or serverless service, not software you run on EC2.</p></div>
+    <div class="c"><h3>Automate</h3><p>CloudFormation or CDK for infrastructure, Auto Scaling for capacity, EventBridge + Lambda / SSM for responses.</p></div>
+  </div>
+
+  <h3>RTO and RPO</h3>
+  <div class="grid2">
+    <div class="box prose"><h3>RPO: how much data can you lose?</h3><p><b>Recovery Point Objective.</b> Time between the last good copy and the disaster. Backups every 24 h → RPO up to 24 h. Continuous replication → seconds.</p></div>
+    <div class="box prose"><h3>RTO: how long can you be down?</h3><p><b>Recovery Time Objective.</b> Time from the disaster until service is back. Restore from backup → hours. Standby already running → minutes.</p></div>
+  </div>
+  <div class="remember"><b>Lower RTO and RPO always cost more.</b> The exam wants the cheapest design that still meets the stated numbers. Don't pick active/active when "4 hours" is acceptable.</div>
+</section>
+
+<!-- 2 HA -->
+<section class="lesson" data-id="ha" data-name="Highly available">
+  <div class="eyebrow">Lesson 2 · 15 min</div>
+  <h2>The classic highly available web app</h2>
+  <p class="lede">Route 53 → CloudFront → ALB → Auto Scaling group in 2+ AZs → ElastiCache → RDS Multi-AZ. Static files in S3.</p>
+
+  <h3>Failure simulator</h3>
+  <p class="prose">Choose your design, then break something. Single resources are assumed to be in AZ-a.</p>
+  <div class="box">
+    <div class="cfg" id="haCfg"></div>
+    <div class="tg"><span class="t">Break something</span><div class="seg" id="haFail"></div></div>
+    <div class="verdict" id="haVerdict"></div>
+    <div class="ladder" id="haLadder"></div>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Multi-AZ vs multi-Region</h3><p><b>Multi-AZ</b> protects against a data center failure and is the normal "highly available" answer. <b>Multi-Region</b> is for disaster recovery, global latency or data residency, and costs more.</p></div>
+    <div class="c"><h3>Static content</h3><p>Images, CSS and JS go to S3 + CloudFront, not the web servers. Less load, cheaper, faster.</p></div>
+    <div class="c"><h3>Shared files</h3><p>Instances that need the same files use EFS (Linux) or FSx (Windows), not copies on each EBS volume.</p></div>
+    <div class="c"><h3>Health checks everywhere</h3><p>Route 53 health checks between Regions, ALB health checks between instances, ELB health checks on the ASG.</p></div>
+  </div>
+</section>
+
+<!-- 3 DR -->
+<section class="lesson" data-id="dr" data-name="Disaster recovery">
+  <div class="eyebrow">Lesson 3 · 12 min · heavily tested</div>
+  <h2>Four disaster recovery strategies</h2>
+  <p class="lede">From cheap and slow to expensive and instant. Set the RTO and RPO; the cheapest strategy that meets both lights up.</p>
+
+  <div class="box">
+    <div class="sliders">
+      <label for="rtoR"><span>RTO: max downtime <b id="rtoV"></b></span><input type="range" id="rtoR" min="0" max="5" value="3"></label>
+      <label for="rpoR"><span>RPO: max data loss <b id="rpoV"></b></span><input type="range" id="rpoR" min="0" max="5" value="3"></label>
+    </div>
+    <div class="dr" id="drCards"></div>
+    <p class="say" id="drSay"></p>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Strategy</th><th>What runs in the DR Region</th><th>Recovery steps</th></tr></thead>
+    <tbody>
+      <tr><td>Backup &amp; restore</td><td>Nothing. Only backups and AMIs copied there</td><td>Deploy with IaC, restore data, switch DNS</td></tr>
+      <tr><td>Pilot light</td><td>Core data replicated live (DB replica). App servers off or not created</td><td>Start/create app servers, scale up, promote DB, switch DNS</td></tr>
+      <tr><td>Warm standby</td><td>A full copy of the stack running at small scale</td><td>Scale out, promote DB, switch DNS</td></tr>
+      <tr><td>Multi-site active/active</td><td>Full production in 2+ Regions, all taking traffic</td><td>Route 53 or Global Accelerator stops sending to the failed Region</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><h3>Tools for DR</h3><ul><li><b>AWS Backup</b>: cross-Region, cross-account copies</li><li><b>Aurora Global Database</b>: replication usually under 1 s, promote a secondary in about a minute</li><li><b>DynamoDB global tables</b>: multi-active writes in many Regions</li><li><b>S3 CRR</b>, EBS snapshot copy, AMI copy</li></ul></div>
+    <div class="c"><h3>AWS Elastic Disaster Recovery</h3><p>Continuously replicates on-prem or cloud servers at block level into a low-cost staging area. Launch recovered instances in minutes. RPO of seconds, RTO of minutes.</p></div>
+    <div class="c"><h3>Failover routing</h3><p>Route 53 failover policy with health checks, or Global Accelerator for faster failover without waiting for DNS caches.</p></div>
+  </div>
+</section>
+
+<!-- 4 DECOUPLING -->
+<section class="lesson" data-id="decouple" data-name="Decoupling">
+  <div class="eyebrow">Lesson 4 · 15 min</div>
+  <h2>Put a buffer between the parts</h2>
+  <p class="lede">When the front end calls the back end directly, a spike or an outage in one breaks both. A queue absorbs the spike and the workers catch up later.</p>
+
+  <h3>Traffic spike simulator</h3>
+  <div class="box">
+    <div class="tg"><span class="t">Design</span><div class="seg" id="qMode"></div></div>
+    <div class="sliders"><label for="qCap"><span>Workers can process <b id="qCapV"></b></span><input type="range" id="qCap" min="60" max="320" step="20" value="120"></label></div>
+    <div class="legend"><span><i class="in"></i>Incoming requests/s</span><span><i></i>Processed/s</span><span id="qLeg2"></span></div>
+    <svg class="chart" id="qChart1" viewBox="0 0 640 200" role="img" aria-label="Requests per second over time"></svg>
+    <svg class="chart" id="qChart2" viewBox="0 0 640 150" role="img" aria-label="Backlog or failed requests over time"></svg>
+    <div class="stats" id="qStats"></div>
+    <p class="say" id="qSay"></p>
+  </div>
+
+  <h3>Which messaging service?</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Service</th><th>Model</th><th>Use it when</th></tr></thead>
+    <tbody>
+      <tr><td>SQS Standard</td><td>Queue, pull. At-least-once, best-effort order, nearly unlimited throughput</td><td>Buffer work for workers; decouple tiers</td></tr>
+      <tr><td>SQS FIFO</td><td>Queue with strict order and exactly-once processing. 300 msg/s per action (3,000 batched); high-throughput mode for more</td><td>Order matters: payments, order events</td></tr>
+      <tr><td>SNS</td><td>Pub/sub, push to many subscribers</td><td>One event → many receivers (SQS, Lambda, HTTP, email, SMS)</td></tr>
+      <tr><td>EventBridge</td><td>Event bus with rules, filtering, schedules, SaaS sources, archive and replay</td><td>React to AWS or SaaS events; route by content; cron jobs</td></tr>
+      <tr><td>Kinesis Data Streams</td><td>Ordered stream per shard, replay, many consumers, retention 24 h up to 365 days</td><td>Real-time analytics, clickstreams, IoT</td></tr>
+      <tr><td>Data Firehose</td><td>Managed delivery, buffers and loads data</td><td>Load streams into S3, Redshift, OpenSearch, Splunk with no code</td></tr>
+      <tr><td>Step Functions</td><td>Workflow state machine with retries, branches, waits, human approval</td><td>Orchestrate several steps or Lambdas</td></tr>
+      <tr><td>Amazon MQ</td><td>Managed ActiveMQ / RabbitMQ</td><td>Migrating apps that use MQTT, AMQP, JMS</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><h3>SQS settings to know</h3><ul><li><b>Visibility timeout</b> (default 30 s, max 12 h): message hidden while a worker processes it. Too short = processed twice</li><li><b>Dead-letter queue</b>: after N failed receives</li><li><b>Long polling</b> (up to 20 s): fewer empty responses, lower cost</li><li><b>Delay queue</b>: up to 15 min</li><li>Retention 4 days default, max 14</li></ul></div>
+    <div class="c"><h3>Fan-out pattern</h3><p>SNS topic → several SQS queues. Each consumer gets its own copy and works at its own pace. Use SNS message filtering to send each queue only what it needs.</p></div>
+    <div class="c"><h3>Scale workers on the queue</h3><p>Auto Scaling group with target tracking on a custom metric: <b>backlog per instance</b> (ApproximateNumberOfMessagesVisible ÷ instances). Or Lambda with an SQS trigger.</p></div>
+  </div>
+</section>
+
+<!-- 5 COMPUTE -->
+<section class="lesson" data-id="compute" data-name="Serverless & containers">
+  <div class="eyebrow">Lesson 5 · 15 min</div>
+  <h2>Choosing where code runs</h2>
+  <p class="lede">The less you manage, the less flexibility you have. Pick a requirement to see the usual answer.</p>
+
+  <div class="chips" id="cPicks"></div>
+  <div class="tablewrap"><table id="cT">
+    <thead><tr><th>Option</th><th>You manage</th><th>Limits / notes</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr data-o="ec2"><td>EC2</td><td>OS, patching, scaling setup</td><td>Full control, any software</td><td>Legacy apps, special OS or licensing, long-running</td></tr>
+      <tr data-o="ecs"><td>ECS on EC2</td><td>Cluster instances + containers</td><td>Cheapest at steady scale, GPU, custom hosts</td><td>Containers with host control</td></tr>
+      <tr data-o="fargate"><td>Fargate (ECS / EKS)</td><td>Only container image + CPU/memory</td><td>No servers; pay per task vCPU and memory</td><td>Containers without managing servers</td></tr>
+      <tr data-o="eks"><td>EKS</td><td>Kubernetes workloads (control plane managed)</td><td>Kubernetes API, portable</td><td>Teams already on Kubernetes</td></tr>
+      <tr data-o="lambda"><td>Lambda</td><td>Only code</td><td>Max 15 min, up to 10 GB memory, 1,000 concurrent by default per Region</td><td>Event-driven, short, spiky work</td></tr>
+      <tr data-o="apprunner"><td>App Runner</td><td>Source code or image</td><td>Web apps and APIs with built-in scaling and HTTPS</td><td>Simplest web app or API hosting</td></tr>
+      <tr data-o="eb"><td>Elastic Beanstalk</td><td>Code; AWS builds EC2, ALB, ASG</td><td>You still see and can tweak the resources</td><td>Classic web apps, quick deploy</td></tr>
+    </tbody>
+  </table></div>
+  <p class="say" id="cSay"></p>
+
+  <h3>Serverless patterns</h3>
+  <div class="cards">
+    <div class="c"><h3>Serverless API</h3><p>API Gateway → Lambda → DynamoDB. Cognito for sign-in. Scales to zero, pay per request.</p></div>
+    <div class="c"><h3>File processing</h3><p>S3 upload → event → Lambda (or SQS → Lambda for buffering and retries) → results to S3 or DynamoDB.</p></div>
+    <div class="c"><h3>Static website</h3><p>S3 + CloudFront (OAC) + Route 53 alias + ACM certificate in us-east-1.</p></div>
+    <div class="c"><h3>Scheduled jobs</h3><p>EventBridge Scheduler → Lambda (under 15 min) or ECS Fargate task (longer).</p></div>
+    <div class="c"><h3>Multi-step workflow</h3><p>Step Functions coordinates Lambdas with retries and error handling instead of Lambdas calling Lambdas.</p></div>
+    <div class="c"><h3>Real-time stream</h3><p>Kinesis Data Streams → Lambda or Managed Service for Apache Flink → S3 via Firehose.</p></div>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Lambda facts</h3><ul><li>Timeout max 15 minutes</li><li>Memory 128 MB – 10 GB (CPU scales with it)</li><li>/tmp up to 10 GB</li><li><b>Provisioned concurrency</b> removes cold starts</li><li><b>Reserved concurrency</b> caps or guarantees one function</li><li>In a VPC: use RDS Proxy for databases</li></ul></div>
+    <div class="c"><h3>API Gateway facts</h3><ul><li>REST, HTTP (cheaper, simpler) and WebSocket APIs</li><li>Throttling, usage plans, API keys</li><li>Response caching (REST APIs)</li><li>Edge-optimized, Regional or private endpoints</li><li>Integration timeout about 29 s by default</li></ul></div>
+    <div class="c"><h3>Containers facts</h3><ul><li><b>Task role</b>: IAM role per ECS task</li><li>ECR stores images</li><li>ECS Service Auto Scaling for tasks; capacity providers for hosts</li><li>Persistent shared storage: EFS</li></ul></div>
+  </div>
+</section>
+
+<!-- 6 CACHING & DATA -->
+<section class="lesson" data-id="cache" data-name="Caching & data">
+  <div class="eyebrow">Lesson 6 · 12 min</div>
+  <h2>Make reads cheap and fast</h2>
+  <p class="lede">Cache at every layer the user passes through, from the edge to the database.</p>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Layer</th><th>Service</th><th>Caches</th></tr></thead>
+    <tbody>
+      <tr><td>Edge</td><td>CloudFront</td><td>Static files, whole pages, API responses near users</td></tr>
+      <tr><td>API</td><td>API Gateway caching</td><td>Responses for a TTL (REST APIs)</td></tr>
+      <tr><td>Application</td><td>ElastiCache (Redis OSS / Valkey / Memcached)</td><td>Query results, sessions, leaderboards</td></tr>
+      <tr><td>DynamoDB</td><td>DAX</td><td>Microsecond reads in front of DynamoDB, no code changes to logic</td></tr>
+      <tr><td>Relational DB</td><td>Read replicas</td><td>Offload read-heavy queries and reports</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div class="box prose"><h3>Lazy loading (cache-aside)</h3><p>Read cache → miss → read DB → write to cache. Only requested data is cached. Data can go stale; the first read is slow.</p></div>
+    <div class="box prose"><h3>Write-through</h3><p>Every DB write also updates the cache. Never stale, but every write costs more and unused data fills the cache. Add a TTL either way.</p></div>
+  </div>
+  <div class="cards">
+    <div class="c"><h3>Redis OSS / Valkey</h3><p>Replication, Multi-AZ failover, backups, persistence, sorted sets (leaderboards), pub/sub.</p></div>
+    <div class="c"><h3>Memcached</h3><p>Simple, multi-threaded, sharding. No replication, no persistence.</p></div>
+  </div>
+
+  <h3>Multi-AZ vs read replicas</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>RDS Multi-AZ (instance)</th><th>Read replica</th></tr></thead>
+    <tbody>
+      <tr><td>Purpose</td><td>High availability</td><td>Read scaling (and DR if cross-Region)</td></tr>
+      <tr><td>Replication</td><td>Synchronous</td><td>Asynchronous</td></tr>
+      <tr><td>Can you read from it?</td><td class="n">No, standby only</td><td class="y">Yes</td></tr>
+      <tr><td>Failover</td><td>Automatic, same endpoint, about 1–2 min</td><td>Manual promotion, new endpoint</td></tr>
+      <tr><td>Location</td><td>Another AZ, same Region</td><td>Same AZ, another AZ, or another Region</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">RDS Multi-AZ <b>DB cluster</b> (MySQL, PostgreSQL) has two readable standbys. Aurora always stores 6 copies across 3 AZs and allows up to 15 replicas behind a reader endpoint.</p>
+
+  <div class="cards">
+    <div class="c"><h3>RDS Proxy</h3><p>Pools database connections. Fixes "too many connections" from Lambda, speeds up failover, supports IAM auth.</p></div>
+    <div class="c"><h3>Global data</h3><p><b>Aurora Global Database</b>: one writer Region, fast cross-Region reads and DR. <b>DynamoDB global tables</b>: write in any Region.</p></div>
+    <div class="c"><h3>Session state</h3><p>Prefer ElastiCache or DynamoDB over ALB sticky sessions. Then any instance can serve any user.</p></div>
+  </div>
+</section>
+
+<!-- 7 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the pattern">
+  <div class="eyebrow">Lesson 7 · game</div>
+  <h2>Pick the pattern</h2>
+  <p class="lede">18 scenarios. Find the requirement, choose the service or strategy.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 8 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 8 · exam style</div>
+  <h2>SAA-style architecture questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('archpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('archpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab','principles'));
+
+  /* 2 failure simulator */
+  const CFG=[
+    {k:'asg',t:'Web tier',o:['Single EC2','ASG in 2 AZs']},
+    {k:'sess',t:'User sessions',o:['In instance memory','ElastiCache / DynamoDB']},
+    {k:'nat',t:'NAT gateways',o:['One NAT','One per AZ']},
+    {k:'db',t:'Database',o:['RDS Single-AZ','RDS Multi-AZ']},
+    {k:'reg',t:'Second Region',o:['None','Warm standby']}
+  ];
+  const FAILS=['Nothing','One instance crashes','AZ-a outage','Region outage','10× traffic spike'];
+  const hc={asg:'Single EC2',sess:'In instance memory',nat:'One NAT',db:'RDS Single-AZ',reg:'None'},hf={f:'AZ-a outage'};
+  function haDraw(){
+    $('#haCfg').innerHTML=CFG.map(c=>`<div class="tg"><span class="t">${c.t}</span><div class="seg" data-k="${c.k}">${c.o.map(o=>`<button type="button" aria-pressed="${hc[c.k]===o}">${o}</button>`).join('')}</div></div>`).join('');
+    seg($('#haFail'),FAILS,hf.f);
+    const asg=hc.asg!=='Single EC2',sess=hc.sess!=='In instance memory',nat=hc.nat==='One per AZ',maz=hc.db==='RDS Multi-AZ',r2=hc.reg!=='None',f=hf.f;
+    const R=[];const add=(n,s,t)=>R.push([n,s,t]);
+    if(f==='Region outage'){
+      add('Route 53',r2?'ok':'ok',r2?'Health check fails, DNS points to Region 2':'DNS still works, but there is nowhere to send users');
+      ['ALB','Web tier','Database'].forEach(n=>add(n,r2?'ok':'down',r2?(n==='Database'?'Promote the replica in Region 2':'Region 2 copy scales out and takes traffic'):'The whole Region is gone'));
+      add('User sessions',r2?'warn':'down',r2?'Sessions in Region 1 are lost unless replicated (e.g. DynamoDB global tables)':'Gone with the Region');
+    } else {
+      add('Route 53','ok','Global service, always answering');
+      add('ALB',f==='AZ-a outage'?'ok':'ok',f==='AZ-a outage'?'Spans AZs; stops sending traffic to AZ-a':'Spreads traffic across healthy targets');
+      if(f==='One instance crashes')add('Web tier',asg?'ok':'down',asg?'ALB health check removes it; ASG launches a replacement':'The only server is gone');
+      else if(f==='AZ-a outage')add('Web tier',asg?'ok':'down',asg?'AZ-b instances keep serving; ASG launches more in AZ-b':'The only server was in AZ-a');
+      else if(f==='10× traffic spike')add('Web tier',asg?'ok':'down',asg?'Scales out toward max size':'One server overloaded: timeouts and errors');
+      else add('Web tier','ok',asg?'Instances in 2 AZs behind the ALB':'One instance, a single point of failure');
+      const lost=(f==='One instance crashes'||f==='AZ-a outage')&&asg;
+      add('User sessions',sess?'ok':lost?'warn':'ok',sess?'Stored outside instances, any server can serve any user':lost?(f==='AZ-a outage'?'About half the users are logged out':'Users on the failed instance are logged out'):'Stored in instance memory: fine until an instance dies');
+      add('NAT / outbound internet',f==='AZ-a outage'&&!nat?'warn':'ok',f==='AZ-a outage'?(nat?'AZ-b has its own NAT gateway':'The single NAT was in AZ-a; AZ-b can’t reach external APIs'):(nat?'One NAT gateway per AZ':'One NAT gateway, in AZ-a'));
+      if(f==='AZ-a outage')add('Database',maz?'ok':'down',maz?'Automatic failover to the standby in AZ-b (about 1–2 min)':'The single-AZ database was in AZ-a');
+      else if(f==='10× traffic spike')add('Database','warn','Many more reads. Add ElastiCache or read replicas');
+      else add('Database','ok',maz?'Synchronous standby in AZ-b':'One instance in AZ-a');
+    }
+    const worst=R.some(r=>r[1]==='down')?'down':R.some(r=>r[1]==='warn')?'warn':'ok';
+    const label={ok:'UP',warn:'DEGRADED',down:'DOWN'}[worst];
+    const why=worst==='ok'?(f==='Nothing'?'Running normally. Now break something.':'Your design survives this failure.'):worst==='warn'?'Users notice something, but the app is still running.':'Users can’t use the app. Fix the red rows.';
+    const v=$('#haVerdict');v.className='verdict '+worst;v.innerHTML=`<span class="big">${label}</span><span class="why">${why}</span>`;
+    $('#haLadder').innerHTML=R.map(r=>`<div class="lrow ${r[1]}"><span class="nm">${r[0]}</span><span class="st ${r[1]}">${{ok:'OK',warn:'WARN',down:'DOWN'}[r[1]]}</span><span class="nt">${r[2]}</span></div>`).join('');
+  }
+  $('#haCfg').addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;hc[b.parentNode.dataset.k]=b.textContent;haDraw()});
+  $('#haFail').addEventListener('click',e=>{const b=e.target.closest('button');if(b){hf.f=b.textContent;haDraw()}});
+  haDraw();
+
+  /* 3 DR */
+  const TL=['near zero','1 minute','15 minutes','4 hours','24 hours','3 days'];
+  const DR=[
+    {n:'Backup & restore',c:'$',rt:'RPO/RTO: hours',p:'Back up data and AMIs to the DR Region. Rebuild everything after a disaster.'},
+    {n:'Pilot light',c:'$$',rt:'RPO: seconds–minutes · RTO: tens of minutes',p:'Data replicates live. The rest is switched off until needed.'},
+    {n:'Warm standby',c:'$$$',rt:'RPO: seconds · RTO: minutes',p:'A small but complete copy is running. Scale it up and switch over.'},
+    {n:'Multi-site active/active',c:'$$$$',rt:'RPO/RTO: near zero',p:'Full production in two or more Regions at once.'}
+  ];
+  function dr(){
+    const rto=+$('#rtoR').value,rpo=+$('#rpoR').value;$('#rtoV').textContent=TL[rto];$('#rpoV').textContent=TL[rpo];
+    const byRto=rto===0?3:rto===1?2:rto===2?2:rto===3?1:0;
+    const byRpo=rpo===0?3:rpo<=2?1:0;
+    const pick=Math.max(byRto,byRpo);
+    $('#drCards').innerHTML=DR.map((d,i)=>`<div class="drc ${i===pick?'pick':i>pick?'over':'under'}"><h3>${d.n}</h3><span class="cost">${d.c}</span><p>${d.p}</p><span class="rt">${d.rt}</span></div>`).join('');
+    const why=byRto>=byRpo?`RTO of ${TL[rto]} sets the bar.`:`RPO of ${TL[rpo]} needs continuous replication.`;
+    $('#drSay').innerHTML=`<b>${DR[pick].n}</b><br>${why} ${pick<3?'Anything to the right also works, but costs more. The exam wants the cheapest one that meets both numbers.':'Only active/active gets close to zero downtime and zero data loss.'}`;
+  }
+  ['#rtoR','#rpoR'].forEach(id=>$(id).addEventListener('input',dr));dr();
+
+  /* 4 queue sim */
+  let qm='Direct calls';
+  function qsim(){
+    seg($('#qMode'),['Direct calls','SQS queue'],qm);
+    const cap=+$('#qCap').value;$('#qCapV').textContent=cap+' req/s';
+    const T=90,inc=[],out=[],side=[];let b=0,drop=0,maxB=0,drain=null;
+    for(let t=0;t<T;t++){const i=(t>=10&&t<30)?300:60;inc.push(i);
+      if(qm==='Direct calls'){const o=Math.min(i,cap);out.push(o);side.push(i-o);drop+=i-o}
+      else{const a=b+i,o=Math.min(a,cap);b=a-o;out.push(o);side.push(b);maxB=Math.max(maxB,b);if(t>=30&&b===0&&drain===null)drain=t}}
+    const W=640,L=44,Rr=10;
+    const x=t=>L+(W-L-Rr)*t/(T-1);
+    function axes(H,top,bot,max,ticks,unit){let g='';ticks.forEach(v=>{const y=top+(H-top-bot)*(1-v/max);g+=`<line class="ax" x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}"/><text class="lbl" x="${L-6}" y="${y+4}" text-anchor="end">${fmt(v)}</text>`});[0,15,30,45,60,75,89].forEach(t=>{g+=`<text class="lbl" x="${x(t)}" y="${H-4}" text-anchor="middle">${t}s</text>`});return g}
+    const H1=200,top=10,bot=22,M1=320,y1=v=>top+(H1-top-bot)*(1-v/M1);
+    const path=a=>a.map((v,t)=>(t?'L':'M')+x(t).toFixed(1)+' '+y1(v).toFixed(1)).join(' ');
+    $('#qChart1').innerHTML=axes(H1,top,bot,M1,[0,100,200,300])+`<path class="ln-in" d="${path(inc)}"/><path class="ln-out" d="${path(out)}"/>`;
+    const qMax=Math.max(1000,Math.ceil(maxB/1000)*1000),H2=150,M2=qm==='Direct calls'?300:qMax,ticks=qm==='Direct calls'?[0,100,200,300]:Array.from({length:qMax/1000+1},(_,i)=>i*1000),y2=v=>top+(H2-top-bot)*(1-v/M2);
+    const area='M'+x(0)+' '+y2(0)+' '+side.map((v,t)=>'L'+x(t).toFixed(1)+' '+y2(v).toFixed(1)).join(' ')+' L'+x(T-1)+' '+y2(0)+' Z';
+    $('#qChart2').innerHTML=axes(H2,top,bot,M2,ticks)+`<path class="${qm==='Direct calls'?'ar-d':'ar-q'}" d="${area}"/>`;
+    $('#qLeg2').innerHTML=qm==='Direct calls'?'<i class="d"></i>Failed requests/s (lower chart)':'<i class="q"></i>Messages waiting in queue (lower chart)';
+    if(qm==='Direct calls'){
+      $('#qStats').innerHTML=`<div class="stat"><div class="v">${fmt(drop)}</div><div class="k">Requests failed</div></div><div class="stat"><div class="v">0</div><div class="k">Messages waiting</div></div>`;
+      $('#qSay').innerHTML=drop?`<b>${fmt(drop)} requests lost.</b> During the spike the back end can't keep up, so users get errors. Tightly coupled: one slow part breaks the whole chain.`:'<b>No errors</b>, but only because the workers are sized for the peak, and they sit idle the rest of the time.';
+    } else {
+      $('#qStats').innerHTML=`<div class="stat"><div class="v">0</div><div class="k">Requests failed</div></div><div class="stat"><div class="v">${fmt(maxB)}</div><div class="k">Peak queue depth</div></div><div class="stat"><div class="v">${drain===null?(maxB?'> 90 s':'—'):drain+' s'}</div><div class="k">Queue empty again at</div></div>`;
+      $('#qSay').innerHTML=maxB?`<b>Nothing lost.</b> The queue holds up to ${fmt(maxB)} messages and workers catch up${drain!==null?' by '+drain+' s':' later'}. Scale workers on queue depth to drain it faster.`:'<b>Nothing lost</b> and no backlog: the workers keep up even at the peak.';
+    }
+  }
+  $('#qMode').addEventListener('click',e=>{const b=e.target.closest('button');if(b){qm=b.textContent;qsim()}});
+  $('#qCap').addEventListener('input',qsim);qsim();
+
+  /* 5 compute picker */
+  const CP=[
+    ['Run code for 2 seconds when a file lands in S3','lambda','Lambda: event-driven, short, pay per invocation.'],
+    ['A job that runs 2 hours every night, in a container','fargate','Fargate task, started by EventBridge Scheduler. Lambda stops at 15 minutes.'],
+    ['Containers, but no servers to manage','fargate','ECS (or EKS) on Fargate.'],
+    ['Team already uses Kubernetes and wants portability','eks','EKS. Add Fargate profiles to avoid managing nodes.'],
+    ['Legacy app needs a specific OS and licensed agent','ec2','EC2: full control of the operating system.'],
+    ['Containers needing GPUs, cheapest at large steady scale','ecs','ECS on EC2 instances (with Reserved Instances or Savings Plans).'],
+    ['Deploy a web app quickly; AWS should build the ALB and ASG','eb','Elastic Beanstalk.'],
+    ['Simplest way to run a containerized web API with HTTPS and autoscaling','apprunner','App Runner.']
+  ];
+  $('#cPicks').innerHTML=CP.map((p,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="false">${p[0]}</button>`).join('');
+  function cpick(i){$('#cPicks').querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));document.querySelectorAll('#cT tbody tr').forEach(r=>r.classList.toggle('hi',r.dataset.o===CP[i][1]));$('#cSay').innerHTML='<b>Answer:</b> '+CP[i][2]}
+  $('#cPicks').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)cpick(+b.dataset.i)});cpick(0);
+
+  /* 7 game */
+  const SVC=['Backup & restore','Pilot light','Warm standby','Multi-site active/active','SQS','SQS FIFO','SNS + SQS fan-out','EventBridge','Kinesis Data Streams','Step Functions','Lambda','Fargate','ElastiCache','DAX','Read replica','RDS Multi-AZ','RDS Proxy','Aurora Global Database'];
+  const G=[
+    ['RTO 24 hours, RPO 12 hours, lowest cost.','Backup & restore','Hours are fine, so just backups.'],
+    ['RTO 1 hour. Data must be replicated live, but app servers can stay off to save money.','Pilot light','Core data live, the rest off.'],
+    ['RTO a few minutes. A scaled-down copy of the full stack may run all the time.','Warm standby','Small but complete stack running.'],
+    ['Zero downtime even if a whole Region fails.','Multi-site active/active','Both Regions serve traffic.'],
+    ['Orders arrive faster than the processing tier can handle during sales.','SQS','Buffer and let workers catch up.'],
+    ['Bank transactions must be processed exactly once, in order.','SQS FIFO','Ordering + exactly-once.'],
+    ['One order event must reach billing, shipping and analytics independently.','SNS + SQS fan-out','One message, many queues.'],
+    ['React to EC2 state changes and to events from a SaaS partner, routed by content.','EventBridge','Event bus with rules and SaaS sources.'],
+    ['Clickstream from millions of users, real-time analytics, replay for 7 days.','Kinesis Data Streams','Ordered, replayable stream.'],
+    ['Five Lambda steps with retries, branches and a human approval.','Step Functions','Orchestration.'],
+    ['Resize images within seconds of upload, no servers.','Lambda','Event-driven, short.'],
+    ['Containers without managing EC2 hosts.','Fargate','Serverless containers.'],
+    ['Repeated product queries overload RDS. Add microsecond-to-millisecond caching.','ElastiCache','App-level cache for RDS.'],
+    ['DynamoDB reads need microsecond latency with minimal code changes.','DAX','In-memory cache for DynamoDB.'],
+    ['Reporting queries slow down the production database.','Read replica','Offload reads.'],
+    ['The database must fail over automatically if an AZ fails.','RDS Multi-AZ','Synchronous standby, automatic failover.'],
+    ['Thousands of Lambda invocations open too many database connections.','RDS Proxy','Connection pooling.'],
+    ['A relational DB must serve fast reads in 3 Regions and recover in about a minute if the primary Region fails.','Aurora Global Database','Under 1 s replication, fast promotion.']
+  ];
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=15?'Strong. You can map requirements to patterns.':'Review Lessons 3–6, then play again.'}</p><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* 8 quiz */
+  const Q=[
+    {q:'A web application runs on a single EC2 instance. The company wants it to be highly available with the LEAST operational overhead.',o:['Take daily AMIs','Run instances in an Auto Scaling group across multiple AZs behind an ALB','Use a bigger instance type','Add a second instance in the same AZ with an Elastic IP'],c:1,e:'Multi-AZ ASG + ALB removes the single point of failure and replaces failed instances automatically.'},
+    {q:'Users are logged out whenever an instance in an Auto Scaling group is terminated. What fixes this?',o:['Enable sticky sessions only','Store session data in ElastiCache or DynamoDB','Increase the ASG minimum size','Use larger instances'],c:1,e:'Make the tier stateless by moving sessions out of instance memory.'},
+    {q:'Private instances in two AZs use one NAT gateway in AZ-a. What improves availability?',o:['A NAT instance in AZ-a','A NAT gateway in each AZ, with each private subnet routing to its own AZ’s NAT','A second internet gateway','A VPC peering connection'],c:1,e:'NAT gateways are zonal. One per AZ removes the dependency on AZ-a.'},
+    {q:'A company needs an RTO of 24 hours and an RPO of 24 hours for a DR Region at the LOWEST cost.',o:['Multi-site active/active','Warm standby','Pilot light','Backup and restore'],c:3,e:'Generous targets → the cheapest strategy.'},
+    {q:'A company needs an RTO of under 1 hour. Its database must be replicated continuously, but the app servers should not run in the DR Region until needed.',o:['Backup and restore','Pilot light','Warm standby','Multi-site active/active'],c:1,e:'Pilot light: data live, compute off until disaster.'},
+    {q:'A business-critical app needs an RTO of a few minutes. A scaled-down but fully working copy may run in another Region.',o:['Pilot light','Warm standby','Backup and restore','Single Region with Multi-AZ'],c:1,e:'Warm standby = small but complete stack, scale up on failover.'},
+    {q:'A front end sends orders directly to a processing tier. During sales, the processing tier is overwhelmed and orders are lost.',o:['Use larger instances','Put an SQS queue between the tiers and scale workers on queue depth','Use SNS to send orders','Add a read replica'],c:1,e:'Queue buffers the spike; nothing is lost.'},
+    {q:'Messages must be processed in exactly the order they were sent, with no duplicates.',o:['SQS Standard','SQS FIFO','SNS Standard','Kinesis Data Firehose'],c:1,e:'FIFO = order + exactly-once processing.'},
+    {q:'One "order placed" event must be processed independently by billing, inventory and email services.',o:['One SQS queue shared by all three','SNS topic with an SQS queue for each service','Three Lambda functions calling each other','A Kinesis Data Firehose stream'],c:1,e:'Fan-out: each service gets its own copy and pace.'},
+    {q:'Workers sometimes process the same SQS message twice because processing takes longer than expected.',o:['Increase the visibility timeout','Enable long polling','Decrease retention period','Use a delay queue'],c:0,e:'If processing outlasts the visibility timeout, the message becomes visible again.'},
+    {q:'Messages that fail processing repeatedly block investigation of other messages. What should be added?',o:['A dead-letter queue','A longer retention period','Long polling','SNS filtering'],c:0,e:'After maxReceiveCount, messages move to the DLQ for analysis.'},
+    {q:'A video processing job runs for about 2 hours in a container and must run without managing servers.',o:['AWS Lambda','ECS on Fargate','EC2 Spot Instances in an ASG','API Gateway'],c:1,e:'Lambda stops at 15 minutes; Fargate runs containers without servers.'},
+    {q:'An order workflow has several steps with retries, error handling and a manual approval step.',o:['Lambda functions calling each other','AWS Step Functions','SQS FIFO','EventBridge Scheduler'],c:1,e:'Step Functions orchestrates steps, retries and waits.'},
+    {q:'Real-time clickstream data must be analysed by several applications, and data must be replayable for 7 days.',o:['SQS Standard','Kinesis Data Streams','SNS','Amazon MQ'],c:1,e:'Kinesis keeps ordered records for replay and multiple consumers.'},
+    {q:'An RDS database is overloaded by repeated identical read queries. What reduces load with the LEAST change to the database?',o:['Enable Multi-AZ','Add ElastiCache in front of the database','Move to a larger instance type','Use SQS'],c:1,e:'Caching repeated reads offloads the DB. Multi-AZ standby doesn’t serve reads.'},
+    {q:'A DynamoDB-based app needs microsecond read latency for hot items.',o:['ElastiCache Memcached','DynamoDB Accelerator (DAX)','RDS read replicas','CloudFront'],c:1,e:'DAX is the in-memory cache built for DynamoDB.'},
+    {q:'Reporting queries slow down a production RDS for MySQL database. The reports can tolerate slightly stale data.',o:['Enable Multi-AZ and query the standby','Create a read replica and point reports at it','Increase storage IOPS','Use RDS Proxy'],c:1,e:'Read replicas serve reads (async). The Multi-AZ instance standby is not readable.'},
+    {q:'Lambda functions exhaust the database’s connection limit during traffic spikes.',o:['Increase Lambda memory','Use RDS Proxy','Add a read replica','Use provisioned concurrency'],c:1,e:'RDS Proxy pools and reuses connections.'},
+    {q:'A global application needs a relational database with low-latency reads in several Regions and fast Regional failover.',o:['RDS Multi-AZ','Aurora Global Database','DynamoDB with DAX','RDS cross-Region snapshots'],c:1,e:'Aurora Global Database: typical lag under 1 s, promote in about a minute.'},
+    {q:'A company wants to replicate on-premises servers to AWS continuously and recover them in minutes during a disaster.',o:['AWS Backup','AWS Elastic Disaster Recovery','AWS DataSync','S3 Cross-Region Replication'],c:1,e:'Elastic Disaster Recovery: block-level replication, launch in minutes.'}
+  ];
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on architecture patterns.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s0=Q[qi],n=s0.o.length,rot=(qi*3)%n,s={q:s0.q,e:s0.e,o:s0.o.map((_,j)=>s0.o[(j+rot)%n]),c:(s0.c-rot+n)%n};
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  const C=[
+    ['"Least operational overhead"','Managed / serverless service'],['Highly available','Multi-AZ (ASG + ALB, RDS Multi-AZ)'],['Survive a Region failure','Multi-Region + Route 53 failover'],['Lose users on instance failure','Sessions in ElastiCache / DynamoDB'],['NAT single point of failure','One NAT gateway per AZ'],['Static content','S3 + CloudFront'],
+    ['RTO/RPO hours, cheapest','Backup & restore'],['Data live, compute off','Pilot light'],['Small full copy running, minutes','Warm standby'],['Near-zero RTO/RPO','Multi-site active/active'],['Replicate servers, recover in minutes','Elastic Disaster Recovery'],
+    ['Absorb spikes, decouple tiers','SQS'],['Strict order, exactly once','SQS FIFO'],['One event → many consumers','SNS + SQS fan-out'],['Route AWS/SaaS events by content','EventBridge'],['Real-time stream, replay','Kinesis Data Streams'],['Load streams to S3/Redshift','Data Firehose'],['Multi-step workflow, retries','Step Functions'],['Duplicate processing in SQS','Raise visibility timeout'],['Poison messages','Dead-letter queue'],['Fewer empty receives','Long polling'],['Scale workers on queue','Backlog per instance metric'],
+    ['Short event-driven code','Lambda (≤ 15 min)'],['Long container job, no servers','ECS on Fargate'],['Kubernetes','EKS'],['Quick web app deploy','Elastic Beanstalk / App Runner'],['Lambda cold starts','Provisioned concurrency'],
+    ['Repeated DB reads','ElastiCache'],['DynamoDB microseconds','DAX'],['Reports slow the DB','Read replica'],['Automatic DB failover','RDS Multi-AZ'],['Too many DB connections','RDS Proxy'],['Global relational DB','Aurora Global Database'],['Multi-Region writes, NoSQL','DynamoDB global tables']
+  ];
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+
+</body></html>

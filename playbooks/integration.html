@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Integration Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the other SAA playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600} td.m{color:var(--amber);font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+.work{font-family:var(--f-mono);font-size:.84rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;gap:2px;overflow-x:auto}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* gantt */
+.gantt{display:grid;gap:6px}
+.grow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;align-items:center;font-size:.82rem}
+.grow .gl{color:var(--muted);font-weight:500}
+.track{position:relative;height:26px;background:var(--bg);border-radius:6px;border:1px solid var(--line);overflow:hidden}
+.track .vis{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--accent) 16%,transparent);border-right:2px dashed var(--accent)}
+.track .proc{position:absolute;top:6px;height:12px;border-radius:4px;background:var(--accent)}
+.track .proc.dup{background:var(--amber)}
+.track .proc.crash{background:var(--deny)}
+.track .mk{position:absolute;top:3px;font-size:.72rem;font-weight:700;transform:translateX(4px);white-space:nowrap}
+.track .mk.dlq{transform:translateX(-100%)}
+.mk.del{color:var(--allow)} .mk.dlq{color:var(--deny)} .mk.x{color:var(--deny)}
+.gaxis{position:relative;height:16px;font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.gaxis span{position:absolute;transform:translateX(-50%)}
+.gaxis span:first-child{transform:none}
+.verdict{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r)}
+.verdict .big{font-family:var(--f-display);font-size:1.25rem;font-weight:800;white-space:nowrap}
+.verdict.ok{background:var(--allow-soft);color:var(--allow)}
+.verdict.warn{background:var(--amber-soft);color:var(--amber)}
+.verdict.down{background:var(--deny-soft);color:var(--deny)}
+.verdict .why{color:var(--ink);font-size:.9rem}
+@media (max-width:480px){.grow{grid-template-columns:1fr;gap:2px}}
+
+/* subscribers */
+.evjson{font-family:var(--f-mono);font-size:.82rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);white-space:pre;overflow-x:auto}
+.subs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.sub{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface);display:grid;gap:6px;align-content:start;transition:opacity .2s}
+.sub .hd{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.sub b{font-size:.92rem}
+.sub code{font-size:.74rem;color:var(--muted);white-space:pre-wrap;word-break:break-word}
+.sub.yes{border-color:var(--allow);background:var(--allow-soft)}
+.sub.no{opacity:.5}
+.pill{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.sub.yes .pill{background:var(--allow);color:#fff}
+.sub.no .pill{background:var(--line);color:var(--muted)}
+
+/* workflow */
+.flow{display:grid;gap:6px}
+.fs{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:.88rem}
+.fs .ty{font-family:var(--f-mono);font-size:.74rem;color:var(--muted)}
+.fs .stt{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.fs.done{border-color:var(--allow)} .fs.done .stt{background:var(--allow-soft);color:var(--allow)}
+.fs.retry{border-color:var(--amber)} .fs.retry .stt{background:var(--amber-soft);color:var(--amber)}
+.fs.fail{border-color:var(--deny);background:var(--deny-soft)} .fs.fail .stt{background:var(--deny);color:#fff}
+.fs.skip{opacity:.4} .fs.skip .stt{background:var(--bg);color:var(--muted)}
+.fs.par{margin-left:24px}
+@media (max-width:480px){.fs{grid-template-columns:minmax(0,1fr) auto}.fs .ty{grid-column:1/-1;grid-row:1}}
+.log{font-family:var(--f-mono);font-size:.8rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;gap:2px;overflow-x:auto}
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Integration <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · SQS, SNS, EventBridge, Step Functions, API Gateway, MQ</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 MAP -->
+<section class="lesson" data-id="map" data-name="The map">
+  <div class="eyebrow">Lesson 1 · 6 min</div>
+  <h2>Six ways for services to talk</h2>
+  <p class="lede">Synchronous calls wait for an answer and fail together. Asynchronous messages let each part run, scale and fail on its own. The exam nearly always prefers async for decoupling.</p>
+
+  <div class="tablewrap"><table id="mapT">
+    <thead><tr><th>Pattern</th><th>Service</th><th>One-line idea</th></tr></thead>
+    <tbody>
+      <tr data-o="q"><td>Queue</td><td>SQS</td><td>Producers drop work in; one worker takes each message</td></tr>
+      <tr data-o="ps"><td>Pub/sub</td><td>SNS</td><td>One message pushed to many subscribers at once</td></tr>
+      <tr data-o="bus"><td>Event bus</td><td>EventBridge</td><td>Route events by their content to the right targets; AWS and SaaS events built in</td></tr>
+      <tr data-o="orch"><td>Orchestration</td><td>Step Functions</td><td>A state machine runs steps in order, with branches, retries and waits</td></tr>
+      <tr data-o="stream"><td>Stream</td><td>Kinesis / MSK</td><td>Ordered, replayable records for many readers (see Analytics Playbook)</td></tr>
+      <tr data-o="api"><td>API front door</td><td>API Gateway / AppSync</td><td>Synchronous REST, WebSocket or GraphQL entry point</td></tr>
+      <tr data-o="mq"><td>Broker</td><td>Amazon MQ</td><td>Managed ActiveMQ / RabbitMQ for apps using standard protocols</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Which one?</h3>
+  <div class="chips" id="mPicks"></div>
+  <p class="say" id="mSay"></p>
+
+  <div class="remember"><b>Choreography vs orchestration.</b> With SNS or EventBridge, each service reacts to events on its own (choreography). With Step Functions, one state machine tells each step what to do (orchestration). Need retries, order and one place to see progress → Step Functions.</div>
+</section>
+
+<!-- 2 SQS -->
+<section class="lesson" data-id="sqs" data-name="SQS">
+  <div class="eyebrow">Lesson 2 · 15 min · heavily tested</div>
+  <h2>SQS: the queue</h2>
+  <p class="lede">A consumer <b>receives</b> a message, which hides it for the <b>visibility timeout</b>. If the consumer <b>deletes</b> it in time, it's done. If not, it reappears for another try.</p>
+
+  <h3>Message lifecycle simulator</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="sVt"><span>Visibility timeout <b id="sVtV"></b></span><input type="range" id="sVt" min="10" max="120" step="5" value="30"></label>
+      <label for="sProc"><span>Processing time <b id="sProcV"></b></span><input type="range" id="sProc" min="5" max="150" step="5" value="20"></label>
+      <label for="sMax"><span>maxReceiveCount (DLQ) <b id="sMaxV"></b></span><input type="range" id="sMax" min="1" max="5" value="3"></label>
+    </div>
+    <div class="tg"><span class="t">Consumer</span><div class="seg" id="sMode"></div></div>
+    <div class="verdict" id="sVerdict"></div>
+    <div class="gantt" id="sGantt"></div>
+    <p class="hint">Light band = message hidden (visibility timeout). Bar = a worker processing it. Orange = duplicate work. Red = worker crashed.</p>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Standard queue</th><th>FIFO queue</th></tr></thead>
+    <tbody>
+      <tr><td>Order</td><td>Best effort</td><td>Strict, per <b>message group ID</b></td></tr>
+      <tr><td>Delivery</td><td>At least once (rare duplicates)</td><td>Exactly-once processing (dedup within 5 minutes)</td></tr>
+      <tr><td>Throughput</td><td>Nearly unlimited</td><td>300 msg/s per action, 3,000 with batching; high-throughput mode for much more</td></tr>
+      <tr><td>Name</td><td>Any</td><td>Must end in <code>.fifo</code></td></tr>
+      <tr><td>Dedup</td><td>Make consumers idempotent</td><td>Deduplication ID or content-based deduplication</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">FIFO parallelism: different message group IDs are processed in parallel; one group is always in order. Use the customer or order ID as the group ID.</p>
+
+  <div class="cards">
+    <div class="c"><h3>Settings</h3><ul><li><b>Visibility timeout</b>: default 30 s, up to 12 h. Workers can extend it with <code>ChangeMessageVisibility</code></li><li><b>Retention</b>: 1 min – 14 days (default 4 days)</li><li><b>Delay queue</b>: hide new messages up to 15 min</li><li><b>Long polling</b>: wait up to 20 s for messages; fewer empty responses, lower cost</li></ul></div>
+    <div class="c"><h3>Dead-letter queue</h3><p>After <code>maxReceiveCount</code> failed receives, the message moves to a DLQ for inspection. Fix the bug, then <b>redrive</b> messages back to the source queue. A FIFO queue needs a FIFO DLQ.</p></div>
+    <div class="c"><h3>Scaling consumers</h3><ul><li>ASG target tracking on <b>backlog per instance</b></li><li>Lambda event source mapping: batches, scales with queue depth, partial batch responses</li></ul></div>
+    <div class="c"><h3>Security & size</h3><ul><li>Encryption: SSE-SQS or KMS, HTTPS in transit</li><li>Access policy for cross-account senders or SNS topics</li><li>Large payloads: put the body in S3 and send a pointer (Extended Client Library)</li></ul></div>
+  </div>
+</section>
+
+<!-- 3 SNS -->
+<section class="lesson" data-id="sns" data-name="SNS">
+  <div class="eyebrow">Lesson 3 · 10 min</div>
+  <h2>SNS: one message, many receivers</h2>
+  <p class="lede">Publishers send to a <b>topic</b>. SNS pushes a copy to every subscriber whose <b>filter policy</b> matches.</p>
+
+  <h3>Fan-out with filters</h3>
+  <div class="box">
+    <div class="tg"><span class="t">Publish an event</span><div class="seg" id="nEv"></div></div>
+    <div class="evjson" id="nJson"></div>
+    <div class="subs" id="nSubs"></div>
+    <p class="say" id="nSay"></p>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Subscribers</h3><p>SQS, Lambda, HTTP/S endpoints, email, SMS, mobile push, Data Firehose.</p></div>
+    <div class="c"><h3>Filter policies</h3><p>Match on message attributes or the message body. Without a filter, a subscriber gets everything.</p></div>
+    <div class="c"><h3>FIFO topics</h3><p>Ordered, deduplicated fan-out to SQS queues. Pair with SQS FIFO for order end to end.</p></div>
+    <div class="c"><h3>Reliability</h3><p>Retries per protocol, DLQ per subscription. SNS doesn't store messages for later; add SQS subscribers so consumers can catch up.</p></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>SQS</th><th>SNS</th></tr></thead>
+    <tbody>
+      <tr><td>Model</td><td>Pull (consumers poll)</td><td>Push to subscribers</td></tr>
+      <tr><td>Receivers per message</td><td>One</td><td>Many</td></tr>
+      <tr><td>Persistence</td><td>Up to 14 days</td><td>No storage (deliver and retry)</td></tr>
+      <tr><td>Best answer when</td><td>"buffer", "decouple workers", "process later"</td><td>"notify", "fan out", "send to email/SMS"</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><b>SNS + SQS fan-out</b> is the classic answer when one event must be processed by several services independently and reliably: SNS for the copies, SQS so each service can be slow or offline without losing messages.</div>
+</section>
+
+<!-- 4 EVENTBRIDGE -->
+<section class="lesson" data-id="eb" data-name="EventBridge">
+  <div class="eyebrow">Lesson 4 · 12 min</div>
+  <h2>EventBridge: route events by what they contain</h2>
+  <p class="lede">Events land on an <b>event bus</b>. <b>Rules</b> match event patterns and send matches to <b>targets</b>.</p>
+
+  <h3>Rule matcher</h3>
+  <div class="box">
+    <div class="tg"><span class="t">Incoming event</span><div class="seg" id="eEv"></div></div>
+    <div class="evjson" id="eJson"></div>
+    <div class="subs" id="eRules"></div>
+  </div>
+
+  <div class="cards">
+    <div class="c"><header><h3>Event buses</h3></header><ul><li><b>Default</b>: events from AWS services (EC2 state change, S3, CodePipeline, Health…)</li><li><b>Partner</b>: SaaS events (Zendesk, Datadog, Shopify…)</li><li><b>Custom</b>: your apps' events</li><li>Send to buses in other accounts or Regions</li></ul></div>
+    <div class="c"><header><h3>Targets</h3></header><p>Lambda, SQS, SNS, Step Functions, Kinesis, Firehose, ECS tasks, CodeBuild, SSM Automation, another event bus, and any HTTP API (<b>API destinations</b>). Input transformers reshape the event.</p></div>
+    <div class="c"><header><h3>Scheduler</h3></header><p>Cron, rate or one-time schedules, with time zones and retries, for millions of schedules. Replaces "EC2 running cron".</p></div>
+    <div class="c"><header><h3>Pipes</h3></header><p>Point-to-point: source (SQS, Kinesis, DynamoDB Streams, MSK, MQ) → filter → enrich → target. Less glue code than Lambda.</p></div>
+    <div class="c"><header><h3>Archive & replay</h3></header><p>Keep events and replay them later, e.g. after fixing a bug in a consumer.</p></div>
+    <div class="c"><header><h3>Schema registry</h3></header><p>Discovers event structures and generates code bindings.</p></div>
+  </div>
+  <div class="remember"><b>EventBridge or SNS?</b> React to AWS service or SaaS events, route by many fields, schedules, replay → <b>EventBridge</b>. Very high-throughput fan-out to many subscribers, SMS, email, mobile push → <b>SNS</b>.</div>
+</section>
+
+<!-- 5 STEP FUNCTIONS -->
+<section class="lesson" data-id="sfn" data-name="Step Functions">
+  <div class="eyebrow">Lesson 5 · 12 min</div>
+  <h2>Step Functions: workflows as state machines</h2>
+  <p class="lede">You draw the steps; Step Functions runs them, retries failures, waits, branches, and records every step of every run.</p>
+
+  <h3>Order workflow</h3>
+  <div class="box">
+    <div class="tg"><span class="t">Order amount</span><div class="seg" id="wAmt"></div></div>
+    <div class="tg"><span class="t">Payment service</span><div class="seg" id="wPay"></div></div>
+    <div class="flow" id="wFlow"></div>
+    <div class="log" id="wLog"></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Standard workflow</th><th>Express workflow</th></tr></thead>
+    <tbody>
+      <tr><td>Max duration</td><td>1 year</td><td>5 minutes</td></tr>
+      <tr><td>Execution</td><td>Exactly once</td><td>At least once (async) / at most once (sync)</td></tr>
+      <tr><td>History</td><td>Full visual history in the console</td><td>CloudWatch Logs</td></tr>
+      <tr><td>Price</td><td>Per state transition</td><td>Per execution and duration</td></tr>
+      <tr><td>Use for</td><td>Long, auditable business processes, human approval</td><td>High-volume, short event processing, IoT, streaming</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><h3>State types</h3><p><b>Task</b> (do work), <b>Choice</b> (branch), <b>Parallel</b>, <b>Map</b> (for each item), <b>Wait</b>, <b>Pass</b>, <b>Succeed</b>, <b>Fail</b>. Retry and Catch on any Task.</p></div>
+    <div class="c"><h3>Integration patterns</h3><ul><li><b>Request-response</b>: call and move on</li><li><b>Run a job</b> (<code>.sync</code>): wait for ECS, Glue, Batch to finish</li><li><b>Wait for callback</b> (task token): pause until a human or system replies</li></ul></div>
+    <div class="c"><h3>SDK integrations</h3><p>Call 200+ AWS services directly (DynamoDB, SNS, S3…) without a Lambda in between. <b>Distributed Map</b> runs thousands of parallel steps over S3 objects.</p></div>
+  </div>
+</section>
+
+<!-- 6 APIS & MORE -->
+<section class="lesson" data-id="api" data-name="APIs, MQ & more">
+  <div class="eyebrow">Lesson 6 · 10 min</div>
+  <h2>API front doors and the rest of the toolbox</h2>
+
+  <h3>API Gateway</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>REST API</th><th>HTTP API</th><th>WebSocket API</th></tr></thead>
+    <tbody>
+      <tr><td>Use for</td><td>Full features</td><td>Cheaper, faster, simpler proxies</td><td>Two-way real-time (chat, live updates)</td></tr>
+      <tr><td>Caching</td><td class="y">Yes</td><td class="n">No</td><td>—</td></tr>
+      <tr><td>Usage plans / API keys</td><td class="y">Yes</td><td class="n">No</td><td>—</td></tr>
+      <tr><td>WAF</td><td class="y">Yes</td><td class="n">No</td><td>—</td></tr>
+      <tr><td>Auth</td><td>IAM, Cognito, Lambda authorizer</td><td>IAM, JWT (Cognito/OIDC), Lambda authorizer</td><td>IAM, Lambda authorizer</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cards">
+    <div class="c"><h3>Limits & protection</h3><ul><li>Account throttle: 10,000 requests/s (burst 5,000) per Region by default</li><li>Per-client throttling with usage plans</li><li>Integration timeout about 29 s by default; long jobs go async</li></ul></div>
+    <div class="c"><h3>Endpoint types</h3><p><b>Edge-optimized</b> (via CloudFront), <b>Regional</b>, <b>Private</b> (only from a VPC via interface endpoint).</p></div>
+    <div class="c"><h3>Direct integrations</h3><p>API Gateway can call SQS, Step Functions, DynamoDB or Kinesis directly, without Lambda in the middle.</p></div>
+  </div>
+
+  <h3>The rest</h3>
+  <div class="cards">
+    <div class="c"><header><h3>AppSync</h3><span class="tag">GraphQL</span></header><p>Managed GraphQL APIs that combine data from DynamoDB, Lambda, RDS and HTTP. Real-time subscriptions and offline sync for mobile apps.</p></div>
+    <div class="c"><header><h3>Amazon MQ</h3><span class="tag">broker</span></header><p>Managed ActiveMQ and RabbitMQ. Supports MQTT, AMQP, STOMP, OpenWire, JMS. For <b>migrating existing apps</b> without rewriting. Active/standby across AZs. Less scalable than SQS/SNS.</p></div>
+    <div class="c"><header><h3>AppFlow</h3><span class="tag">SaaS data</span></header><p>No-code data transfer between SaaS apps (Salesforce, SAP, Zendesk, Slack) and AWS (S3, Redshift), on a schedule or on events.</p></div>
+    <div class="c"><header><h3>Lambda async</h3><span class="tag">retries</span></header><p>Async invocations retry twice. Send results to <b>destinations</b> (on success or failure: SQS, SNS, Lambda, EventBridge) or failures to a DLQ.</p></div>
+    <div class="c"><header><h3>SES</h3><span class="tag">email</span></header><p>Send and receive email at scale: transactional, marketing. SNS email is only for simple notifications.</p></div>
+    <div class="c"><header><h3>SWF</h3><span class="tag warn">legacy</span></header><p>Simple Workflow Service. Older; on the exam Step Functions is almost always the better answer, unless "external signals" and existing SWF code.</p></div>
+  </div>
+</section>
+
+<!-- 7 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the service">
+  <div class="eyebrow">Lesson 7 · game</div>
+  <h2>Pick the integration service</h2>
+  <p class="lede">16 scenarios.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 8 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 8 · exam style</div>
+  <h2>SAA-style integration questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('intpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('intpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+  const onSeg=(el,fn)=>el.addEventListener('click',e=>{const b=e.target.closest('button');if(b)fn(b.textContent)});
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab','map'));
+
+  /* 1 map picker */
+  const MP=[
+    ['Absorb a burst of 10,000 image jobs for a worker fleet','q','SQS. Workers pull at their own pace.'],
+    ['Text a customer and email the team when an order ships','ps','SNS: one publish, SMS and email subscribers.'],
+    ['Run a Lambda whenever any EC2 instance is stopped','bus','EventBridge rule on the EC2 state-change event.'],
+    ['Charge card, reserve stock, ship, with retries and a human approval','orch','Step Functions.'],
+    ['Many apps read the same clickstream and replay last week','stream','Kinesis Data Streams.'],
+    ['Mobile app needs a single GraphQL endpoint with live updates','api','AppSync.'],
+    ['Move an on-prem app that speaks AMQP and JMS','mq','Amazon MQ.']
+  ];
+  $('#mPicks').innerHTML=MP.map((p,i)=>`<button type="button" class="chip" data-i="${i}">${p[0]}</button>`).join('');
+  function mpick(i){$('#mPicks').querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));document.querySelectorAll('#mapT tbody tr').forEach(r=>r.classList.toggle('hi',r.dataset.o===MP[i][1]));$('#mSay').innerHTML='<b>Answer:</b> '+MP[i][2]}
+  $('#mPicks').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)mpick(+b.dataset.i)});mpick(0);
+
+  /* 2 SQS sim */
+  let sMode='Succeeds';
+  function sqs(){
+    seg($('#sMode'),['Succeeds','Crashes every time'],sMode);
+    const vt=+$('#sVt').value,pr=+$('#sProc').value,mx=+$('#sMax').value;
+    $('#sVtV').textContent=vt+' s';$('#sProcV').textContent=pr+' s';$('#sMaxV').textContent=mx;
+    const rows=[];let dlq=null,del=null,kind,why;
+    if(sMode==='Succeeds'){
+      const k=Math.ceil(pr/vt);
+      const n=Math.min(k,mx);
+      for(let i=0;i<n;i++)rows.push({s:i*vt,p:pr,dup:i>0});
+      if(k>mx){dlq=mx*vt;kind='down';why=`Processing (${pr} s) is longer than the visibility timeout (${vt} s). The message kept reappearing, was worked on ${n} times, then moved to the DLQ. Raise the timeout above the processing time.`}
+      else if(k>1){del=pr;kind='warn';why=`The message became visible again at ${vt} s while worker 1 was still busy, so ${k} workers processed it. Duplicate work. Set the visibility timeout above ${pr} s, or extend it with ChangeMessageVisibility.`}
+      else{del=pr;kind='ok';why=`Processed once and deleted at ${pr} s, before the ${vt} s timeout ran out.`}
+    } else {
+      for(let i=0;i<mx;i++)rows.push({s:i*vt,p:Math.max(2,Math.min(pr,vt)*0.5),crash:true});
+      dlq=mx*vt;kind='down';why=`Each worker crashed, the message reappeared after ${vt} s, and after ${mx} receives it moved to the dead-letter queue. Nothing is lost: inspect it, fix the bug, redrive.`;
+    }
+    const T=Math.max(...rows.map(r=>Math.max(r.s+r.p,r.s+vt)),dlq||0)*1.08+2;
+    const X=t=>(t/T*100).toFixed(2)+'%';
+    let html=rows.map((r,i)=>`<div class="grow"><span class="gl">Receive #${i+1}${r.dup?' (duplicate)':''}</span><div class="track"><div class="vis" style="left:${X(r.s)};width:${X(Math.min(vt,T-r.s))}"></div><div class="proc${r.dup?' dup':''}${r.crash?' crash':''}" style="left:${X(r.s)};width:${X(r.p)}"></div>${r.crash?`<span class="mk x" style="left:${X(r.s+r.p)}">✕</span>`:''}${i===0&&del!==null?`<span class="mk del" style="left:${X(del)}">✓ delete</span>`:''}</div></div>`).join('');
+    if(dlq!==null)html+=`<div class="grow"><span class="gl">Dead-letter queue</span><div class="track"><span class="mk dlq" style="left:${X(dlq)}">→ DLQ</span></div></div>`;
+    const step=T>200?50:T>80?20:10;let ax='';for(let t=0;t<T;t+=step)ax+=`<span style="left:${X(t)}">${t}s</span>`;
+    html+=`<div class="grow"><span></span><div class="gaxis">${ax}</div></div>`;
+    $('#sGantt').innerHTML=html;
+    const v=$('#sVerdict');v.className='verdict '+kind;
+    v.innerHTML=`<span class="big">${{ok:'PROCESSED ONCE',warn:'DUPLICATES',down:'SENT TO DLQ'}[kind]}</span><span class="why">${why}</span>`;
+  }
+  ['#sVt','#sProc','#sMax'].forEach(id=>$(id).addEventListener('input',sqs));
+  onSeg($('#sMode'),t=>{sMode=t;sqs()});sqs();
+
+  /* 3 SNS filters */
+  const NE={
+    'Order placed, Italy, €120':{type:'order_placed',country:'IT',amount:120},
+    'Order placed, US, €2,500':{type:'order_placed',country:'US',amount:2500},
+    'Order cancelled, Italy':{type:'order_cancelled',country:'IT',amount:80},
+    'Payment failed, Germany':{type:'payment_failed',country:'DE',amount:40}
+  };
+  const NS=[
+    {n:'Billing queue',p:'SQS',f:'{"type": ["order_placed"]}',m:e=>e.type==='order_placed'},
+    {n:'Fraud check',p:'Lambda',f:'{"amount": [{"numeric": [">=", 1000]}]}',m:e=>e.amount>=1000},
+    {n:'EU warehouse queue',p:'SQS',f:'{"type": ["order_placed"],\n "country": ["IT","DE","FR"]}',m:e=>e.type==='order_placed'&&['IT','DE','FR'].includes(e.country)},
+    {n:'Support team',p:'Email',f:'{"type": ["order_cancelled",\n          "payment_failed"]}',m:e=>['order_cancelled','payment_failed'].includes(e.type)},
+    {n:'Analytics',p:'Firehose → S3',f:'no filter (receives everything)',m:()=>true}
+  ];
+  let ne=Object.keys(NE)[0];
+  function sns(){
+    seg($('#nEv'),Object.keys(NE),ne);const e=NE[ne];
+    $('#nJson').textContent=`Publish to topic "orders"\nattributes: ${JSON.stringify(e)}`;
+    let c=0;$('#nSubs').innerHTML=NS.map(s=>{const y=s.m(e);if(y)c++;return `<div class="sub ${y?'yes':'no'}"><div class="hd"><b>${s.n}</b><span class="pill">${y?'DELIVERED':'FILTERED OUT'}</span></div><span class="hint">${s.p}</span><code>${esc(s.f)}</code></div>`}).join('');
+    $('#nSay').innerHTML=`<b>${c} of ${NS.length} subscribers</b> got a copy. The publisher doesn't know or care who they are; add a new subscriber without changing the publisher.`;
+  }
+  onSeg($('#nEv'),t=>{ne=t;sns()});sns();
+
+  /* 4 EventBridge */
+  const EE={
+    'EC2 stopped':{source:'aws.ec2','detail-type':'EC2 Instance State-change Notification',detail:{'instance-id':'i-0abc','state':'stopped'}},
+    'EC2 running':{source:'aws.ec2','detail-type':'EC2 Instance State-change Notification',detail:{'instance-id':'i-0abc','state':'running'}},
+    'S3 upload':{source:'aws.s3','detail-type':'Object Created',detail:{bucket:{name:'uploads'},object:{key:'cat.jpg'}}},
+    'Zendesk ticket':{source:'aws.partner/zendesk.com/123/default','detail-type':'Ticket Created',detail:{priority:'high'}},
+    'App order':{source:'com.shop.orders','detail-type':'OrderPlaced',detail:{total:59}}
+  };
+  const ER=[
+    {n:'Alert ops on stopped instances',t:'→ SNS topic',p:'{"source": ["aws.ec2"],\n "detail": {"state": ["stopped","terminated"]}}',m:e=>e.source==='aws.ec2'&&['stopped','terminated'].includes(e.detail.state)},
+    {n:'Image pipeline',t:'→ Step Functions',p:'{"source": ["aws.s3"],\n "detail-type": ["Object Created"],\n "detail": {"bucket": {"name": ["uploads"]}}}',m:e=>e.source==='aws.s3'&&e['detail-type']==='Object Created'&&e.detail.bucket&&e.detail.bucket.name==='uploads'},
+    {n:'Sync SaaS tickets',t:'→ Lambda',p:'{"source": [{"prefix": "aws.partner/"}]}',m:e=>e.source.startsWith('aws.partner/')},
+    {n:'Order processing',t:'→ SQS queue',p:'{"source": ["com.shop.orders"],\n "detail-type": ["OrderPlaced"]}',m:e=>e.source==='com.shop.orders'&&e['detail-type']==='OrderPlaced'},
+    {n:'Archive everything',t:'→ Archive (replay later)',p:'{} on the bus archive',m:()=>true}
+  ];
+  let ee='EC2 stopped';
+  function eb(){
+    seg($('#eEv'),Object.keys(EE),ee);
+    $('#eJson').textContent=JSON.stringify(EE[ee],null,2);
+    $('#eRules').innerHTML=ER.map(r=>{const y=r.m(EE[ee]);return `<div class="sub ${y?'yes':'no'}"><div class="hd"><b>${r.n}</b><span class="pill">${y?'MATCH':'NO MATCH'}</span></div><span class="hint">${r.t}</span><code>${esc(r.p)}</code></div>`}).join('');
+  }
+  onSeg($('#eEv'),t=>{ee=t;eb()});eb();
+
+  /* 5 Step Functions */
+  let wa='€200',wp='Succeeds';
+  function wf(){
+    seg($('#wAmt'),['€200','€5,000'],wa);seg($('#wPay'),['Succeeds','Fails once','Always fails'],wp);
+    const big=wa==='€5,000',log=[];const S=[];
+    const add=(n,ty,st,lbl,par)=>S.push({n,ty,st,lbl,par});
+    add('Validate order','Task','done','done');log.push('Validate order → Lambda → OK');
+    add(`Amount over €1,000?`,'Choice','done',big?'yes':'no');log.push(`Choice → amount ${wa} → ${big?'approval branch':'skip approval'}`);
+    add('Wait for manager approval','Task (token)',big?'done':'skip',big?'approved':'skipped');if(big)log.push('Approval → SNS email with task token → paused… manager clicks Approve → resumes');
+    let payOk=wp!=='Always fails';
+    add('Charge card','Task + Retry',wp==='Succeeds'?'done':wp==='Fails once'?'retry':'fail',wp==='Succeeds'?'done':wp==='Fails once'?'retried, OK':'failed ×3','par');
+    if(wp==='Fails once')log.push('Charge card → error → Retry after 2 s backoff → OK');
+    else if(wp==='Always fails')log.push('Charge card → error → retry 1 → error → retry 2 → error → Catch');
+    else log.push('Parallel: Charge card → OK');
+    add('Reserve stock','Task (DynamoDB)',payOk?'done':'done','done','par');log.push('Parallel: Reserve stock → DynamoDB UpdateItem (no Lambda) → OK');
+    add('Ship order','Task (.sync)',payOk?'done':'skip',payOk?'done':'skipped');if(payOk)log.push('Ship order → ECS task (.sync) → waits until finished → OK');
+    add('Release stock & notify','Catch handler',payOk?'skip':'done',payOk?'not needed':'compensated');if(!payOk)log.push('Catch → release reserved stock, email customer');
+    add(payOk?'Notify customer':'Order failed',payOk?'Task (SNS)':'Fail',payOk?'done':'fail',payOk?'done':'FAILED');log.push(payOk?'Notify customer → SNS → Succeed':'Fail state → execution FAILED (history kept for audit)');
+    $('#wFlow').innerHTML=S.map(s=>`<div class="fs ${s.st}${s.par?' par':''}"><span class="ty">${s.ty}</span><span>${s.n}</span><span class="stt">${s.lbl}</span></div>`).join('');
+    $('#wLog').innerHTML=log.map(l=>`<span>${esc(l)}</span>`).join('');
+  }
+  onSeg($('#wAmt'),t=>{wa=t;wf()});onSeg($('#wPay'),t=>{wp=t;wf()});wf();
+
+  /* 7 game */
+  const SVC=['SQS Standard','SQS FIFO','SNS','SNS + SQS fan-out','EventBridge rule','EventBridge Scheduler','EventBridge Pipes','Step Functions Standard','Step Functions Express','API Gateway','AppSync','Amazon MQ','AppFlow','Kinesis Data Streams','Lambda destinations','SES'];
+  const G=[
+    ['A web tier must hand off video encoding jobs to a worker fleet that may be slow.','SQS Standard','Buffer work for workers.'],
+    ['Stock trades for each account must be processed in order, with no duplicates.','SQS FIFO','Order per group + dedup.'],
+    ['Send an SMS and an email to on-call engineers when a critical alarm fires.','SNS','Push to SMS/email.'],
+    ['An order event must reach billing, shipping and analytics, each processing at its own pace.','SNS + SQS fan-out','Copies + durable buffers.'],
+    ['Invoke remediation automatically when a GuardDuty finding appears.','EventBridge rule','AWS service events → targets.'],
+    ['Run a cleanup Lambda every night at 02:00 Rome time.','EventBridge Scheduler','Cron with time zones.'],
+    ['Read from an SQS queue, filter, enrich with an API call, and start a workflow, with no glue code.','EventBridge Pipes','Source → filter → enrich → target.'],
+    ['Loan approval takes up to 2 weeks with human review and must keep a full audit history.','Step Functions Standard','Long-running, exactly once, history.'],
+    ['Process 100,000 IoT events per second, each in a short workflow under a minute.','Step Functions Express','High volume, short.'],
+    ['Expose a REST API with usage plans and API keys for partners.','API Gateway','REST API features.'],
+    ['A mobile app needs one GraphQL API with real-time subscriptions and offline sync.','AppSync','Managed GraphQL.'],
+    ['Migrate an app that uses JMS and AMQP without code changes.','Amazon MQ','Standard broker protocols.'],
+    ['Copy Salesforce data into S3 every hour without code.','AppFlow','SaaS data transfer.'],
+    ['Many apps must read the same ordered event stream and replay the last 3 days.','Kinesis Data Streams','Stream, not queue.'],
+    ['Send the result of an asynchronous Lambda invocation to an SQS queue on failure, without code.','Lambda destinations','On-failure destination.'],
+    ['Send 1 million marketing emails a month with bounce tracking.','SES','Email at scale.']
+  ];
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=13?'Strong. You can pick the right glue.':'Review Lessons 1–6, then play again.'}</p><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* 8 quiz */
+  const Q=[
+    {q:'An e-commerce front end calls the order service directly. During sales the order service is overloaded and orders are lost. What decouples them with the LEAST effort?',o:['Add an SQS queue between them','Add more front-end instances','Use Route 53 weighted routing','Use a larger database'],c:0,e:'A queue absorbs spikes; workers process at their own pace.'},
+    {q:'SQS consumers sometimes process the same message twice. Processing takes about 60 seconds. The queue uses the default settings.',o:['Enable long polling','Increase the visibility timeout above the processing time','Create a delay queue','Switch to SNS'],c:1,e:'Default 30 s timeout expires during a 60 s job, so the message reappears.'},
+    {q:'Messages that cannot be processed keep failing and are retried forever, delaying other work.',o:['Configure a dead-letter queue with a maxReceiveCount','Increase the retention period','Use a FIFO queue','Enable server-side encryption'],c:0,e:'After N receives, messages move to the DLQ.'},
+    {q:'An application polls SQS constantly and receives many empty responses, increasing cost.',o:['Short polling','Long polling with WaitTimeSeconds up to 20','A delay queue','A larger visibility timeout'],c:1,e:'Long polling waits for messages instead of returning empty immediately.'},
+    {q:'Payment instructions for each customer must be processed in order and never twice, but different customers can be processed in parallel.',o:['SQS Standard with idempotent consumers','SQS FIFO with the customer ID as message group ID','SNS standard topic','Kinesis with one shard'],c:1,e:'FIFO orders per message group; groups run in parallel.'},
+    {q:'Each new order must be processed by three independent services. Each service must be able to go offline without losing orders.',o:['One SQS queue shared by the three services','SNS topic with an SQS queue subscribed for each service','Three Lambda functions calling each other','EventBridge Scheduler'],c:1,e:'Fan-out: SNS makes copies, SQS stores them durably.'},
+    {q:'Only orders over €1,000 should reach the fraud-check subscriber of an SNS topic.',o:['A separate topic per amount','An SNS subscription filter policy on the amount attribute','A Lambda that drops small orders','SQS message timers'],c:1,e:'Filter policies select messages per subscriber.'},
+    {q:'A Lambda function must run automatically whenever an EC2 instance changes to the stopped state.',o:['CloudWatch Logs subscription','EventBridge rule matching the EC2 state-change event','SNS topic subscribed to EC2','SQS queue polled by Lambda'],c:1,e:'AWS service events land on the default event bus.'},
+    {q:'A company wants to receive events from a SaaS partner (e.g. Zendesk) and route them to AWS targets without polling.',o:['EventBridge partner event bus','SNS HTTP subscription','AppFlow only','API Gateway polling'],c:0,e:'Partner event sources deliver directly into EventBridge.'},
+    {q:'A nightly job must start at 01:00 in the Europe/Rome time zone, with no servers.',o:['Cron on an EC2 instance','EventBridge Scheduler invoking Lambda or ECS','SQS delay queue','Step Functions Wait state looping forever'],c:1,e:'Scheduler supports cron with time zones.'},
+    {q:'After fixing a bug in an event consumer, the team needs to reprocess the events from the last 2 days.',o:['EventBridge archive and replay','SNS message retry','SQS visibility timeout','CloudTrail Lake'],c:0,e:'Archive events, then replay them to the bus.'},
+    {q:'An order process has several steps, needs retries with backoff, error handling, and can wait days for a manager’s approval.',o:['Lambda functions chained together','Step Functions Standard workflow with a task token for approval','SQS FIFO','Step Functions Express workflow'],c:1,e:'Standard runs up to 1 year; callback pattern waits for approval.'},
+    {q:'A company processes millions of short-lived events per hour through a multi-step workflow that completes in seconds.',o:['Step Functions Standard','Step Functions Express','AWS SWF','Amazon MQ'],c:1,e:'Express: high volume, up to 5 minutes, cheaper per execution.'},
+    {q:'A workflow step must start an ECS task and wait until it finishes before continuing.',o:['Request-response integration','Run a job (.sync) integration','Wait for callback','A Pass state'],c:1,e:'.sync waits for the job to complete.'},
+    {q:'A REST API must cache responses, enforce per-customer quotas with API keys and be protected by AWS WAF.',o:['API Gateway HTTP API','API Gateway REST API','Application Load Balancer','AppSync'],c:1,e:'Caching, usage plans and WAF are REST API features.'},
+    {q:'Clients need to send requests that take 10 minutes to process. API Gateway times out.',o:['Increase Lambda memory','Make it async: API Gateway puts the request into SQS (or starts Step Functions) and returns immediately','Use a WebSocket API for the processing','Use an edge-optimized endpoint'],c:1,e:'Long work goes async; the client checks status later.'},
+    {q:'A company is moving an on-prem application that uses ActiveMQ with JMS and wants minimal code changes.',o:['Amazon SQS','Amazon MQ','Amazon SNS','Kinesis Data Streams'],c:1,e:'Amazon MQ supports the existing protocols.'},
+    {q:'A mobile app needs a single API that combines data from DynamoDB and a REST service, with real-time updates to clients.',o:['API Gateway REST API','AWS AppSync','Amazon MQ','SNS mobile push'],c:1,e:'GraphQL with subscriptions = AppSync.'},
+    {q:'Sales data must be copied from Salesforce to S3 every day without writing code.',o:['AWS Glue crawler','Amazon AppFlow','AWS DataSync','EventBridge Pipes'],c:1,e:'AppFlow moves SaaS data to AWS.'},
+    {q:'Failed asynchronous Lambda invocations must be captured with their error details for later processing.',o:['Configure an on-failure destination (SQS, SNS, EventBridge or Lambda)','Increase the timeout','Use reserved concurrency','Enable X-Ray'],c:0,e:'Destinations capture result and error context after the 2 retries.'}
+  ];
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on integration.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s0=Q[qi],n=s0.o.length,rot=(qi*3)%n,s={q:s0.q,e:s0.e,o:s0.o.map((_,j)=>s0.o[(j+rot)%n]),c:(s0.c-rot+n)%n};
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  const C=[
+    ['Decouple, absorb spikes','SQS'],['Duplicate processing','Visibility timeout > processing time'],['Poison messages','Dead-letter queue (then redrive)'],['Empty receives cost','Long polling (20 s)'],['Postpone delivery','Delay queue (≤ 15 min)'],['Order + no duplicates','SQS FIFO'],['Parallel but ordered per customer','FIFO message group ID'],['Large payloads','S3 + Extended Client Library'],['Scale workers on queue','Backlog per instance'],
+    ['Notify email / SMS / push','SNS'],['One event, many services, durable','SNS + SQS fan-out'],['Send only some messages to a subscriber','SNS filter policy'],
+    ['React to AWS service events','EventBridge rule'],['SaaS events into AWS','EventBridge partner bus'],['Cron without servers','EventBridge Scheduler'],['Source → filter → enrich → target','EventBridge Pipes'],['Reprocess past events','EventBridge archive & replay'],['Call external HTTP APIs from rules','API destinations'],
+    ['Multi-step workflow, retries, audit','Step Functions Standard'],['High-volume short workflows','Step Functions Express'],['Wait for human approval','Task token (callback)'],['Wait for ECS / Glue job','.sync integration'],['Fan out over S3 objects','Distributed Map'],
+    ['REST with caching, keys, WAF','API Gateway REST API'],['Cheap simple HTTP proxy','API Gateway HTTP API'],['Real-time two-way','WebSocket API'],['GraphQL + offline sync','AppSync'],['Existing JMS / AMQP / MQTT','Amazon MQ'],['SaaS data to S3, no code','AppFlow'],['Capture Lambda async failures','Lambda destinations'],['Bulk email','SES']
+  ];
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+
+</body></html>

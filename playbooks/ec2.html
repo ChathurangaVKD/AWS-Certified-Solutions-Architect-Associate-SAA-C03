@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA EC2 Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the IAM, Security, Networking and Storage playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --k2:#1F7F77; --k3:#7150C2;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --k2:#4FC1B4; --k3:#B39BFF; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --k2:#4FC1B4; --k3:#B39BFF; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600} td.m{color:var(--amber);font-weight:600}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ctrl input[type=range]{flex:1;min-width:160px;accent-color:var(--accent)}
+.big{font-family:var(--f-mono);font-size:1.2rem;font-weight:500}
+.big b{color:var(--accent)}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+
+/* decoder */
+.dec-in{display:flex;gap:8px;flex-wrap:wrap}
+.dec-in input{flex:1;min-width:180px;font-family:var(--f-mono);font-size:1.1rem;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px;font-family:var(--f-mono);font-size:.8rem}
+.chip:hover{border-color:var(--accent)}
+.parts{display:flex;flex-wrap:wrap;gap:4px;font-family:var(--f-mono);font-size:1.1rem}
+.parts span{display:grid;gap:4px;padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--line);min-width:52px}
+.parts small{font-family:var(--f-body);font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.parts i{font-style:normal;color:var(--muted);align-self:end;padding-bottom:8px}
+.dec-out{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.dec-out li{display:grid;grid-template-columns:90px minmax(0,1fr);gap:10px;font-size:.92rem;padding:6px 10px;border-radius:6px;background:var(--bg)}
+.dec-out li code{color:var(--accent);font-weight:500}
+.err{color:var(--deny);font-size:.9rem}
+
+/* bars */
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:170px minmax(0,1fr) 84px;gap:10px;align-items:center;font-size:.88rem}
+.bar .track{height:16px;border-radius:4px;background:var(--bg);overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);border-radius:4px;min-width:2px;transition:width .25s}
+.bar.best .fill{background:var(--allow)}
+.bar.best span:first-child{font-weight:600}
+.bar .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+@media (max-width:520px){.bar{grid-template-columns:minmax(0,1fr) 76px}.bar .track{grid-column:1/-1;grid-row:2}}
+
+/* placement */
+.place{display:flex;flex-wrap:wrap;gap:10px}
+.az{flex:1;min-width:150px;border:1px dashed var(--muted);border-radius:10px;padding:10px;display:grid;gap:8px;align-content:start}
+.az .ah{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.racks{display:flex;flex-wrap:wrap;gap:6px}
+.rack{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px;display:grid;grid-template-columns:repeat(2,12px);gap:4px;align-content:start;min-height:52px}
+.rack.wide{grid-template-columns:repeat(4,12px)}
+.rack .rl{grid-column:1/-1;font-size:.62rem;color:var(--muted);font-family:var(--f-mono)}
+.inst{width:12px;height:12px;border-radius:3px;background:var(--accent)}
+.inst.p2{background:var(--k2)} .inst.p3{background:var(--k3)}
+
+/* asg */
+.azrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.azbox{border:1px dashed var(--muted);border-radius:8px;padding:8px;display:grid;gap:6px;align-content:start;min-height:70px}
+.azbox .ah{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.vms{display:flex;flex-wrap:wrap;gap:4px}
+.vm{width:26px;height:26px;border-radius:5px;background:var(--accent);color:#fff;font-size:.62rem;font-weight:600;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.vm.hot{background:var(--deny)}
+.cpu{height:10px;border-radius:5px;background:var(--bg);overflow:hidden;border:1px solid var(--line)}
+.cpu div{height:100%;background:var(--allow);transition:width .25s}
+.cpu.hot div{background:var(--deny)}
+
+/* router */
+.rules{display:grid;gap:6px}
+.rule{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:.88rem}
+.rule .p{font-family:var(--f-mono);color:var(--muted);font-size:.8rem}
+.rule .tgt{font-family:var(--f-mono);font-size:.8rem;color:var(--accent)}
+.rule.chk{opacity:.5}
+.rule.win{border-color:var(--allow);background:var(--allow-soft);opacity:1}
+.req{font-family:var(--f-mono);font-size:.85rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);overflow-x:auto;white-space:pre}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>EC2 <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · instances, pricing, placement, Auto Scaling, load balancers</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 INSTANCE TYPES -->
+<section class="lesson" data-id="types" data-name="Instance types">
+  <div class="eyebrow">Lesson 1 · 10 min</div>
+  <h2>An instance type is a recipe of CPU, memory, disk and network</h2>
+  <p class="lede">The name tells you the recipe. Learn to read it and half the "which instance?" questions answer themselves.</p>
+
+  <h3>Decode an instance name</h3>
+  <div class="box">
+    <div class="dec-in"><input id="decIn" value="m7g.large" aria-label="Instance type" spellcheck="false" autocomplete="off"></div>
+    <div class="chips" id="decChips"></div>
+    <div class="parts" id="decParts"></div>
+    <ul class="dec-out" id="decOut"></ul>
+  </div>
+
+  <h3>The families</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Category</th><th>Families</th><th>Use it for</th><th>Exam keyword</th></tr></thead>
+    <tbody>
+      <tr><td>General purpose</td><td><code>M</code>, <code>T</code>, <code>Mac</code></td><td>Web servers, small DBs, dev/test</td><td>"balanced"</td></tr>
+      <tr><td>Compute optimized</td><td><code>C</code></td><td>Batch, video encoding, gaming servers, HPC, ML inference</td><td>"CPU-intensive"</td></tr>
+      <tr><td>Memory optimized</td><td><code>R</code>, <code>X</code>, <code>U</code>, <code>z</code></td><td>In-memory caches, big relational DBs, SAP HANA, real-time big data</td><td>"in-memory", "large datasets in RAM"</td></tr>
+      <tr><td>Storage optimized</td><td><code>I</code>, <code>D</code>, <code>H</code></td><td>NoSQL, OLTP, data warehouses, Kafka, HDFS</td><td>"high local IOPS", "sequential reads"</td></tr>
+      <tr><td>Accelerated computing</td><td><code>P</code>, <code>G</code>, <code>Trn</code>, <code>Inf</code>, <code>F</code></td><td>ML training and inference, graphics, FPGA</td><td>"GPU", "machine learning"</td></tr>
+      <tr><td>HPC optimized</td><td><code>Hpc</code></td><td>Tightly coupled simulations at scale</td><td>"HPC"</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><header><h3>T: burstable</h3><span class="tag amb">credits</span></header><p>Cheap baseline CPU, earns credits while idle and spends them to burst. In <b>unlimited mode</b> it can keep bursting for an extra charge.</p><p class="kw">"spiky, mostly idle" → T. "Constant high CPU" → not T.</p></div>
+    <div class="c"><header><h3>Graviton</h3><span class="tag ok">g suffix</span></header><p>AWS Arm processors. Best price-performance for most Linux workloads. Software must support Arm.</p></div>
+    <div class="c"><header><h3>Nitro System</h3><span class="tag">platform</span></header><p>AWS's modern hypervisor and hardware. Faster networking and EBS, better security, needed for many features (io2 Block Express, Multi-Attach).</p></div>
+  </div>
+</section>
+
+<!-- 2 LAUNCH & LIFECYCLE -->
+<section class="lesson" data-id="launch" data-name="Launch & lifecycle">
+  <div class="eyebrow">Lesson 2 · 12 min</div>
+  <h2>Launching an instance, and what happens when you stop it</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>AMI</h3><span class="tag">template</span></header><p>The image an instance boots from: OS, software, settings, EBS snapshot mappings.</p><ul><li><b>Regional.</b> Copy an AMI to use it in another Region</li><li>Share with other accounts or publish to Marketplace</li><li>Golden AMI = pre-baked software for fast boot</li><li><b>EC2 Image Builder</b> automates building and testing AMIs</li></ul></div>
+    <div class="c"><header><h3>User data</h3><span class="tag">boot script</span></header><p>A script that runs as root on <b>first boot</b> only (by default). Installs packages, pulls config.</p><p class="kw">Slow boot from user data? Bake it into an AMI.</p></div>
+    <div class="c"><header><h3>Instance metadata (IMDS)</h3><span class="tag">169.254.169.254</span></header><p>The instance asks about itself: ID, AZ, IPs, role credentials, user data.</p><p class="kw"><b>IMDSv2</b> requires a session token (PUT first). Enforce it to block SSRF credential theft.</p></div>
+    <div class="c"><header><h3>Launch template</h3><span class="tag ok">use this</span></header><p>Saved launch settings: AMI, type, key, security groups, user data, role. Versioned. Used by Auto Scaling, EC2 Fleet, Spot Fleet. Launch configurations are the old, deprecated version.</p></div>
+  </div>
+
+  <h3>Stop, hibernate, terminate: what survives?</h3>
+  <div class="box">
+    <div class="tg"><span class="t">Action</span><div class="seg" id="lcAct"></div></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Item</th><th>After the action</th></tr></thead>
+      <tbody id="lcBody"></tbody>
+    </table></div>
+    <p class="say" id="lcSay"></p>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Hibernate rules</h3><ul><li>RAM is written to the <b>encrypted EBS root</b> volume</li><li>RAM must fit in the root volume (max 150 GB RAM)</li><li>Up to 60 days hibernated</li><li>Use for slow-starting apps that need warm memory</li></ul></div>
+    <div class="c"><h3>Termination protection</h3><p>Blocks accidental terminate from the console or API. Doesn't stop Auto Scaling from terminating, or a shutdown from inside the OS if behavior is "terminate".</p></div>
+    <div class="c"><h3>Access</h3><p>Key pair for SSH, <b>EC2 Instance Connect</b> (temporary key pushed by IAM), or <b>Session Manager</b> (no port 22, no keys).</p></div>
+  </div>
+</section>
+
+<!-- 3 PRICING -->
+<section class="lesson" data-id="pricing" data-name="Purchase options">
+  <div class="eyebrow">Lesson 3 · 15 min · heavily tested</div>
+  <h2>Seven ways to pay for the same instance</h2>
+  <p class="lede">You trade flexibility for discount. The exam gives you a workload and asks for the cheapest option that still meets the needs.</p>
+
+  <div class="tablewrap"><table id="payT">
+    <thead><tr><th>Option</th><th>Discount</th><th>Commitment</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr data-o="od"><td>On-Demand</td><td>—</td><td>None, pay per second (Linux)</td><td>Short, unpredictable, can't be interrupted</td></tr>
+      <tr data-o="spot"><td>Spot</td><td class="num">up to 90%</td><td>None. AWS can reclaim with a 2-minute warning</td><td>Fault-tolerant, flexible: batch, CI, big data, stateless web</td></tr>
+      <tr data-o="ri"><td>Reserved Instances</td><td class="num">up to 72%</td><td>1 or 3 years, a specific instance config</td><td>Steady 24/7 workloads</td></tr>
+      <tr data-o="isp"><td>EC2 Instance Savings Plan</td><td class="num">up to 72%</td><td>$/hour for 1 or 3 years, one family in one Region</td><td>Steady use of one family, any size, OS or AZ</td></tr>
+      <tr data-o="csp"><td>Compute Savings Plan</td><td class="num">up to 66%</td><td>$/hour for 1 or 3 years, any family, Region, OS</td><td>Changing instances; also covers Fargate and Lambda</td></tr>
+      <tr data-o="cr"><td>On-Demand Capacity Reservation</td><td>None on its own</td><td>None, cancel anytime; billed whether used or not</td><td>Guaranteed capacity in one AZ (events, DR)</td></tr>
+      <tr data-o="dh"><td>Dedicated Host</td><td>—</td><td>On-Demand or reserved</td><td>BYOL licenses per socket/core, compliance, host visibility</td></tr>
+      <tr data-o="di"><td>Dedicated Instance</td><td>—</td><td>On-Demand or reserved</td><td>Hardware not shared with other customers, no host control</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Which option?</h3>
+  <div class="chips" id="payPicks"></div>
+  <p class="say" id="paySay"></p>
+
+  <h3>When does a commitment pay off?</h3>
+  <div class="box">
+    <div class="ctrl"><span class="big">runs <b id="hrsV">24</b> h / day</span><input type="range" id="hrsR" min="1" max="24" value="24" aria-label="Hours per day the instance runs"></div>
+    <div class="bars" id="payBars"></div>
+    <p class="hint">Example instance at $0.10/hour On-Demand, 730 hours per month, using each option's maximum discount. A commitment is billed every hour whether the instance runs or not. Spot can be interrupted.</p>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>RI details</h3><ul><li><b>Standard</b>: biggest discount, can change AZ and size within the family; sell on the RI Marketplace</li><li><b>Convertible</b>: up to 66%, exchange for another family, OS or tenancy</li><li>Pay all, partial or no upfront (more upfront = more discount)</li><li><b>Zonal</b> RI also reserves capacity in that AZ; <b>regional</b> RI does not</li></ul></div>
+    <div class="c"><h3>Spot details</h3><ul><li>2-minute interruption notice (metadata + EventBridge)</li><li>On interruption: terminate, stop or hibernate</li><li><b>Spot Fleet / EC2 Fleet</b>: mix types and AZs; use <b>price-capacity-optimized</b> allocation</li><li>Cancelling a Spot request doesn't terminate running instances</li><li>Never for databases or anything stateful you can't lose</li></ul></div>
+    <div class="c"><h3>Capacity extras</h3><ul><li>Capacity Reservation + regional RI or Savings Plan = capacity <i>and</i> discount</li><li><b>Capacity Blocks for ML</b>: reserve GPU instances for a future date range</li></ul></div>
+  </div>
+</section>
+
+<!-- 4 PLACEMENT & NETWORKING -->
+<section class="lesson" data-id="placement" data-name="Placement & network">
+  <div class="eyebrow">Lesson 4 · 10 min</div>
+  <h2>Placement groups: decide how close instances sit</h2>
+  <p class="lede">Close together = fast network, shared risk. Far apart = isolated failures.</p>
+
+  <div class="box">
+    <div class="tg"><span class="t">Placement strategy</span><div class="seg" id="pgSeg"></div></div>
+    <div class="place" id="pgDraw"></div>
+    <p class="say" id="pgSay"></p>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Cluster</th><th>Spread</th><th>Partition</th></tr></thead>
+    <tbody>
+      <tr><td>Layout</td><td>Close together, one AZ</td><td>Each instance on distinct hardware</td><td>Groups of racks ("partitions") that share nothing</td></tr>
+      <tr><td>Scope</td><td>Single AZ</td><td>Multiple AZs</td><td>Multiple AZs</td></tr>
+      <tr><td>Limit</td><td>Capacity of the AZ</td><td class="num">7 running instances per AZ per group</td><td class="num">7 partitions per AZ, hundreds of instances</td></tr>
+      <tr><td>Good</td><td>Lowest latency, highest throughput</td><td>Minimal correlated failure</td><td>Big distributed systems, rack-aware</td></tr>
+      <tr><td>Bad</td><td>Rack or AZ failure hits all</td><td>Small groups only</td><td>Instances in one partition share risk</td></tr>
+      <tr><td>Exam use</td><td>HPC, tightly coupled jobs</td><td>A few critical instances</td><td>HDFS, HBase, Cassandra, Kafka</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Instance networking</h3>
+  <div class="cards">
+    <div class="c"><h3>ENI</h3><p>Virtual network card: private IPs, MAC, security groups. Move a secondary ENI to a standby instance in the same AZ for quick failover.</p></div>
+    <div class="c"><h3>Public IP vs Elastic IP</h3><p>Auto-assigned public IPv4 <b>changes on stop/start</b>. An Elastic IP is static until you release it. All public IPv4 is billed hourly.</p></div>
+    <div class="c"><h3>ENA (enhanced networking)</h3><p>SR-IOV networking, higher bandwidth (100 Gbps and more), lower latency, more packets per second. On by default on current instances.</p></div>
+    <div class="c"><h3>EFA</h3><p>Elastic Fabric Adapter: ENA plus OS-bypass for HPC and ML using MPI or NCCL. Pair with a cluster placement group.</p><p class="kw">"HPC, tightly coupled, MPI" → EFA</p></div>
+  </div>
+</section>
+
+<!-- 5 AUTO SCALING -->
+<section class="lesson" data-id="asg" data-name="Auto Scaling">
+  <div class="eyebrow">Lesson 5 · 15 min</div>
+  <h2>Auto Scaling groups add and remove instances for you</h2>
+  <p class="lede">You set min, max and a policy. The group keeps the desired count healthy, spread across AZs.</p>
+
+  <h3>Target tracking simulator</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="aTarget"><span>Target average CPU <b id="aTargetV"></b></span><input type="range" id="aTarget" min="30" max="90" step="5" value="50"></label>
+      <label for="aMin"><span>Minimum <b id="aMinV"></b></span><input type="range" id="aMin" min="1" max="6" value="2"></label>
+      <label for="aMax"><span>Maximum <b id="aMaxV"></b></span><input type="range" id="aMax" min="3" max="12" value="9"></label>
+      <label for="aLoad"><span>Total traffic (CPU work) <b id="aLoadV"></b></span><input type="range" id="aLoad" min="0" max="900" step="10" value="230"></label>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="aDes"></div><div class="k">Desired instances</div></div>
+      <div class="stat"><div class="v" id="aCpu"></div><div class="k">Average CPU per instance</div></div>
+    </div>
+    <div class="azrow" id="aAz"></div>
+    <p class="say" id="aSay"></p>
+    <p class="hint">Traffic 230 = the work of 2.3 instances running at 100% CPU. Desired = traffic ÷ target, rounded up, kept between min and max.</p>
+  </div>
+
+  <h3>Scaling policies</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Policy</th><th>How it works</th><th>Exam keyword</th></tr></thead>
+    <tbody>
+      <tr><td>Target tracking</td><td>Keep a metric at a value, like a thermostat. AWS creates the alarms</td><td>"keep average CPU at 50%"</td></tr>
+      <tr><td>Step scaling</td><td>CloudWatch alarm thresholds add or remove different amounts</td><td>"add 2 at 70%, add 4 at 90%"</td></tr>
+      <tr><td>Simple scaling</td><td>One adjustment per alarm, then waits for the cooldown</td><td>Older, rarely the best answer</td></tr>
+      <tr><td>Scheduled</td><td>Change min/max/desired at set times</td><td>"every Monday at 9:00"</td></tr>
+      <tr><td>Predictive</td><td>ML forecast from history, scales ahead of daily/weekly patterns</td><td>"recurring pattern, scale before load arrives"</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">Good metrics: CPUUtilization, ALB RequestCountPerTarget, network in/out, or a custom metric like SQS backlog per instance.</p>
+
+  <div class="cards">
+    <div class="c"><h3>Health checks</h3><p>Default: EC2 status checks only. Turn on <b>ELB health checks</b> so the ASG replaces instances whose app fails behind the load balancer. Grace period lets new instances boot first.</p></div>
+    <div class="c"><h3>Cooldown and warm-up</h3><p>Default cooldown 300 s stops extra scaling while new instances start. Instance warm-up excludes new instances from metrics until ready.</p></div>
+    <div class="c"><h3>Lifecycle hooks</h3><p>Pause an instance in <code>Pending:Wait</code> or <code>Terminating:Wait</code> to run scripts: install software, or copy logs before termination.</p></div>
+    <div class="c"><h3>Termination order</h3><p>Default: first balance AZs (remove from the AZ with most instances), then the oldest launch template or configuration.</p></div>
+    <div class="c"><h3>Mixed instances policy</h3><p>One ASG with several instance types and a mix of On-Demand and Spot (e.g. base 2 On-Demand, the rest 70% Spot).</p></div>
+    <div class="c"><h3>Warm pools and instance refresh</h3><p><b>Warm pool</b>: pre-initialised stopped instances for fast scale-out. <b>Instance refresh</b>: roll out a new AMI or launch template gradually.</p></div>
+  </div>
+  <div class="remember"><b>ASGs are regional, not global.</b> They span AZs in one Region. For multi-Region, run an ASG in each Region and route with Route 53 or Global Accelerator.</div>
+</section>
+
+<!-- 6 LOAD BALANCERS -->
+<section class="lesson" data-id="elb" data-name="Load balancers">
+  <div class="eyebrow">Lesson 6 · 15 min</div>
+  <h2>Elastic Load Balancing: spread traffic, survive failures</h2>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>ALB</th><th>NLB</th><th>GWLB</th></tr></thead>
+    <tbody>
+      <tr><td>OSI layer</td><td>7 (HTTP, HTTPS, gRPC, WebSocket)</td><td>4 (TCP, UDP, TLS)</td><td>3 (IP packets, GENEVE port 6081)</td></tr>
+      <tr><td>Routing</td><td>Path, host, header, method, query string, source IP</td><td>Port</td><td>To appliance fleet</td></tr>
+      <tr><td>Targets</td><td>Instances, IPs, Lambda, containers</td><td>Instances, IPs, ALB</td><td>Firewall / IDS appliances</td></tr>
+      <tr><td>Static IP</td><td class="n">No, DNS name only</td><td class="y">One per AZ, can use Elastic IPs</td><td>—</td></tr>
+      <tr><td>Client IP</td><td>In <code>X-Forwarded-For</code> header</td><td>Preserved</td><td>Preserved</td></tr>
+      <tr><td>Performance</td><td>Very high</td><td>Millions of requests/s, ultra-low latency</td><td>—</td></tr>
+      <tr><td>Extras</td><td>WAF, Cognito/OIDC auth, redirects, fixed responses</td><td>PrivateLink endpoint services</td><td>Transparent inspection</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">Classic Load Balancer (CLB) is legacy. On the exam it's almost never the right answer.</p>
+
+  <h3>ALB listener rules</h3>
+  <div class="box">
+    <div class="tg"><span class="t">Incoming request</span><div class="seg" id="rReq"></div></div>
+    <div class="req" id="rShow"></div>
+    <div class="rules" id="rRules"></div>
+    <p class="hint">Rules are checked in priority order. The first match wins; nothing matches → default action.</p>
+  </div>
+
+  <h3>Cross-zone load balancing</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="xA"><span>Instances in AZ-a <b id="xAV"></b></span><input type="range" id="xA" min="1" max="10" value="2"></label>
+      <label for="xB"><span>Instances in AZ-b <b id="xBV"></b></span><input type="range" id="xB" min="1" max="10" value="8"></label>
+    </div>
+    <div class="tg"><span class="t">Cross-zone load balancing</span><div class="seg" id="xSeg"></div></div>
+    <div class="bars" id="xBars"></div>
+    <p class="say" id="xSay"></p>
+  </div>
+
+  <div class="cards">
+    <div class="c"><h3>Health checks</h3><p>LB sends requests to a path (e.g. <code>/health</code>). Unhealthy targets get no traffic until they pass again.</p></div>
+    <div class="c"><h3>Deregistration delay</h3><p>(Connection draining.) A target being removed finishes in-flight requests first. Default 300 s, range 0–3600.</p></div>
+    <div class="c"><h3>Sticky sessions</h3><p>Same user → same target. ALB uses cookies (duration-based or app cookie). Can cause uneven load. Better: store sessions in ElastiCache or DynamoDB.</p></div>
+    <div class="c"><h3>SSL/TLS and SNI</h3><p>Terminate HTTPS on the LB with an ACM certificate. <b>SNI</b> lets ALB and NLB serve many domains with many certificates on one listener.</p></div>
+    <div class="c"><h3>Security groups</h3><p>Allow 80/443 from the internet to the ALB. Instances allow traffic <b>only from the ALB's security group</b>.</p></div>
+    <div class="c"><h3>Need static IPs for an ALB?</h3><p>Put Global Accelerator (or an NLB) in front of it.</p></div>
+  </div>
+</section>
+
+<!-- 7 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the option">
+  <div class="eyebrow">Lesson 7 · game</div>
+  <h2>Pick the right option</h2>
+  <p class="lede">18 scenarios across pricing, placement, scaling and load balancing.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 8 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 8 · exam style</div>
+  <h2>SAA-style EC2 questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('ec2pb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('ec2pb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab','types'));
+
+  /* 1 decoder */
+  const FAM={t:'General purpose, burstable CPU',m:'General purpose, balanced',mac:'macOS on Apple hardware',c:'Compute optimized',r:'Memory optimized',x:'Memory optimized, very large RAM',u:'High memory (terabytes of RAM)',z:'Memory optimized, high CPU frequency',i:'Storage optimized, fast local NVMe SSD',d:'Storage optimized, dense local HDD',h:'Storage optimized, HDD throughput',p:'Accelerated: GPUs for ML training and HPC',g:'Accelerated: GPUs for graphics and inference',inf:'Accelerated: AWS Inferentia chips for ML inference',trn:'Accelerated: AWS Trainium chips for ML training',f:'Accelerated: FPGA',hpc:'HPC optimized',vt:'Accelerated: video transcoding'};
+  const ATT={g:'AWS Graviton (Arm) processor',a:'AMD processor',i:'Intel processor',d:'Local NVMe instance store disks',n:'Higher network bandwidth',e:'Extra memory or storage',z:'High CPU frequency',b:'Higher EBS performance',q:'Qualcomm inference accelerators'};
+  const EX=['t3.micro','m7g.large','c7gn.xlarge','r6id.2xlarge','i4i.4xlarge','x2idn.metal','p5.48xlarge','inf2.xlarge','m7i-flex.large','hpc7g.16xlarge'];
+  $('#decChips').innerHTML=EX.map(e=>`<button type="button" class="chip">${e}</button>`).join('');
+  $('#decChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){$('#decIn').value=b.textContent;decode()}});
+  function sizeTxt(s){if(s==='metal')return 'Bare metal: the whole physical server, no hypervisor';const m={nano:'smallest',micro:'very small',small:'small',medium:'medium',large:'2 vCPU on most families (memory depends on family)',xlarge:'2× large'};if(m[s])return 'Size '+s+': '+m[s];const n=s.match(/^(\d+)xlarge$/);return n?`${n[1]}× xlarge, about ${n[1]*4} vCPU on most families`:'Size'}
+  function decode(){
+    const v=$('#decIn').value.trim().toLowerCase();
+    const m=v.match(/^(mac|inf|trn|hpc|vt|[a-z])(\d+)([a-z]*)(-flex)?\.([a-z0-9]+)$/);
+    if(!m||!FAM[m[1]]){$('#decParts').innerHTML='';$('#decOut').innerHTML='<li class="err" style="display:block">Try a name like m7g.large or c6in.2xlarge.</li>';return}
+    const [,f,g,a,flex,s]=m;
+    $('#decParts').innerHTML=`<span><small>family</small>${f}</span><span><small>generation</small>${g}</span>${a?`<span><small>attributes</small>${a}</span>`:''}${flex?`<span><small>variant</small>${flex.slice(1)}</span>`:''}<i>.</i><span><small>size</small>${s}</span>`;
+    const rows=[[f,FAM[f]],[g,`Generation ${g}. Higher is newer and usually better price-performance`]];
+    [...a].forEach(ch=>rows.push([ch,ATT[ch]||'Attribute']));
+    if(flex)rows.push(['flex','Flex: cheaper, can run at full CPU most of the time; good for general workloads']);
+    rows.push([s,sizeTxt(s)]);
+    $('#decOut').innerHTML=rows.map(r=>`<li><code>${esc(r[0])}</code><span>${r[1]}</span></li>`).join('');
+  }
+  $('#decIn').addEventListener('input',decode);decode();
+
+  /* 2 lifecycle */
+  const ROWS=['Billing for compute','EBS root volume data','Extra EBS volumes','Instance store data','RAM contents','Private IPv4','Auto-assigned public IPv4','Elastic IP'];
+  const ACT={
+    'Reboot':[['m','Continues'],['y','Kept'],['y','Kept'],['y','Kept'],['n','Lost'],['y','Kept'],['y','Kept'],['y','Kept']],
+    'Stop':[['y','Stops (EBS still billed)'],['y','Kept'],['y','Kept'],['n','Lost'],['n','Lost'],['y','Kept'],['n','Released; new IP on start'],['y','Stays attached']],
+    'Hibernate':[['y','Stops (EBS still billed)'],['y','Kept'],['y','Kept'],['n','Lost'],['y','Saved to EBS root, restored on start'],['y','Kept'],['n','Released; new IP on start'],['y','Stays attached']],
+    'Terminate':[['y','Stops'],['n','Deleted (DeleteOnTermination = true by default)'],['y','Kept (DeleteOnTermination = false by default)'],['n','Lost'],['n','Lost'],['n','Released'],['n','Released'],['m','Disassociated; still yours and still billed']]
+  };
+  const SAYS={Reboot:'Same host, same everything. Only memory is cleared.',Stop:'The instance may start on a different host, which is why instance store data is gone. Use an Elastic IP if the address must stay the same.',Hibernate:'Like a laptop lid: boots back with the app and memory exactly as they were.',Terminate:'Gone for good. Set DeleteOnTermination = false on the root volume if you must keep it.'};
+  let act='Stop';
+  function lc(){seg($('#lcAct'),Object.keys(ACT),act);$('#lcBody').innerHTML=ROWS.map((r,i)=>`<tr><td>${r}</td><td class="${ACT[act][i][0]}">${ACT[act][i][1]}</td></tr>`).join('');$('#lcSay').textContent=SAYS[act]}
+  $('#lcAct').addEventListener('click',e=>{const b=e.target.closest('button');if(b){act=b.textContent;lc()}});lc();
+
+  /* 3 pay picker */
+  const PP=[
+    ['Steady 24/7 web app for 3 years, same instance type','ri','Reserved Instances (Standard, 3-year) or an EC2 Instance Savings Plan: up to 72% off.'],
+    ['Steady usage but families, Regions and Fargate/Lambda will change','csp','Compute Savings Plan: up to 66%, applies across families, Regions, Fargate and Lambda.'],
+    ['Batch jobs that can restart if stopped','spot','Spot: up to 90% off. Design for the 2-minute interruption.'],
+    ['A 3-week test with unpredictable usage','od','On-Demand: no commitment, pay only for what runs.'],
+    ['Licenses billed per physical CPU core (BYOL)','dh','Dedicated Host: you see sockets and cores, and can keep instances on the same host.'],
+    ['Compliance says no shared hardware, no license needs','di','Dedicated Instances: hardware only for your account, cheaper and simpler than hosts.'],
+    ['Must be sure capacity exists in one AZ on Black Friday','cr','On-Demand Capacity Reservation, with no long-term commitment. Add a Savings Plan for a discount.'],
+    ['Database that runs 24/7 and can’t be interrupted','ri','Reserved Instances or a Savings Plan. Never Spot for a stateful database.']
+  ];
+  $('#payPicks').innerHTML=PP.map((p,i)=>`<button type="button" class="chip" data-i="${i}" style="font-family:var(--f-body)">${p[0]}</button>`).join('');
+  function pay(i){$('#payPicks').querySelectorAll('.chip').forEach(b=>{const on=+b.dataset.i===i;b.style.background=on?'var(--accent)':'';b.style.color=on?'#fff':'';b.style.borderColor=on?'var(--accent)':''});
+    document.querySelectorAll('#payT tbody tr').forEach(r=>r.classList.toggle('hi',r.dataset.o===PP[i][1]||(PP[i][1]==='ri'&&r.dataset.o==='isp')));$('#paySay').innerHTML='<b>Answer:</b> '+PP[i][2]}
+  $('#payPicks').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)pay(+b.dataset.i)});pay(0);
+
+  /* 3 cost bars */
+  function bars(){
+    const hpd=+$('#hrsR').value;$('#hrsV').textContent=hpd;
+    const used=hpd*730/24,p=.10;
+    const B=[['On-Demand',p*used],['Spot (up to 90% off)',p*.10*used],['Compute SP, 3-yr (66%)',p*.34*730],['RI / EC2 Instance SP, 3-yr (72%)',p*.28*730]];
+    const max=Math.max(...B.map(b=>b[1])),min=Math.min(...B.slice(0,1).concat(B.slice(2)).map(b=>b[1]));
+    $('#payBars').innerHTML=B.map((b,i)=>`<div class="bar${i!==1&&b[1]===min?' best':''}"><span>${b[0]}</span><div class="track"><div class="fill" style="width:${(b[1]/max*100).toFixed(1)}%"></div></div><span class="val">$${fmt(b[1],2)}</span></div>`).join('')+
+      `<p class="hint">${hpd*1<24*.28?'At this usage On-Demand beats every commitment.':hpd<24*.34?'The 72% commitment just wins; the 66% plan still loses to On-Demand.':'Commitments win. Break-even: about 6.7 h/day for 72% off, 8.2 h/day for 66% off.'}</p>`;
+  }
+  $('#hrsR').addEventListener('input',bars);bars();
+
+  /* 4 placement */
+  const PG={
+    Cluster:'All instances packed into one rack area in one AZ. 10–100 Gbps between them, lowest latency. If that hardware fails, they all fail.',
+    Spread:'Every instance on its own rack with its own power and network. At most 7 running instances per AZ per group.',
+    Partition:'Instances grouped into partitions; each partition has its own racks. A rack failure hits only one partition. The instance can read its partition number from metadata, so Kafka or HDFS can place replicas smartly.'
+  };
+  let pg='Cluster';
+  function place(){
+    seg($('#pgSeg'),Object.keys(PG),pg);
+    const inst=(n,c='')=>Array(n).fill(`<span class="inst ${c}"></span>`).join('');
+    let html='';
+    if(pg==='Cluster')html=`<div class="az"><span class="ah">AZ-a</span><div class="racks"><div class="rack wide"><span class="rl">rack 1</span>${inst(12)}</div></div></div><div class="az"><span class="ah">AZ-b</span><div class="racks"></div></div>`;
+    if(pg==='Spread')html=['a','b'].map(z=>`<div class="az"><span class="ah">AZ-${z}</span><div class="racks">${[1,2,3,4,5,6,7].map(r=>`<div class="rack"><span class="rl">r${r}</span>${inst(1)}</div>`).join('')}</div></div>`).join('');
+    if(pg==='Partition')html=['a','b'].map(z=>`<div class="az"><span class="ah">AZ-${z}</span><div class="racks">${[1,2,3].map(p=>`<div class="rack wide"><span class="rl">partition ${z==='a'?p:p+3}</span>${inst(8,'p'+p)}</div>`).join('')}</div></div>`).join('');
+    $('#pgDraw').innerHTML=html;$('#pgSay').textContent=PG[pg];
+  }
+  $('#pgSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b){pg=b.textContent;place()}});place();
+
+  /* 5 ASG */
+  function asg(){
+    let t=+$('#aTarget').value,mn=+$('#aMin').value,mx=+$('#aMax').value,ld=+$('#aLoad').value;
+    if(mx<mn){mx=mn;$('#aMax').value=mx}
+    $('#aTargetV').textContent=t+'%';$('#aMinV').textContent=mn;$('#aMaxV').textContent=mx;$('#aLoadV').textContent=ld;
+    const raw=Math.ceil(ld/t)||0,des=Math.min(mx,Math.max(mn,raw)),cpu=des?ld/des:0,hot=cpu>t+0.5;
+    $('#aDes').textContent=des;$('#aCpu').textContent=fmt(Math.min(cpu,100),0)+'%'+(cpu>100?' (overloaded)':'');
+    const per=[0,0,0];for(let i=0;i<des;i++)per[i%3]++;
+    $('#aAz').innerHTML=per.map((n,i)=>`<div class="azbox"><span class="ah">AZ-${'abc'[i]}</span><div class="vms">${Array(n).fill(`<span class="vm${hot?' hot':''}">${Math.round(Math.min(cpu,100))}</span>`).join('')}</div><div class="cpu${hot?' hot':''}"><div style="width:${Math.min(cpu,100)}%"></div></div></div>`).join('');
+    let s;
+    if(raw>mx)s=`<b>Stuck at maximum.</b> It needs ${raw} instances to hold ${t}%, but max is ${mx}. CPU runs hot. Raise the maximum.`;
+    else if(raw<mn)s=`<b>Held at minimum.</b> Traffic is low, but the group never goes below ${mn}. That's your availability floor.`;
+    else s=`<b>On target.</b> ${des} instances keep average CPU at or below ${t}%. Instances are balanced across AZs.`;
+    $('#aSay').innerHTML=s;
+  }
+  ['#aTarget','#aMin','#aMax','#aLoad'].forEach(id=>$(id).addEventListener('input',asg));asg();
+
+  /* 6 ALB router */
+  const RULES=[
+    {p:1,c:'Host is api.shop.example',t:'tg-api',m:r=>r.host==='api.shop.example'},
+    {p:2,c:'Path is /images/*',t:'tg-images',m:r=>r.path.startsWith('/images/')},
+    {p:3,c:'Header X-Beta: true',t:'tg-beta',m:r=>r.beta},
+    {p:4,c:'Query string platform=mobile',t:'tg-mobile',m:r=>/[?&]platform=mobile/.test(r.path)},
+    {p:'def',c:'Default action',t:'tg-web',m:()=>true}
+  ];
+  const REQ={
+    'Homepage':{host:'shop.example',path:'/'},
+    'Product image':{host:'shop.example',path:'/images/shoe.jpg'},
+    'API call':{host:'api.shop.example',path:'/images/list'},
+    'Beta tester':{host:'shop.example',path:'/cart',beta:true},
+    'Mobile app':{host:'shop.example',path:'/home?platform=mobile'}
+  };
+  let rq='Product image';
+  function route(){
+    seg($('#rReq'),Object.keys(REQ),rq);const r=REQ[rq];
+    $('#rShow').textContent=`GET ${r.path} HTTP/1.1\nHost: ${r.host}${r.beta?'\nX-Beta: true':''}`;
+    const win=RULES.findIndex(x=>x.m(r));
+    $('#rRules').innerHTML=RULES.map((x,i)=>`<div class="rule ${i===win?'win':i<win?'chk':''}"><span class="p">${x.p==='def'?'last':'#'+x.p}</span><span>${x.c}${i<win?' · no match':''}${i===win?' · <b>match</b>':''}</span><span class="tgt">→ ${x.t}</span></div>`).join('');
+  }
+  $('#rReq').addEventListener('click',e=>{const b=e.target.closest('button');if(b){rq=b.textContent;route()}});route();
+
+  /* 6 cross-zone */
+  let xz='Off';
+  function cross(){
+    const a=+$('#xA').value,b=+$('#xB').value;$('#xAV').textContent=a;$('#xBV').textContent=b;
+    seg($('#xSeg'),['Off','On'],xz);
+    const pa=xz==='On'?100/(a+b):50/a,pb=xz==='On'?100/(a+b):50/b,max=Math.max(pa,pb);
+    $('#xBars').innerHTML=`<div class="bar"><span>Each AZ-a instance</span><div class="track"><div class="fill" style="width:${pa/max*100}%"></div></div><span class="val">${fmt(pa,1)}%</span></div><div class="bar"><span>Each AZ-b instance</span><div class="track"><div class="fill" style="width:${pb/max*100}%"></div></div><span class="val">${fmt(pb,1)}%</span></div>`;
+    $('#xSay').innerHTML=xz==='On'?'<b>On:</b> every target gets an equal share, whatever its AZ. Default on for ALB (free). Off by default for NLB and GWLB, which charge for inter-AZ data when on.':`<b>Off:</b> each AZ gets 50% of traffic, split only among its own instances. ${a!==b?'The smaller AZ’s instances get overloaded.':'Even here, because both AZs have the same count.'}`;
+  }
+  ['#xA','#xB'].forEach(id=>$(id).addEventListener('input',cross));
+  $('#xSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b){xz=b.textContent;cross()}});cross();
+
+  /* 7 game */
+  const SVC=['On-Demand','Spot','Reserved Instances','Compute Savings Plan','Dedicated Host','Capacity Reservation','Cluster placement','Spread placement','Partition placement','Hibernate','Elastic IP','ALB','NLB','GWLB','Target tracking','Scheduled scaling','Lifecycle hook','Cross-zone LB'];
+  const G=[
+    ['Nightly image rendering that can restart from checkpoints. Lowest cost.','Spot','Interruptible batch = Spot.'],
+    ['A production database runs 24/7 on the same r7g instance for 3 years.','Reserved Instances','Steady, known config, long term.'],
+    ['Company moves between instance families and uses Fargate too. Wants a discount.','Compute Savings Plan','Flexible across families, Regions, Fargate, Lambda.'],
+    ['Windows Server licensed per physical core must be brought to AWS.','Dedicated Host','BYOL per socket/core.'],
+    ['Guarantee capacity for 10 large instances in eu-south-1a during a 2-week launch.','Capacity Reservation','Capacity, no long-term term.'],
+    ['Tightly coupled CFD simulation needs the lowest node-to-node latency.','Cluster placement','Same rack area, high bandwidth.'],
+    ['Five critical instances must never fail together.','Spread placement','Distinct hardware per instance.'],
+    ['A 300-node Cassandra ring must be rack-aware.','Partition placement','Partitions + metadata partition number.'],
+    ['An app takes 15 minutes to load caches at start. Restart must be fast.','Hibernate','RAM saved to EBS root.'],
+    ['A partner firewall needs one fixed IP for a single EC2 web server.','Elastic IP','Static public IPv4.'],
+    ['Route /api and /web to different microservices.','ALB','Path-based routing, layer 7.'],
+    ['UDP game servers, millions of packets per second, static IP per AZ.','NLB','Layer 4, UDP, static IPs.'],
+    ['Inspect all traffic with third-party firewall appliances.','GWLB','GENEVE, appliance fleets.'],
+    ['Keep average CPU of the web tier at 50%.','Target tracking','Thermostat-style policy.'],
+    ['Traffic jumps every weekday at 08:00 sharp.','Scheduled scaling','Known time = schedule.'],
+    ['Copy application logs to S3 before Auto Scaling terminates an instance.','Lifecycle hook','Terminating:Wait state.'],
+    ['NLB with 2 instances in AZ-a and 6 in AZ-b; AZ-a instances are overloaded.','Cross-zone LB','Even distribution across all targets.'],
+    ['A 2-week proof of concept with unpredictable usage that can’t be interrupted.','On-Demand','Short, no commitment, no interruptions.']
+  ];
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=15?'Strong. You know which lever to pull.':'Review Lessons 3–6, then play again.'}</p><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* 8 quiz */
+  const Q=[
+    {q:'A company runs a steady workload 24/7 on m6i instances in one Region for the next 3 years. It wants the largest discount.',o:['On-Demand Instances','Spot Instances','3-year Standard Reserved Instances (or an EC2 Instance Savings Plan), all upfront','Compute Savings Plan, 1 year'],c:2,e:'Steady + fixed family + long term = up to 72%.'},
+    {q:'Data processing jobs can be stopped and restarted at any time. The company wants the LOWEST cost.',o:['On-Demand','Spot Instances','Reserved Instances','Dedicated Hosts'],c:1,e:'Fault-tolerant, flexible = Spot, up to 90% off.'},
+    {q:'A company expects to change instance families and Regions, and also runs Fargate and Lambda. It wants a discount for a consistent spend.',o:['EC2 Instance Savings Plan','Compute Savings Plan','Convertible Reserved Instances','Spot Fleet'],c:1,e:'Compute Savings Plans cover any family, Region, OS, plus Fargate and Lambda.'},
+    {q:'Software licenses are tied to physical sockets and cores. The company must bring them to AWS.',o:['Dedicated Instances','Dedicated Hosts','Spot Instances','Reserved Instances on shared tenancy'],c:1,e:'Only Dedicated Hosts expose the physical sockets and cores.'},
+    {q:'A company must be sure it can launch 20 instances in a specific AZ for a 2-week event, with no long-term commitment.',o:['Zonal Reserved Instances for 1 year','On-Demand Capacity Reservation','Spot Instances','Compute Savings Plan'],c:1,e:'Capacity Reservations: no term, cancel any time, capacity guaranteed in that AZ.'},
+    {q:'An HPC application needs the lowest possible network latency and highest throughput between instances.',o:['Spread placement group','Cluster placement group with EFA-enabled instances','Partition placement group','Instances in several AZs'],c:1,e:'Cluster + EFA for tightly coupled HPC.'},
+    {q:'A small set of critical instances must be isolated so that a single hardware failure can affect only one of them.',o:['Cluster placement group','Spread placement group','Partition placement group','A single Dedicated Host'],c:1,e:'Spread puts each instance on distinct hardware (max 7 per AZ).'},
+    {q:'A large HDFS cluster must be rack-aware and spread across failure domains.',o:['Partition placement group','Cluster placement group','Spread placement group','No placement group'],c:0,e:'Partition groups expose partition numbers for topology-aware replication.'},
+    {q:'An application takes a long time to load data into memory at start-up. The company wants it to resume quickly after being stopped.',o:['Stop and start the instance','Use EC2 hibernation','Use a larger instance type','Use an instance store volume'],c:1,e:'Hibernate saves RAM to the encrypted EBS root and restores it.'},
+    {q:'An instance’s public IP changes every time it is stopped and started. The IP must stay the same.',o:['Use a private IP','Associate an Elastic IP address','Enable termination protection','Use IMDSv2'],c:1,e:'Auto-assigned public IPs are released on stop. Elastic IPs stay.'},
+    {q:'Instances in private subnets need their own instance ID and IAM role credentials, while protecting against SSRF attacks.',o:['Hard-code values in user data','Require IMDSv2 on the instances','Store credentials in S3','Use EC2 Instance Connect'],c:1,e:'IMDSv2 uses a session token, which blocks simple SSRF requests.'},
+    {q:'An Auto Scaling group must keep the average CPU of its instances at 60%.',o:['Simple scaling','Target tracking scaling','Scheduled scaling','Step scaling with one step'],c:1,e:'"Keep at X" = target tracking.'},
+    {q:'Traffic rises every weekday at 9:00 and falls at 18:00. Instances must be ready before 9:00.',o:['Target tracking only','Scheduled scaling actions','Simple scaling','Larger instances'],c:1,e:'Known, fixed times = scheduled scaling. Predictive scaling also fits learned patterns.'},
+    {q:'Instances behind an ALB pass EC2 status checks but the application is failing. The ASG doesn’t replace them.',o:['Enable ELB health checks on the Auto Scaling group','Enable detailed monitoring','Increase the cooldown','Use a Spread placement group'],c:0,e:'By default ASGs use only EC2 status checks.'},
+    {q:'An ASG must run a script to back up logs before an instance is terminated.',o:['User data','A lifecycle hook on termination','A longer cooldown','Termination protection'],c:1,e:'Lifecycle hook pauses the instance in Terminating:Wait.'},
+    {q:'A web app needs /api requests sent to one set of instances and /images to another, behind a single endpoint.',o:['Network Load Balancer','Application Load Balancer with path-based rules','Gateway Load Balancer','Classic Load Balancer'],c:1,e:'Layer 7 path routing is an ALB feature.'},
+    {q:'A TCP application needs extreme performance and static IP addresses that partners can allowlist.',o:['ALB','NLB with Elastic IPs','CloudFront','Classic Load Balancer'],c:1,e:'NLB gives one static IP (or EIP) per AZ. ALB has no static IPs.'},
+    {q:'A company must route all VPC traffic through a fleet of third-party firewall appliances that scale.',o:['Gateway Load Balancer','Application Load Balancer','NAT gateway','Network ACLs'],c:0,e:'GWLB + GENEVE is built for inline appliance fleets.'},
+    {q:'The backend behind an ALB sees the load balancer’s IP instead of the client’s.',o:['Enable cross-zone load balancing','Read the X-Forwarded-For header','Use sticky sessions','Switch to IMDSv2'],c:1,e:'ALB passes the client IP in X-Forwarded-For.'},
+    {q:'During scale-in, users get errors because instances are removed while handling requests.',o:['Enable deregistration delay (connection draining)','Disable health checks','Use Spot Instances','Reduce the max size'],c:0,e:'Deregistration delay lets in-flight requests finish (default 300 s).'}
+  ];
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on EC2.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s=Q[qi];
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  const C=[
+    ['CPU-intensive','C family'],['In-memory / big RAM','R or X family'],['High local IOPS','I family'],['GPU / ML training','P family (or Trn)'],['Spiky, mostly idle','T family (burstable)'],
+    ['Same AMI in another Region','Copy the AMI'],['Slow boot from user data','Bake a golden AMI'],['Instance info, secure','IMDSv2'],['Fast resume with RAM state','Hibernate'],['Fixed public IP','Elastic IP'],
+    ['Steady 24/7, long term','Reserved Instances / EC2 Instance SP (up to 72%)'],['Flexible family/Region + Fargate/Lambda','Compute Savings Plan (up to 66%)'],['Interruptible, cheapest','Spot (up to 90%)'],['Short, unpredictable','On-Demand'],['BYOL per core/socket','Dedicated Host'],['No shared hardware','Dedicated Instances'],['Capacity in one AZ, no term','On-Demand Capacity Reservation'],
+    ['HPC, lowest latency','Cluster placement + EFA'],['Few critical, isolate failures','Spread placement (7/AZ)'],['Kafka / HDFS / Cassandra','Partition placement'],
+    ['Keep metric at a value','Target tracking'],['Known times','Scheduled scaling'],['Recurring patterns, scale ahead','Predictive scaling'],['Replace app-unhealthy instances','ELB health checks on ASG'],['Script before launch/terminate','Lifecycle hook'],['On-Demand + Spot in one group','Mixed instances policy'],
+    ['HTTP routing by path/host','ALB'],['TCP/UDP, static IP, extreme speed','NLB'],['Third-party appliances inline','GWLB'],['Client IP behind ALB','X-Forwarded-For'],['Finish requests before removal','Deregistration delay'],['Uneven AZs','Cross-zone load balancing'],['Many certs on one listener','SNI'],['Static IP for ALB','Global Accelerator in front']
+  ];
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Cost Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the other SAA playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600} td.m{color:var(--amber);font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+.work{font-family:var(--f-mono);font-size:.84rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;gap:2px;overflow-x:auto}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* stacked cost bars */
+.mix{display:grid;gap:10px}
+.mixrow{display:grid;grid-template-columns:200px minmax(0,1fr) 100px;gap:10px;align-items:center;font-size:.88rem}
+.mixrow .track{height:22px;border-radius:5px;background:var(--bg);border:1px solid var(--line);display:flex;overflow:hidden}
+.mixrow .track i{display:block;height:100%}
+.mixrow .track i.od{background:var(--deny);opacity:.75}
+.mixrow .track i.sp{background:var(--accent)}
+.mixrow .track i.spot{background:var(--allow)}
+.mixrow .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.mixrow.best span:first-child{font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+@media (max-width:560px){.mixrow{grid-template-columns:minmax(0,1fr) 90px}.mixrow .track{grid-column:1/-1;grid-row:2}}
+/* transfer paths */
+.paths{display:grid;gap:6px}
+.path{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:9px 12px;text-align:left;width:100%}
+.path[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.path .route{font-size:.9rem}
+.price{font-family:var(--f-mono);font-size:.74rem;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.price.free{background:var(--allow-soft);color:var(--allow)}
+.price.low{background:var(--amber-soft);color:var(--amber)}
+.price.high{background:var(--deny-soft);color:var(--deny)}
+
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Cost Optimization <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Module 13 · Purchase options, storage tiers, data transfer, cost tools</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+<!-- 1 TOOLS -->
+<section class="lesson" data-id="tools" data-name="Cost tools">
+  <div class="eyebrow">Lesson 1 · 10 min</div>
+  <h2>See, alert, attribute: the cost tools</h2>
+  <p class="lede">Cost is 20% of the exam. Most questions are "which design is cheapest", but a few ask which tool shows, forecasts, alerts on or splits the bill.</p>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Need</th><th>Tool</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Visualize and forecast spend</td><td>Cost Explorer</td><td>Filters by service, account, tag; RI / Savings Plans recommendations and coverage</td></tr>
+      <tr><td>Alert when spend or usage passes a limit</td><td>AWS Budgets</td><td>Cost, usage, RI/SP utilization budgets. <b>Budget actions</b> can apply an IAM policy or SCP, or stop EC2/RDS</td></tr>
+      <tr><td>Catch unexpected spikes automatically</td><td>Cost Anomaly Detection</td><td>ML monitors per service/account, alerts by email or SNS</td></tr>
+      <tr><td>Most detailed line-item data</td><td>Cost and Usage Report (Data Exports)</td><td>Hourly line items to S3; query with Athena, show in QuickSight</td></tr>
+      <tr><td>Split the bill by team / project</td><td>Cost allocation tags</td><td>Tag resources, then <b>activate</b> the tags in the Billing console</td></tr>
+      <tr><td>One bill, shared discounts</td><td>Organizations consolidated billing</td><td>Usage pooled for volume tiers; RIs and Savings Plans shared across accounts</td></tr>
+      <tr><td>Estimate before building</td><td>Pricing Calculator</td><td>Price a planned architecture</td></tr>
+      <tr><td>Right-size resources</td><td>Compute Optimizer</td><td>EC2, ASG, EBS, Lambda, ECS on Fargate</td></tr>
+      <tr><td>Idle and underused resources</td><td>Trusted Advisor</td><td>Cost checks (idle load balancers, low-use instances, unassociated EIPs)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><b>Exam trap:</b> Cost Explorer <i>shows</i>. Budgets <i>alerts</i> (and can act). Anomaly Detection finds the <i>unexpected</i> without a threshold. Tags only appear in cost reports after you activate them.</div>
+</section>
+
+<!-- 2 COMPUTE -->
+<section class="lesson" data-id="compute" data-name="Compute pricing">
+  <div class="eyebrow">Lesson 2 · 15 min · heavily tested</div>
+  <h2>Pay for compute the right way</h2>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Option</th><th>Max discount</th><th>Commitment</th><th>Flexibility</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>On-Demand</td><td>—</td><td>None</td><td>Full</td><td>Short, spiky, unknown</td></tr>
+      <tr class="hi"><td>Compute Savings Plan</td><td class="num">~66%</td><td>$/hour, 1 or 3 yr</td><td>Any family, size, Region, OS; also <b>Fargate and Lambda</b></td><td>Steady spend that may change shape</td></tr>
+      <tr><td>EC2 Instance Savings Plan</td><td class="num">~72%</td><td>$/hour, 1 or 3 yr</td><td>One family in one Region (any size, OS)</td><td>Stable family</td></tr>
+      <tr><td>Standard Reserved Instance</td><td class="num">~72%</td><td>1 or 3 yr</td><td>Fixed type; sell on RI Marketplace</td><td>Steady, known instance</td></tr>
+      <tr><td>Convertible Reserved Instance</td><td class="num">~66%</td><td>1 or 3 yr</td><td>Exchange for another family/OS</td><td>Steady, may change type</td></tr>
+      <tr class="hi"><td>Spot</td><td class="num">~90%</td><td>None</td><td>Can be reclaimed with a <b>2-minute notice</b></td><td>Stateless, batch, CI, fault-tolerant</td></tr>
+      <tr><td>Dedicated Host</td><td>—</td><td>On-demand or reserved</td><td>Physical server; you see sockets/cores</td><td><b>BYOL</b> per-socket/core licences, compliance</td></tr>
+      <tr><td>On-Demand Capacity Reservation</td><td>None by itself</td><td>None</td><td>Reserves capacity in one AZ</td><td>Guaranteed capacity; pair with a Savings Plan for the discount</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Blend calculator: steady base + daily peak</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="cBase"><span>Instances running 24/7 <b id="cBaseV"></b></span><input type="range" id="cBase" min="0" max="20" value="6"></label>
+      <label for="cPeak"><span>Extra instances at peak <b id="cPeakV"></b></span><input type="range" id="cPeak" min="0" max="30" value="10"></label>
+      <label for="cHrs"><span>Peak hours per day <b id="cHrsV"></b></span><input type="range" id="cHrs" min="1" max="24" value="8"></label>
+    </div>
+    <div class="tg"><span class="t">Peak workload can be interrupted?</span><div class="seg" id="cInt"></div></div>
+    <div class="legend"><span><i style="background:var(--deny);opacity:.75"></i>On-Demand</span><span><i style="background:var(--accent)"></i>Savings Plan (3 yr)</span><span><i style="background:var(--allow)"></i>Spot</span></div>
+    <div class="mix" id="cMix"></div>
+    <p class="say" id="cSay"></p>
+    <p class="hint">Illustrative prices: $0.20/h On-Demand, Savings Plan 3 yr −55%, Spot −70%. Real discounts vary by type, Region and term.</p>
+  </div>
+  <div class="remember"><b>Pattern:</b> commit (Savings Plan / RI) for the always-on baseline, Auto Scaling with On-Demand for peaks, Spot for anything that can be interrupted. "Can't be interrupted" kills Spot. "Unknown future instance types" or "Lambda and Fargate too" → Compute Savings Plan.</div>
+</section>
+
+<!-- 3 STORAGE -->
+<section class="lesson" data-id="storage" data-name="Storage cost">
+  <div class="eyebrow">Lesson 3 · 12 min</div>
+  <h2>Storage: put each byte in the cheapest tier that still meets access needs</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>S3 classes</h3><span class="tag">recap</span></header><ul><li>Unknown or changing access → <b>Intelligent-Tiering</b> (no retrieval fees)</li><li>Known pattern → <b>lifecycle rules</b>: Standard → Standard-IA (30 d) → Glacier tiers</li><li>Reproducible data, one AZ is fine → One Zone-IA</li><li>Archive, hours to restore OK → Glacier Deep Archive (cheapest)</li></ul></div>
+    <div class="c"><header><h3>S3 hygiene</h3><span class="tag amb">hidden cost</span></header><ul><li>Expire old <b>noncurrent versions</b></li><li>Abort <b>incomplete multipart uploads</b> after N days</li><li><b>S3 Storage Lens</b>: org-wide usage and savings insights</li><li><b>Requester Pays</b>: downloader pays transfer + requests</li></ul></div>
+    <div class="c"><header><h3>EBS</h3><span class="tag ok">quick wins</span></header><ul><li><b>gp2 → gp3</b>: ~20% cheaper per GB, 3,000 IOPS baseline at any size; change online</li><li>Delete <b>unattached volumes</b></li><li>Old snapshots → <b>Snapshot Archive</b> (~75% cheaper, 24–72 h restore)</li><li>Data Lifecycle Manager automates snapshot retention</li><li>st1/sc1 HDD for big sequential data</li></ul></div>
+    <div class="c"><header><h3>EFS and FSx</h3><span class="tag">file</span></header><ul><li>EFS lifecycle to <b>Infrequent Access</b> and <b>Archive</b></li><li>One Zone storage class when multi-AZ is not needed</li><li>FSx: HDD storage and data deduplication (Windows)</li></ul></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Need</th><th>Cheapest that works</th></tr></thead>
+    <tbody>
+      <tr><td>Shared files for many Linux instances</td><td>EFS (+ IA lifecycle), not EBS copies</td></tr>
+      <tr><td>Static website assets</td><td>S3 + CloudFront, not EC2 disks</td></tr>
+      <tr><td>Logs kept 7 years, rarely read</td><td>S3 lifecycle → Glacier Deep Archive</td></tr>
+      <tr><td>Database backups for compliance</td><td>Snapshots/AWS Backup with cold-storage tier</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 4 DATA TRANSFER -->
+<section class="lesson" data-id="transfer" data-name="Data transfer">
+  <div class="eyebrow">Lesson 4 · 12 min · trap-heavy</div>
+  <h2>Data transfer: what costs money on the wire</h2>
+  <p class="lede">Click each path to see whether it is free, cheap, or the expensive one.</p>
+
+  <div class="paths" id="paths"></div>
+  <p class="say" id="pSay">Pick a path.</p>
+
+  <h3>NAT gateway vs gateway endpoint</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="nGb"><span>S3/DynamoDB traffic from private subnets <b id="nGbV"></b></span><input type="range" id="nGb" min="1" max="100" value="20"></label>
+    </div>
+    <div class="stats"><div class="stat"><div class="v" id="nNat"></div><div class="k">Through NAT gateway / month</div></div><div class="stat"><div class="v" id="nEp"></div><div class="k">Through gateway endpoint</div></div><div class="stat"><div class="v" id="nSave"></div><div class="k">Saved per year</div></div></div>
+    <p class="hint">NAT data processing ≈ $0.045/GB (us-east-1), plus the hourly NAT charge. Gateway endpoints for S3 and DynamoDB have no charge.</p>
+  </div>
+  <div class="remember"><b>Rules:</b> traffic <i>into</i> AWS is free. Out to the internet costs most. Cross-Region costs. Cross-AZ costs a little each way. Same AZ over private IPs is free. Put CloudFront in front of heavy egress, use gateway endpoints for S3/DynamoDB, keep chatty services in one AZ when HA allows.</div>
+</section>
+
+<!-- 5 DESIGN -->
+<section class="lesson" data-id="design" data-name="Cheaper designs">
+  <div class="eyebrow">Lesson 5 · 12 min</div>
+  <h2>Design patterns that cut the bill</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>Match capacity to demand</h3><span class="tag ok">elastic</span></header><ul><li>Auto Scaling with target tracking</li><li>Stop dev/test at night (Instance Scheduler, EventBridge + Lambda)</li><li>RDS can be <b>stopped up to 7 days</b>, then restarts</li><li>Aurora Serverless v2, DynamoDB on-demand for spiky or unknown load</li></ul></div>
+    <div class="c"><header><h3>Serverless for idle time</h3><span class="tag">pay per use</span></header><p>Lambda, API Gateway, Fargate, DynamoDB, S3: nothing to pay while idle. Great for intermittent, event-driven workloads. Steady high traffic can be cheaper on EC2 with Savings Plans.</p></div>
+    <div class="c"><header><h3>Cache instead of scale</h3><span class="tag">read-heavy</span></header><p>CloudFront, ElastiCache or DAX absorb reads so the database can stay smaller. Read replicas for reporting instead of a bigger primary.</p></div>
+    <div class="c"><header><h3>Cheaper silicon</h3><span class="tag">Graviton</span></header><p>Arm-based Graviton instances: better price-performance for most Linux workloads (up to ~40% vs comparable x86).</p></div>
+    <div class="c"><header><h3>Decouple with queues</h3><span class="tag">smooth peaks</span></header><p>SQS lets workers scale on queue depth and run on Spot instead of provisioning for the peak.</p></div>
+    <div class="c"><header><h3>Managed beats self-managed</h3><span class="tag">ops cost</span></header><p>"Least operational overhead" usually also wins on total cost: RDS over databases on EC2, Fargate over self-managed clusters.</p></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>DynamoDB capacity</th><th>Use when</th></tr></thead>
+    <tbody>
+      <tr><td>On-demand</td><td>Unpredictable or new workload; pay per request</td></tr>
+      <tr><td>Provisioned + auto scaling</td><td>Predictable traffic; cheaper per request; add reserved capacity for steady base</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 6 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the saving">
+  <div class="eyebrow">Lesson 6 · game</div>
+  <h2>Pick the cheapest correct answer</h2>
+  <p class="lede">16 scenarios. Find the constraint first, then the cheapest option that still meets it.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 7 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 7 · exam style</div>
+  <h2>SAA-style cost questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('costpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('costpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+  const onSeg=(el,fn)=>el.addEventListener('click',e=>{const b=e.target.closest('button');if(b)fn(b.textContent)});
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab',lessons[0].dataset.id));
+
+  /* ---------- playbook widgets + data ---------- */
+  /* 2 blend calculator */
+  const P=0.20,SP=0.45,SPOT=0.30,HM=730,DM=30.4;let intr='Yes';
+  function mix(){
+    seg($('#cInt'),['Yes','No'],intr);
+    const b=+$('#cBase').value,pk=+$('#cPeak').value,hr=+$('#cHrs').value;
+    $('#cBaseV').textContent=b;$('#cPeakV').textContent=pk;$('#cHrsV').textContent=hr+' h';
+    const baseH=b*HM,peakH=pk*hr*DM;
+    const S=[
+      {n:'All On-Demand',p:[['od',baseH*P+peakH*P]]},
+      {n:'Savings Plan for peak too (24/7)',p:[['sp',(b+pk)*HM*P*SP]]},
+      {n:'Savings Plan base + On-Demand peak',p:[['sp',baseH*P*SP],['od',peakH*P]]}
+    ];
+    if(intr==='Yes')S.push({n:'Savings Plan base + Spot peak',p:[['sp',baseH*P*SP],['spot',peakH*P*SPOT]]});
+    S.forEach(s=>s.t=s.p.reduce((a,x)=>a+x[1],0));
+    const max=Math.max(...S.map(s=>s.t),1),best=S.reduce((a,s,i)=>s.t<S[a].t?i:a,0);
+    $('#cMix').innerHTML=S.map((s,i)=>`<div class="mixrow ${i===best?'best':''}"><span>${s.n}</span><div class="track">${s.p.map(x=>`<i class="${x[0]}" style="width:${x[1]/max*100}%"></i>`).join('')}</div><span class="val">$${fmt(s.t)}</span></div>`).join('');
+    const od=S[0].t,w=S[best];
+    let say=`<b>${w.n}</b> is cheapest at $${fmt(w.t)}/month, ${od>0?fmt((1-w.t/od)*100):0}% below all On-Demand.`;
+    if(best===1)say+=' The peak runs so many hours that committing to it 24/7 still pays off.';
+    else if(S[1].t>S[2].t)say+=` Committing to the peak 24/7 would waste $${fmt(S[1].t-S[2].t)}/month on idle commitment.`;
+    if(intr==='No')say+=' Spot is out: the peak workload cannot be interrupted.';
+    $('#cSay').innerHTML=say;
+  }
+  ['#cBase','#cPeak','#cHrs'].forEach(id=>$(id).addEventListener('input',mix));
+  onSeg($('#cInt'),t=>{intr=t;mix()});mix();
+
+  /* 4 transfer paths */
+  const PATHS=[
+    ['Internet → EC2 (upload into AWS)','free','Free','Inbound data transfer is free.'],
+    ['EC2 → internet (users download)','high','~$0.09/GB','Egress to the internet is the most expensive path. CloudFront is usually cheaper per GB and caches.'],
+    ['EC2 → EC2, same AZ, private IP','free','Free','Same-AZ traffic over private IPs costs nothing.'],
+    ['EC2 → EC2, same AZ, public or Elastic IP','low','~$0.01/GB','Going through the public IP is billed like cross-AZ. Use private IPs.'],
+    ['EC2 → EC2, different AZ','low','~$0.01/GB each way','Cross-AZ is charged in both directions. Multi-AZ is worth it for HA; avoid chatty cross-AZ calls you don\'t need.'],
+    ['EC2 → another Region','high','~$0.02/GB','Inter-Region transfer and cross-Region replication are charged.'],
+    ['Private subnet → S3 via NAT gateway','high','~$0.045/GB processing','NAT gateways charge per GB processed, on top of the hourly fee.'],
+    ['Private subnet → S3 via gateway endpoint','free','Free','Gateway endpoints for S3 and DynamoDB have no charge. Classic cost fix.'],
+    ['S3 → CloudFront (origin fetch)','free','Free','Origin fetches from AWS origins to CloudFront are free; you pay CloudFront egress, usually cheaper than direct.'],
+    ['On-prem ← AWS over Direct Connect','low','Reduced rate','DX has lower data-out rates than the internet; worthwhile for large steady egress.']
+  ];
+  let pI=-1;
+  function paths(){$('#paths').innerHTML=PATHS.map((p,i)=>`<button type="button" class="path" data-i="${i}" aria-pressed="${i===pI}"><span class="route">${p[0]}</span><span class="price ${p[1]}">${p[2]}</span></button>`).join('')}
+  $('#paths').addEventListener('click',e=>{const b=e.target.closest('.path');if(!b)return;pI=+b.dataset.i;paths();$('#pSay').innerHTML='<b>'+PATHS[pI][2]+'.</b> '+PATHS[pI][3]});paths();
+
+  function nat(){const tb=+$('#nGb').value;$('#nGbV').textContent=tb+' TB/month';
+    const c=tb*1024*0.045;$('#nNat').textContent='$'+fmt(c);$('#nEp').textContent='$0';$('#nSave').textContent='$'+fmt(c*12)}
+  $('#nGb').addEventListener('input',nat);nat();
+
+  /* game data */
+  const SVC=['Compute Savings Plan','EC2 Instance Savings Plan','Standard Reserved Instance','Spot Instances','Dedicated Host','Capacity Reservation','S3 Intelligent-Tiering','S3 lifecycle to Glacier Deep Archive','gp3 volumes','Gateway VPC endpoint','CloudFront','AWS Budgets','Cost Anomaly Detection','Cost allocation tags','Lambda (serverless)','DynamoDB on-demand'];
+  const G=[
+    ['Steady compute spend for 3 years across EC2, Fargate and Lambda; instance families will change.','Compute Savings Plan','Most flexible commitment, covers Fargate and Lambda.'],
+    ['Steady m6i usage in one Region for 3 years, sizes may vary; maximum discount with a Savings Plan.','EC2 Instance Savings Plan','Family + Region commitment, bigger discount.'],
+    ['Overnight image rendering that can restart anytime from checkpoints.','Spot Instances','Interruptible batch = Spot.'],
+    ['Software licensed per physical CPU socket must move to AWS.','Dedicated Host','BYOL with socket/core visibility.'],
+    ['Must be sure capacity exists in one AZ for a 2-week launch event; no long commitment.','Capacity Reservation','On-Demand Capacity Reservation, cancel anytime.'],
+    ['Millions of objects with unknown access patterns; avoid retrieval fees.','S3 Intelligent-Tiering','Moves objects between tiers automatically.'],
+    ['Audit logs must be kept 10 years and are almost never read; 48 h retrieval is fine.','S3 lifecycle to Glacier Deep Archive','Cheapest archive.'],
+    ['Hundreds of gp2 volumes need 3,000 IOPS; cut storage cost with no downtime.','gp3 volumes','~20% cheaper, baseline 3,000 IOPS, change online.'],
+    ['NAT gateway bill is huge because instances read S3 constantly.','Gateway VPC endpoint','Free path to S3/DynamoDB.'],
+    ['High egress bill for images served to users worldwide.','CloudFront','Caching + cheaper egress.'],
+    ['Finance wants an email and to block new launches when monthly spend passes $10,000.','AWS Budgets','Budget alert + budget action.'],
+    ['Be told about an unexpected spend spike in any service without setting thresholds.','Cost Anomaly Detection','ML-based monitoring.'],
+    ['Show cost per project in Cost Explorer.','Cost allocation tags','Tag and activate.'],
+    ['An API receives a few hundred requests a day, mostly idle.','Lambda (serverless)','No cost when idle.'],
+    ['A new DynamoDB table with unpredictable, spiky traffic.','DynamoDB on-demand','Pay per request, no capacity planning.'],
+    ['A database server with a fixed instance type will run 24/7 for 3 years and the team wants to resell unused commitment if plans change.','Standard Reserved Instance','RIs can be sold on the RI Marketplace.']
+  ];
+
+  /* quiz */
+  const Q=[
+    {q:'A company runs a steady fleet of EC2 instances 24/7 and also uses Fargate and Lambda. It expects to change instance families next year. Which option gives the largest discount with that flexibility?',o:['Compute Savings Plan','EC2 Instance Savings Plan','Standard Reserved Instances','Spot Instances'],c:0,e:'Compute SP applies across families, Regions, Fargate and Lambda.'},
+    {q:'A batch job processes images from SQS. Jobs can be retried if interrupted. What is the MOST cost-effective compute?',o:['On-Demand Instances','Spot Instances in an Auto Scaling group','Dedicated Hosts','Reserved Instances'],c:1,e:'Interruptible, retryable work = Spot.'},
+    {q:'A web app has a constant baseline of 10 instances and doubles for 4 hours each afternoon. Which purchasing approach is MOST cost-effective? The app cannot tolerate interruptions.',o:['Savings Plan for 20 instances','Savings Plan for 10 instances and On-Demand for the peak through Auto Scaling','Spot for all instances','On-Demand for all instances'],c:1,e:'Commit to the baseline, pay on demand for short peaks; no Spot because of interruptions.'},
+    {q:'A company must bring licences that are tied to physical cores.',o:['Dedicated Hosts','Dedicated Instances','Spot Instances','Capacity Reservations'],c:0,e:'Only Dedicated Hosts expose sockets/cores for BYOL.'},
+    {q:'Instances in private subnets download large amounts of data from S3 through a NAT gateway. How can costs be reduced?',o:['Add an S3 gateway VPC endpoint','Use a bigger NAT gateway','Enable S3 Transfer Acceleration','Use an interface endpoint for EC2'],c:0,e:'Gateway endpoints for S3 are free and bypass NAT processing charges.'},
+    {q:'A media site pays a lot for data transfer out from EC2 to users worldwide.',o:['Serve content through CloudFront','Move instances to another AZ','Use larger instances','Enable detailed monitoring'],c:0,e:'Caching at the edge and cheaper egress.'},
+    {q:'Objects in S3 have unpredictable access. The company wants automatic savings without retrieval fees or lifecycle design.',o:['S3 Intelligent-Tiering','S3 One Zone-IA','S3 Glacier Flexible Retrieval','S3 Standard-IA'],c:0,e:'Automatic tiering, no retrieval fees.'},
+    {q:'Log files are accessed often for 30 days, then rarely, and must be kept 7 years.',o:['Lifecycle: Standard → Standard-IA at 30 days → Glacier Deep Archive later','Keep in Standard forever','Store on EBS','Intelligent-Tiering only with no expiration'],c:0,e:'Known pattern → lifecycle transitions.'},
+    {q:'Many gp2 volumes need the same performance at lower cost with no downtime.',o:['Modify to gp3 with Elastic Volumes','Change to sc1','Change to io2','Recreate volumes from snapshots'],c:0,e:'gp3 is ~20% cheaper with baseline 3,000 IOPS.'},
+    {q:'Finance wants alerts when forecast monthly spend exceeds budget and to automatically stop development EC2 instances.',o:['AWS Budgets with a budget action','Cost Explorer reports','CloudTrail','Trusted Advisor'],c:0,e:'Budgets alert on forecasts; actions can stop EC2/RDS.'},
+    {q:'A company wants to detect unusual spend increases in any account without defining thresholds.',o:['AWS Cost Anomaly Detection','AWS Budgets','Cost and Usage Report','Pricing Calculator'],c:0,e:'ML-based anomaly detection.'},
+    {q:'Costs must be reported per department. Resources are already tagged with "Department".',o:['Activate the tag as a cost allocation tag in Billing','Create separate Regions','Enable CloudTrail','Use AWS Config'],c:0,e:'Tags appear in cost data only after activation.'},
+    {q:'A company with 30 accounts wants volume discounts and Savings Plans benefits shared across accounts.',o:['AWS Organizations consolidated billing','Separate invoices per account','Trusted Advisor','Cost Explorer filters'],c:0,e:'Consolidated billing pools usage and shares discounts.'},
+    {q:'A development RDS database is used only during office hours.',o:['Stop it outside office hours (up to 7 days at a time) with a schedule','Buy a 3-year RI','Use Multi-AZ','Increase storage'],c:0,e:'Stopped RDS instances pay only for storage.'},
+    {q:'An internal API gets a few thousand requests per day at random times.',o:['API Gateway + Lambda','Two m5.large instances behind an ALB','A Dedicated Host','An EC2 Spot fleet'],c:0,e:'Serverless costs nothing while idle.'},
+    {q:'A new DynamoDB table has unknown, spiky traffic.',o:['On-demand capacity mode','Provisioned capacity with fixed 10,000 WCU','Reserved capacity','DAX only'],c:0,e:'On-demand fits unpredictable load.'},
+    {q:'A company needs guaranteed capacity in one AZ for a 3-day event with no long-term commitment.',o:['On-Demand Capacity Reservation','3-year Standard RI','Spot Instances','Savings Plan'],c:0,e:'Capacity Reservations can be created and cancelled anytime.'},
+    {q:'Which tool gives the most granular, line-item billing data for analysis with Athena?',o:['Cost and Usage Report (Data Exports) to S3','Cost Explorer graphs','AWS Budgets','Billing dashboard PDF'],c:0,e:'CUR is the most detailed dataset.'},
+    {q:'A read-heavy application forces the team to keep upsizing the RDS instance.',o:['Add ElastiCache or read replicas to offload reads','Switch to Provisioned IOPS only','Enable Multi-AZ','Move to a Dedicated Host'],c:0,e:'Cache or replicas instead of a bigger primary.'},
+    {q:'Two application tiers exchange large amounts of data across AZs, increasing costs. HA is handled at another layer. What reduces cost?',o:['Keep the chatty components in the same AZ and communicate over private IPs','Use public IPs between them','Add a NAT gateway','Enable VPC Flow Logs'],c:0,e:'Same-AZ private traffic is free; cross-AZ is billed both ways.'}
+  ];
+
+  const C=[
+    ['Visualize / forecast spend','Cost Explorer'],['Alert on threshold (and act)','AWS Budgets (+ actions)'],['Unexpected spikes, no threshold','Cost Anomaly Detection'],['Line-item data for Athena','Cost and Usage Report'],['Cost per team','Activated cost allocation tags'],['Share discounts across accounts','Consolidated billing'],['Idle resources report','Trusted Advisor'],['Right-size','Compute Optimizer'],
+    ['Steady, flexible, Fargate/Lambda','Compute Savings Plan'],['Steady, one family/Region','EC2 Instance Savings Plan'],['Steady, resell if needed','Standard RI (Marketplace)'],['Interruptible / batch','Spot'],['Per-core licences','Dedicated Host'],['Capacity, no commitment','On-Demand Capacity Reservation'],['Baseline + peak','Commit base, On-Demand/Spot peak'],
+    ['Unknown S3 access','Intelligent-Tiering'],['Known S3 aging','Lifecycle rules'],['Cheapest archive','Glacier Deep Archive'],['Cheaper EBS, same perf','gp2 → gp3'],['Old snapshots','Snapshot Archive'],['Hidden S3 cost','Old versions + incomplete multipart uploads'],
+    ['S3 traffic via NAT','Gateway VPC endpoint'],['High internet egress','CloudFront'],['Cross-AZ chatter','Same AZ, private IPs'],['Inbound data','Free'],
+    ['Idle most of the time','Lambda / serverless'],['Spiky DynamoDB','On-demand mode'],['Dev DB at night','Stop RDS (≤ 7 days)'],['Read-heavy DB','Cache / read replicas'],['Better price-performance','Graviton']
+  ];
+
+
+  /* game */
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=Math.ceil(G.length*0.8)?'Strong. You can map each scenario to its service.':'Review the lessons for the ones you missed, then play again.'}</p><div class="dots">${gr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* quiz */
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on this module.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s0=Q[qi],n=s0.o.length,rot=(qi*3)%n,s={q:s0.q,e:s0.e,o:s0.o.map((_,j)=>s0.o[(j+rot)%n]),c:(s0.c-rot+n)%n};
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+</body></html>

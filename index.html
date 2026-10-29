@@ -561,6 +561,14 @@
     /* Progress bar animation */
     @keyframes fillBar { from { width: 0; } }
     .domain-fill { animation: fillBar 1.2s ease both; }
+    .ml-play { background: rgba(251,191,36,0.1); color: var(--warning); border: 1px solid rgba(251,191,36,0.3); }
+    .ml-play:hover { background: rgba(251,191,36,0.2); }
+    .pb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+    .pb-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; text-decoration: none; color: inherit; display: grid; gap: 0.35rem; transition: all 0.2s; }
+    .pb-card:hover { border-color: rgba(124,58,237,0.5); transform: translateY(-1px); }
+    .pb-card b { font-size: 0.95rem; color: var(--text-primary); }
+    .pb-card span { font-size: 0.75rem; color: var(--text-secondary); }
+    .pb-card .pb-mod { font-size: 0.65rem; font-weight: 600; color: var(--accent-light); letter-spacing: 0.04em; }
   </style>
 </head>
 <body>
@@ -608,6 +616,7 @@
       <div class="sidebar-label">Navigation</div>
       <a class="sidebar-link active" href="#home"><span class="icon">🏠</span> Home</a>
       <a class="sidebar-link" href="simulator/"><span class="icon">🎯</span> Exam Simulator</a>
+      <a class="sidebar-link" href="#playbooks"><span class="icon">🎮</span> Interactive Playbooks</a>
       <a class="sidebar-link" href="#learning-paths"><span class="icon">🛤️</span> Learning Paths</a>
       <a class="sidebar-link" href="#modules"><span class="icon">📚</span> Study Modules</a>
       <a class="sidebar-link" href="#domains"><span class="icon">📊</span> Exam Domains</a>
@@ -666,6 +675,7 @@
         <div class="stat-pill"><i class="fas fa-project-diagram"></i> 217+ Diagrams</div>
         <div class="stat-pill"><i class="fas fa-question-circle"></i> 276+ Questions</div>
         <div class="stat-pill"><i class="fas fa-clock"></i> 3 Learning Speeds</div>
+        <div class="stat-pill"><i class="fas fa-gamepad"></i> 14 Interactive Playbooks</div>
         <div class="stat-pill"><i class="fas fa-flask"></i> 40+ Labs</div>
       </div>
 
@@ -737,6 +747,33 @@
       </div>
     </section>
 
+    <!-- PLAYBOOKS -->
+    <section class="section" id="playbooks">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-gamepad"></i></div>
+        <div>
+          <div class="section-title">Interactive Playbooks</div>
+          <div class="section-subtitle">Short lessons, hands-on simulators, a 16-scenario game and an exam-style quiz per topic · progress saves in your browser · <a href="playbooks/" style="color:var(--accent-light)">all playbooks →</a></div>
+        </div>
+      </div>
+      <div class="pb-grid">
+        <a class="pb-card" href="playbooks/fundamentals.html"><span class="pb-mod">MODULE 01</span><b>AWS Fundamentals</b><span>Regions, AZs, scope, shared responsibility, ARNs</span></a>
+        <a class="pb-card" href="playbooks/iam.html"><span class="pb-mod">MODULE 02</span><b>IAM</b><span>Policy evaluation simulator, roles, STS</span></a>
+        <a class="pb-card" href="playbooks/ec2.html"><span class="pb-mod">MODULE 03</span><b>EC2 & Scaling</b><span>Purchase-option chart, Auto Scaling, ALB rules</span></a>
+        <a class="pb-card" href="playbooks/serverless.html"><span class="pb-mod">MODULE 03</span><b>Serverless & Containers</b><span>Lambda concurrency, ECS roles, compute picker</span></a>
+        <a class="pb-card" href="playbooks/storage.html"><span class="pb-mod">MODULE 04</span><b>Storage</b><span>Lifecycle builder, versioning simulator</span></a>
+        <a class="pb-card" href="playbooks/database.html"><span class="pb-mod">MODULE 05</span><b>Database</b><span>Availability lab, Aurora quorum, DynamoDB capacity</span></a>
+        <a class="pb-card" href="playbooks/networking.html"><span class="pb-mod">MODULE 06</span><b>Networking</b><span>CIDR calculator, route tables, TGW vs peering</span></a>
+        <a class="pb-card" href="playbooks/security.html"><span class="pb-mod">MODULE 07</span><b>Security</b><span>SG vs NACL packet simulator, KMS</span></a>
+        <a class="pb-card" href="playbooks/integration.html"><span class="pb-mod">MODULE 08</span><b>Application Integration</b><span>SQS lifecycle, EventBridge rule matcher</span></a>
+        <a class="pb-card" href="playbooks/monitoring.html"><span class="pb-mod">MODULE 09</span><b>Monitoring</b><span>Alarm M-of-N simulator, CloudTrail events</span></a>
+        <a class="pb-card" href="playbooks/migration.html"><span class="pb-mod">MODULE 10</span><b>Migration & Transfer</b><span>7 Rs, network-vs-Snowball calculator</span></a>
+        <a class="pb-card" href="playbooks/analytics.html"><span class="pb-mod">MODULE 11</span><b>Analytics</b><span>Kinesis shard and Athena cost calculators</span></a>
+        <a class="pb-card" href="playbooks/architecture.html"><span class="pb-mod">MODULE 12</span><b>Architecture Patterns</b><span>HA failure and DR strategy simulators</span></a>
+        <a class="pb-card" href="playbooks/cost.html"><span class="pb-mod">MODULE 13</span><b>Cost Optimization</b><span>Savings Plan/Spot blend, data-transfer paths</span></a>
+      </div>
+    </section>
+
     <!-- MODULES -->
     <section class="section" id="modules">
       <div class="section-header">
@@ -759,6 +796,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/fundamentals.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/01-AWS-Fundamentals/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/01-AWS-Fundamentals/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/01-AWS-Fundamentals/README.md" target="_blank">📄 Full</a>
@@ -777,6 +815,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/iam.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/02-IAM/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/02-IAM/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/02-IAM/README.md" target="_blank">📄 Full</a>
@@ -795,6 +834,8 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/ec2.html">🎮 Playbook: EC2 & Scaling</a>
+            <a class="module-link ml-play" href="playbooks/serverless.html">🎮 Playbook: Serverless & Containers</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/03-Compute/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/03-Compute/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/03-Compute/README.md" target="_blank">📄 Full</a>
@@ -813,6 +854,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/storage.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/04-Storage/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/04-Storage/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/04-Storage/README.md" target="_blank">📄 Full</a>
@@ -831,6 +873,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/database.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/05-Database/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/05-Database/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/05-Database/README.md" target="_blank">📄 Full</a>
@@ -849,6 +892,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/networking.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/06-Networking/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/06-Networking/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/06-Networking/README.md" target="_blank">📄 Full</a>
@@ -867,6 +911,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/security.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/07-Security/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/07-Security/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/07-Security/README.md" target="_blank">📄 Full</a>
@@ -885,6 +930,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/integration.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/08-Application-Integration/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/08-Application-Integration/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/08-Application-Integration/README.md" target="_blank">📄 Full</a>
@@ -903,6 +949,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/monitoring.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/09-Monitoring/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/09-Monitoring/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/09-Monitoring/README.md" target="_blank">📄 Full</a>
@@ -921,6 +968,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/migration.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/10-Migration/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/10-Migration/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/10-Migration/README.md" target="_blank">📄 Full</a>
@@ -939,6 +987,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/analytics.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/11-Analytics/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/11-Analytics/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/11-Analytics/README.md" target="_blank">📄 Full</a>
@@ -957,6 +1006,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/architecture.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/12-Architecture-Patterns/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/12-Architecture-Patterns/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/12-Architecture-Patterns/README.md" target="_blank">📄 Full</a>
@@ -975,6 +1025,7 @@
             </div>
           </div>
           <div class="module-links">
+            <a class="module-link ml-play" href="playbooks/cost.html">🎮 Playbook</a>
             <a class="module-link ml-ultra" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/13-Cost-Optimization/ULTRA-FAST-LEARN.md" target="_blank">🚀 Ultra</a>
             <a class="module-link ml-fast" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/13-Cost-Optimization/FAST-LEARN.md" target="_blank">⚡ Fast</a>
             <a class="module-link ml-full" href="https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/13-Cost-Optimization/README.md" target="_blank">📄 Full</a>
@@ -1265,6 +1316,21 @@
 
   // ── SEARCH ──
   const searchData = [
+    { label: 'Interactive Playbooks (all 14)', href: 'playbooks/', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — AWS Fundamentals', href: 'playbooks/fundamentals.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — IAM', href: 'playbooks/iam.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — EC2 & Scaling', href: 'playbooks/ec2.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Serverless & Containers', href: 'playbooks/serverless.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Storage', href: 'playbooks/storage.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Database', href: 'playbooks/database.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Networking', href: 'playbooks/networking.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Security', href: 'playbooks/security.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Application Integration', href: 'playbooks/integration.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Monitoring', href: 'playbooks/monitoring.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Migration & Transfer', href: 'playbooks/migration.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Analytics', href: 'playbooks/analytics.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Architecture Patterns', href: 'playbooks/architecture.html', icon: 'fas fa-gamepad' },
+    { label: 'Playbook — Cost Optimization', href: 'playbooks/cost.html', icon: 'fas fa-gamepad' },
     { label: 'Module 01 — AWS Fundamentals', href: 'https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/01-AWS-Fundamentals/README.md', icon: 'fas fa-cloud' },
     { label: 'Module 02 — IAM', href: 'https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/02-IAM/README.md', icon: 'fas fa-user-shield' },
     { label: 'Module 03 — Compute (EC2, Lambda)', href: 'https://github.com/ChathurangaVKD/AWS-Certified-Solutions-Architect-Associate-SAA-C03/blob/main/03-Compute/README.md', icon: 'fas fa-server' },

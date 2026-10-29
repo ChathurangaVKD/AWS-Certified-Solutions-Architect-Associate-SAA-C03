@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA IAM Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive panels sit inside lessons as "consoles". */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --code-bg:#121A2E; --code-fg:#E4E9F3; --code-key:#F2B652; --code-str:#8FD3A8; --code-dim:#7D88A3; --code-hi:#24325A;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --code-bg:#080C17; --code-hi:#1E2A4D; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714;
+  --code-bg:#080C17; --code-hi:#1E2A4D; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+.rail button[aria-selected="true"] .n::after{color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:12px}
+h3{font-size:1.2rem;font-weight:700}
+
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.grid2>*{min-width:0}
+
+/* 4 questions */
+.q4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.q4 div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:4px}
+.q4 .k{font-family:var(--f-mono);font-size:.8rem;color:var(--amber)}
+.q4 .w{font-family:var(--f-display);font-weight:700;font-size:1.1rem}
+.q4 .d{font-size:.9rem;color:var(--muted)}
+.sentence{font-family:var(--f-display);font-size:1.15rem;line-height:1.5;padding:16px;border-radius:var(--r);background:var(--accent-soft)}
+.sentence mark{background:none;color:var(--accent);font-weight:700}
+
+/* analogy table */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600;white-space:nowrap}
+
+/* identity cards */
+.id-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.idc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;align-content:start}
+.idc header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.idc h3{font-size:1.15rem}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.idc ul{margin:0;padding-left:18px;font-size:.92rem;display:grid;gap:4px}
+.idc .lbl{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* code / policy reader */
+.reader{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:720px){.reader{grid-template-columns:1fr}}
+pre.code{margin:0;background:var(--code-bg);color:var(--code-fg);border-radius:var(--r);padding:14px 0;overflow-x:auto;font-family:var(--f-mono);font-size:.84rem;line-height:1.7}
+pre.code .ln{display:block;padding:0 16px;border-left:3px solid transparent;white-space:pre}
+pre.code .ln[data-k]{cursor:pointer}
+pre.code .ln[data-k]:hover{background:var(--code-hi)}
+pre.code .ln.on{background:var(--code-hi);border-left-color:var(--code-key)}
+.ck{color:var(--code-key)} .cs{color:var(--code-str)} .cd{color:var(--code-dim)}
+.explain{position:sticky;top:120px}
+.explain .box{display:grid;gap:8px}
+.explain h3{font-family:var(--f-mono);font-size:1rem;color:var(--amber)}
+.hint{font-size:.85rem;color:var(--muted)}
+
+.arn{display:flex;flex-wrap:wrap;gap:2px;font-family:var(--f-mono);font-size:.85rem}
+.arn span{display:grid;gap:2px;padding:6px 8px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.arn small{font-family:var(--f-body);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.arn i{font-style:normal;color:var(--muted);align-self:end;padding-bottom:6px}
+
+/* builder */
+.builder{display:grid;gap:14px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.controls label{display:grid;gap:4px;font-size:.78rem;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+select{font:inherit;font-size:.92rem;text-transform:none;letter-spacing:0;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
+.say{font-size:1rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say.deny{background:var(--deny-soft)}
+.note{font-size:.88rem;color:var(--amber);font-weight:500}
+
+/* policy types */
+.types{display:grid;gap:10px}
+.type{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;padding:14px 16px}
+.type .badge{grid-row:span 3;align-self:start;font-family:var(--f-mono);font-size:.72rem;font-weight:500;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.badge.grant{background:var(--allow-soft);color:var(--allow)}
+.badge.limit{background:var(--deny-soft);color:var(--deny)}
+.type h3{font-size:1.05rem}
+.type p{font-size:.92rem}
+.type .eg{font-size:.85rem;color:var(--muted)}
+@media (max-width:480px){.type{grid-template-columns:1fr}.type .badge{grid-row:auto;justify-self:start}}
+
+/* simulator */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:720px){.sim{grid-template-columns:1fr}}
+.toggles{display:grid;gap:8px}
+.tg{display:grid;gap:6px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.tg .t{font-size:.9rem;font-weight:500}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:4px 10px;font-size:.82rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.flow{list-style:none;margin:0;padding:0;display:grid;gap:6px;counter-reset:s}
+.flow li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:.9rem;transition:opacity .2s}
+.flow li::before{content:counter(s);font-family:var(--f-mono);font-size:.8rem;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--muted)}
+.flow li b{display:block}
+.flow li small{color:var(--muted)}
+.flow li.pass::before{background:var(--allow-soft);color:var(--allow);content:"✓"}
+.flow li.stop{border-color:var(--deny);background:var(--deny-soft)}
+.flow li.stop::before{background:var(--deny);color:#fff;content:"✕"}
+.flow li.win{border-color:var(--allow);background:var(--allow-soft)}
+.flow li.win::before{background:var(--allow);color:#fff;content:"✓"}
+.flow li.skip{opacity:.45}
+.verdict{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r);font-weight:600}
+.verdict .big{font-family:var(--f-display);font-size:1.6rem;font-weight:800;letter-spacing:.02em}
+.verdict.allow{background:var(--allow-soft);color:var(--allow)}
+.verdict.deny{background:var(--deny-soft);color:var(--deny)}
+.verdict .why{font-weight:400;color:var(--ink);font-size:.92rem}
+
+/* roles flow */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:r}
+.steps li{counter-increment:r;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start}
+.steps li::before{content:counter(r);font-family:var(--f-display);font-weight:800;font-size:1.05rem;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--accent);color:#fff}
+.steps li div{padding-top:4px}
+
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.use{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:6px;align-content:start}
+.use h3{font-size:1rem}
+.use p{font-size:.9rem}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.05rem}
+.facts{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.95rem}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.allowb{color:var(--allow);border-color:var(--allow)}
+.btn.denyb{color:var(--deny);border-color:var(--deny)}
+.btn:disabled{opacity:.5;cursor:default}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+
+.cheat{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:.92rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>IAM <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Domain 1 Secure Architectures</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+
+<!-- 1 BIG IDEA -->
+<section class="lesson" data-id="idea" data-name="The big idea">
+  <div class="eyebrow">Lesson 1 · 5 min</div>
+  <h2>Every AWS request answers four questions</h2>
+  <p class="lede">IAM is just a rulebook. Each time anyone calls AWS, AWS reads the rules and says yes or no. Nothing more.</p>
+
+  <div class="q4">
+    <div><span class="k">Principal</span><span class="w">Who?</span><span class="d">A user, a role, a service, an account.</span></div>
+    <div><span class="k">Action</span><span class="w">Does what?</span><span class="d"><code>s3:GetObject</code>, <code>ec2:StartInstances</code></span></div>
+    <div><span class="k">Resource</span><span class="w">On which thing?</span><span class="d">One bucket, one table, or <code>*</code> (everything).</span></div>
+    <div><span class="k">Condition</span><span class="w">When?</span><span class="d">Only with MFA, only from this IP, only in this Region.</span></div>
+  </div>
+
+  <p class="sentence"><mark>Who</mark> can do <mark>what</mark> on <mark>which resource</mark> under <mark>which conditions</mark>. Every policy you ever read is this one sentence.</p>
+
+  <div class="grid2">
+    <div class="box prose"><h3>Authentication</h3><p><b>"Who are you?"</b> Password, MFA, access keys, or temporary credentials prove identity.</p></div>
+    <div class="box prose"><h3>Authorization</h3><p><b>"Are you allowed?"</b> Policies decide. This is where most exam questions live.</p></div>
+  </div>
+
+  <h3>The office building analogy</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>In AWS</th><th>In an office building</th></tr></thead>
+    <tbody>
+      <tr><td>Root user</td><td>The building owner. Master key to every door. Keep it in a safe.</td></tr>
+      <tr><td>IAM user</td><td>An employee with a permanent badge.</td></tr>
+      <tr><td>IAM group</td><td>A department. Give rights to "Finance", everyone in Finance gets them.</td></tr>
+      <tr><td>IAM role</td><td>A visitor badge. You borrow it, it expires, you give it back.</td></tr>
+      <tr><td>Identity policy</td><td>Your job description: what <i>you</i> may do.</td></tr>
+      <tr><td>Resource policy</td><td>A sign on a door: who may enter <i>this room</i>.</td></tr>
+      <tr><td>Permissions boundary</td><td>A clearance ceiling for one person. You can't go above it, whatever your job says.</td></tr>
+      <tr><td>SCP</td><td>Head-office rule for the whole branch. Even the branch manager must obey.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="remember"><b>Golden rule.</b> By default everything is denied. An Allow opens a door. A Deny anywhere slams it shut, and no Allow can reopen it.</div>
+</section>
+
+<!-- 2 IDENTITIES -->
+<section class="lesson" data-id="identities" data-name="Identities">
+  <div class="eyebrow">Lesson 2 · 7 min</div>
+  <h2>Four kinds of "who"</h2>
+  <p class="lede">Three of them hold permissions directly. The group is only a folder of users.</p>
+
+  <div class="id-cards">
+    <article class="idc">
+      <header><h3>Root user</h3><span class="tag warn">all-powerful</span></header>
+      <p>The email + password used to create the account. IAM policies cannot restrict it (only an SCP can, in a member account).</p>
+      <div><div class="lbl">Use it only for</div><ul><li>Closing the account, changing root email</li><li>Changing the support plan</li><li>Restoring access if admins locked themselves out</li></ul></div>
+      <div><div class="lbl">Exam answer</div><ul><li>Turn on MFA</li><li>Delete root access keys</li><li>Never use it for daily work</li></ul></div>
+    </article>
+    <article class="idc">
+      <header><h3>IAM user</h3><span class="tag">long-term creds</span></header>
+      <p>One person or app with permanent credentials: a console password and/or access keys (for CLI/SDK).</p>
+      <div><div class="lbl">Remember</div><ul><li>Permanent keys can leak, so rotate them</li><li>For people today, AWS prefers IAM Identity Center</li><li>For apps on AWS, use a role instead</li></ul></div>
+    </article>
+    <article class="idc">
+      <header><h3>IAM group</h3><span class="tag">just a folder</span></header>
+      <p>A set of users. Attach a policy to the group and every member gets it.</p>
+      <div><div class="lbl">Exam traps</div><ul><li>Groups can't contain other groups</li><li>A group can't sign in and has no credentials</li><li>A group can't be the <code>Principal</code> in a resource policy</li></ul></div>
+    </article>
+    <article class="idc">
+      <header><h3>IAM role</h3><span class="tag ok">temporary creds</span></header>
+      <p>Permissions with no password and no permanent keys. Someone <i>assumes</i> it and gets short-lived credentials from STS.</p>
+      <div><div class="lbl">Has two policies</div><ul><li><b>Trust policy</b>: who may assume me</li><li><b>Permissions policy</b>: what I may do</li></ul></div>
+      <div><div class="lbl">Used by</div><ul><li>EC2, Lambda, ECS tasks</li><li>Users from other accounts</li><li>Federated (SSO) users</li></ul></div>
+    </article>
+  </div>
+
+  <div class="remember"><b>Rule of thumb for the exam.</b> If an answer stores access keys on a server, in code, or in user data, it is almost always wrong. The right answer is a role.</div>
+</section>
+
+<!-- 3 READ A POLICY -->
+<section class="lesson" data-id="policies" data-name="Read a policy">
+  <div class="eyebrow">Lesson 3 · 10 min</div>
+  <h2>A policy is a JSON list of rules</h2>
+  <p class="lede">Tap any line of the policy to see what it means.</p>
+
+  <div class="reader">
+    <pre class="code" id="policyCode"></pre>
+    <div class="explain"><div class="box" id="explainBox"></div></div>
+  </div>
+
+  <h3>How to read an ARN</h3>
+  <p class="prose">An ARN (Amazon Resource Name) is the full address of a resource. Six parts, split by colons.</p>
+  <div class="arn">
+    <span><small>prefix</small>arn</span><i>:</i>
+    <span><small>partition</small>aws</span><i>:</i>
+    <span><small>service</small>dynamodb</span><i>:</i>
+    <span><small>region</small>eu-south-1</span><i>:</i>
+    <span><small>account</small>111122223333</span><i>:</i>
+    <span><small>resource</small>table/Orders</span>
+  </div>
+  <p class="hint">S3 bucket ARNs leave Region and account empty: <code>arn:aws:s3:::my-bucket</code>. IAM is global, so IAM ARNs leave Region empty.</p>
+
+  <h3>Build your own statement</h3>
+  <div class="box builder">
+    <div class="controls">
+      <label for="bEffect">Effect<select id="bEffect"><option>Allow</option><option>Deny</option></select></label>
+      <label for="bAction">Action<select id="bAction">
+        <option value="s3:GetObject">s3:GetObject (read file)</option>
+        <option value="s3:PutObject">s3:PutObject (upload file)</option>
+        <option value="s3:ListBucket">s3:ListBucket (list files)</option>
+        <option value="s3:*">s3:* (everything in S3)</option>
+        <option value="ec2:StartInstances">ec2:StartInstances</option>
+        <option value="dynamodb:GetItem">dynamodb:GetItem</option>
+      </select></label>
+      <label for="bRes">Resource<select id="bRes"><option value="one">One specific resource</option><option value="all">* (all resources)</option></select></label>
+      <label for="bCond">Condition<select id="bCond">
+        <option value="none">None</option>
+        <option value="mfa">Only with MFA</option>
+        <option value="ip">Only from office IP range</option>
+        <option value="region">Only in eu-south-1</option>
+      </select></label>
+    </div>
+    <p class="say" id="bSay"></p>
+    <pre class="code" id="bOut"></pre>
+    <p class="note" id="bNote" hidden></p>
+  </div>
+</section>
+
+<!-- 4 POLICY TYPES -->
+<section class="lesson" data-id="types" data-name="Policy types">
+  <div class="eyebrow">Lesson 4 · 8 min</div>
+  <h2>Some policies give. Others only limit.</h2>
+  <p class="lede">This one idea solves most "which policy type?" questions.</p>
+
+  <div class="remember"><b>Only two types can GRANT access:</b> identity-based and resource-based policies. Permissions boundaries, SCPs and session policies never grant anything. They only set a ceiling.</div>
+
+  <div class="types">
+    <div class="type"><span class="badge grant">GRANTS</span><h3>Identity-based policy</h3><p>Attached to a user, group or role. Says what <i>that identity</i> can do. No <code>Principal</code> field, because the principal is whoever it's attached to.</p><p class="eg"><b>AWS managed</b> (made by AWS, e.g. <code>ReadOnlyAccess</code>) · <b>Customer managed</b> (yours, reusable, versioned) · <b>Inline</b> (glued to one identity, deleted with it)</p></div>
+    <div class="type"><span class="badge grant">GRANTS</span><h3>Resource-based policy</h3><p>Attached to the resource. Has a <code>Principal</code> field: who may touch this thing. Lets other accounts in without assuming a role.</p><p class="eg">S3 bucket policy · SQS queue policy · SNS topic policy · KMS key policy · Lambda resource policy</p></div>
+    <div class="type"><span class="badge grant">GRANTS</span><h3>Role trust policy</h3><p>A resource-based policy on a role. Answers only one question: who may assume this role.</p><p class="eg">"ec2.amazonaws.com may assume me" · "Account 444455556666 may assume me"</p></div>
+    <div class="type"><span class="badge limit">LIMITS</span><h3>Permissions boundary</h3><p>A managed policy set on one user or role as its maximum. Effective rights = identity policy ∩ boundary.</p><p class="eg">Exam keyword: "let developers create roles safely", "delegate admin without privilege escalation"</p></div>
+    <div class="type"><span class="badge limit">LIMITS</span><h3>Service Control Policy (SCP)</h3><p>AWS Organizations. Attached to the org root, an OU or an account. Caps every identity in member accounts, including their root user.</p><p class="eg">Does NOT affect the management account · does not affect service-linked roles · exam keyword: "all accounts", "even administrators"</p></div>
+    <div class="type"><span class="badge limit">LIMITS</span><h3>Session policy</h3><p>Passed when you assume a role or federate. Narrows that one session only.</p><p class="eg">Rare on the exam. Know that it exists.</p></div>
+  </div>
+
+  <h3>Special case: KMS key policy</h3>
+  <p class="prose">Every KMS key must have a key policy. IAM policies only work for a key if its key policy allows the account to use IAM (the default key policy does this). If the key policy doesn't trust the account, no IAM policy can help.</p>
+</section>
+
+<!-- 5 EVALUATION -->
+<section class="lesson" data-id="evaluate" data-name="Allow or deny?">
+  <div class="eyebrow">Lesson 5 · 10 min · the most tested idea</div>
+  <h2>How AWS decides: the evaluation logic</h2>
+  <p class="lede">Flip the switches. Watch which step stops the request.</p>
+
+  <div class="sim">
+    <div class="toggles" id="toggles"></div>
+    <div style="display:grid;gap:10px">
+      <div id="verdict" class="verdict"></div>
+      <ol class="flow" id="flow"></ol>
+    </div>
+  </div>
+  <p class="hint">Simplified for one account. A resource policy that names the user or role session directly can allow even with no identity policy.</p>
+
+  <div class="remember"><b>Three lines to memorise.</b> 1) Explicit Deny always wins. 2) Silence is a Deny (implicit deny). 3) Every limiting layer (SCP, boundary, session) must also allow.</div>
+
+  <h3>Cross-account is different</h3>
+  <div class="box prose">
+    <p>A user in Account A wants something in Account B. <b>Both sides must say yes.</b></p>
+    <p>Account A: the user's identity policy must allow the action.<br>Account B: the resource policy (or a role's trust policy) must allow Account A.</p>
+    <p class="hint">One side alone is not enough.</p>
+  </div>
+</section>
+
+<!-- 6 ROLES -->
+<section class="lesson" data-id="roles" data-name="Roles & STS">
+  <div class="eyebrow">Lesson 6 · 10 min</div>
+  <h2>Roles: borrow permissions, give them back</h2>
+  <p class="lede">STS (Security Token Service) hands out temporary keys. Nothing permanent to leak.</p>
+
+  <ol class="steps">
+    <li><div><b>Ask.</b> A user, app or service calls <code>sts:AssumeRole</code> on a role ARN.</div></li>
+    <li><div><b>Check the trust policy.</b> Is this caller listed as allowed to assume the role?</div></li>
+    <li><div><b>Get temporary credentials.</b> Access key + secret + session token. Expire after the session duration (default 1 hour, role max up to 12 hours).</div></li>
+    <li><div><b>Act.</b> Calls now run with the role's permissions policy, not the caller's own.</div></li>
+  </ol>
+
+  <div class="grid2">
+    <div style="display:grid;gap:6px;min-width:0"><div class="eyebrow">Trust policy · who may assume</div><pre class="code" id="trustCode"></pre></div>
+    <div style="display:grid;gap:6px;min-width:0"><div class="eyebrow">Permissions policy · what it may do</div><pre class="code" id="permCode"></pre></div>
+  </div>
+
+  <h3>Where roles appear on the exam</h3>
+  <div class="uses">
+    <div class="use"><h3>EC2 instance profile</h3><p>A box that carries a role onto an EC2 instance. The SDK picks up the credentials from instance metadata and they rotate on their own.</p></div>
+    <div class="use"><h3>Lambda execution role</h3><p>What your function may do (write logs, read DynamoDB). Each function has one.</p></div>
+    <div class="use"><h3>Cross-account role</h3><p>Role in Account B trusts Account A. A's users need <code>sts:AssumeRole</code> on that role. Then they "switch role".</p></div>
+    <div class="use"><h3>Third party + ExternalId</h3><p>For a vendor's account, add an <code>sts:ExternalId</code> condition to the trust policy. Prevents the "confused deputy" problem.</p></div>
+    <div class="use"><h3>IAM Identity Center</h3><p>Workforce single sign-on to many accounts. Connects to Active Directory, Okta, Entra ID. Users get roles via permission sets.</p></div>
+    <div class="use"><h3>Amazon Cognito</h3><p>For your app's end users (mobile, web). User pools = sign in. Identity pools = temporary AWS credentials.</p></div>
+    <div class="use"><h3>SAML 2.0 / OIDC federation</h3><p>Corporate IdP or web identity trusted directly by IAM. Users get <code>AssumeRoleWithSAML</code> / <code>AssumeRoleWithWebIdentity</code>.</p></div>
+    <div class="use"><h3>iam:PassRole</h3><p>To give a role to a service (launch EC2 with a role, create a Lambda), you need <code>iam:PassRole</code> on that role.</p></div>
+  </div>
+
+  <h3>Tools that audit IAM</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Tool</th><th>Answers the question</th></tr></thead>
+    <tbody>
+      <tr><td>IAM Access Analyzer</td><td>What is shared outside my account or org? Which access is unused? Generate a least-privilege policy from CloudTrail.</td></tr>
+      <tr><td>Credential report</td><td>List of all users with password, access key and MFA status (account level, downloadable CSV).</td></tr>
+      <tr><td>Access Advisor</td><td>Which services did this user or role use, and when? Remove the rest.</td></tr>
+      <tr><td>Policy Simulator</td><td>Would this policy allow this action? Test before you deploy.</td></tr>
+      <tr><td>CloudTrail</td><td>Who called which API, when, from where?</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 7 PRACTICE -->
+<section class="lesson" data-id="practice" data-name="Allowed or denied?">
+  <div class="eyebrow">Lesson 7 · game</div>
+  <h2>Allowed or denied?</h2>
+  <p class="lede">Read the setup. Decide. Then read why.</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 8 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 8 · exam style</div>
+  <h2>SAA-style questions</h2>
+  <p class="lede">12 questions in the style of the real exam. Look for the keyword in each one.</p>
+  <div class="card" id="quizBox"></div>
+
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store = {
+    get(k,d){try{const v=localStorage.getItem('iampb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('iampb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* ---------- tabs ---------- */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');
+  let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;
+    rail.appendChild(li);
+  });
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{
+      b.setAttribute('aria-selected',b.dataset.id===cur);
+      b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur);
+    });
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+
+      (next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);
+    try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab','idea'));
+
+  /* ---------- JSON highlighter ---------- */
+  function hl(line){
+    return esc(line)
+      .replace(/(&quot;[^&]*?&quot;)(\s*:)/g,'<span class="ck">$1</span>$2')
+      .replace(/(:\s*|\[\s*|,\s*|^\s*)(&quot;[^&]*?&quot;)/g,'$1<span class="cs">$2</span>');
+  }
+  function renderCode(el,lines){
+    el.innerHTML=lines.map(l=>{const [t,k]=Array.isArray(l)?l:[l,null];return `<span class="ln"${k?` data-k="${k}"`:''}>${hl(t)||' '}</span>`}).join('');
+  }
+
+  /* ---------- policy reader ---------- */
+  const P=[
+    ['{','doc'],
+    ['  "Version": "2012-10-17",','version'],
+    ['  "Statement": [','statement'],
+    ['    {',null],
+    ['      "Sid": "ReadReportsWithMFA",','sid'],
+    ['      "Effect": "Allow",','effect'],
+    ['      "Action": [','action'],
+    ['        "s3:GetObject",','action'],
+    ['        "s3:ListBucket"','action'],
+    ['      ],','action'],
+    ['      "Resource": [','resource'],
+    ['        "arn:aws:s3:::reports",','resbucket'],
+    ['        "arn:aws:s3:::reports/*"','resobj'],
+    ['      ],','resource'],
+    ['      "Condition": {','condition'],
+    ['        "Bool": { "aws:MultiFactorAuthPresent": "true" }','condition'],
+    ['      }','condition'],
+    ['    }',null],
+    ['  ]','statement'],
+    ['}','doc']
+  ];
+  const EX={
+    doc:['The whole policy','A JSON document. This one is an identity-based policy: you attach it to a user, group or role. In plain words: "Read the reports bucket, but only when signed in with MFA."'],
+    version:['"Version"','The version of the policy language. Always write <code>"2012-10-17"</code>. It is not today\'s date and you never change it.'],
+    statement:['"Statement"','A list of rules. One policy can have many statements. Each one is evaluated on its own.'],
+    sid:['"Sid"','Optional label, like a comment. Helps humans. AWS ignores it when deciding.'],
+    effect:['"Effect"','Only two values: <code>Allow</code> or <code>Deny</code>. If no statement matches, the answer is an implicit deny.'],
+    action:['"Action"','Which API calls. Format <code>service:Operation</code>. Wildcards work: <code>s3:Get*</code>, <code>s3:*</code>, <code>*</code>.'],
+    resource:['"Resource"','Which things, as ARNs. <code>*</code> means everything. Some actions apply to the bucket, some to objects, so S3 policies often list both.'],
+    resbucket:['Bucket ARN','<code>arn:aws:s3:::reports</code> is the bucket itself. <code>s3:ListBucket</code> needs this one.'],
+    resobj:['Object ARN','<code>arn:aws:s3:::reports/*</code> means every object inside. <code>s3:GetObject</code> needs this one. Forgetting <code>/*</code> is a classic AccessDenied.'],
+    condition:['"Condition"','Extra checks. Shape: <code>operator → key → value</code>. Here: allow only if the caller used MFA. Other common keys: <code>aws:SourceIp</code>, <code>aws:RequestedRegion</code>, <code>aws:PrincipalOrgID</code>.']
+  };
+  const pc=$('#policyCode');renderCode(pc,P);
+  function explain(k){
+    const [t,d]=EX[k];
+    $('#explainBox').innerHTML=`<h3>${t}</h3><p>${d}</p><p class="hint">Missing here: <code>Principal</code>. It only appears in resource-based policies (like a bucket policy), because there you must say who.</p>`;
+    pc.querySelectorAll('.ln').forEach(l=>l.classList.toggle('on',l.dataset.k===k));
+  }
+  pc.addEventListener('click',e=>{const l=e.target.closest('.ln[data-k]');if(l)explain(l.dataset.k)});
+  explain('effect');
+
+  /* ---------- builder ---------- */
+  const RES={
+    's3:GetObject':['arn:aws:s3:::my-bucket/*','read files in my-bucket'],
+    's3:PutObject':['arn:aws:s3:::my-bucket/*','upload files to my-bucket'],
+    's3:ListBucket':['arn:aws:s3:::my-bucket','list the files in my-bucket'],
+    's3:*':['arn:aws:s3:::my-bucket/*','do anything with objects in my-bucket'],
+    'ec2:StartInstances':['arn:aws:ec2:eu-south-1:111122223333:instance/i-0abc1234','start instance i-0abc1234'],
+    'dynamodb:GetItem':['arn:aws:dynamodb:eu-south-1:111122223333:table/Orders','read items from the Orders table']
+  };
+  const ALLTXT={'s3:GetObject':'read any file in any bucket','s3:PutObject':'upload to any bucket','s3:ListBucket':'list any bucket','s3:*':'do anything in S3','ec2:StartInstances':'start any instance','dynamodb:GetItem':'read any DynamoDB table'};
+  const COND={
+    none:[null,''],
+    mfa:[['      "Condition": {','        "Bool": { "aws:MultiFactorAuthPresent": "true" }','      }'],', only when signed in with MFA'],
+    ip:[['      "Condition": {','        "IpAddress": { "aws:SourceIp": "203.0.113.0/24" }','      }'],', only from the office network 203.0.113.0/24'],
+    region:[['      "Condition": {','        "StringEquals": { "aws:RequestedRegion": "eu-south-1" }','      }'],', only in Region eu-south-1 (Milan)']
+  };
+  function build(){
+    const ef=$('#bEffect').value,ac=$('#bAction').value,rs=$('#bRes').value,cd=$('#bCond').value;
+    const arn=rs==='all'?'*':RES[ac][0];
+    const c=COND[cd][0];
+    const lines=['{','  "Version": "2012-10-17",','  "Statement": [{',`      "Effect": "${ef}",`,`      "Action": "${ac}",`,`      "Resource": "${arn}"${c?',':''}`];
+    if(c)lines.push(...c);
+    lines.push('  }]','}');
+    renderCode($('#bOut'),lines);
+    const what=rs==='all'?ALLTXT[ac]:RES[ac][1];
+    const say=$('#bSay');
+    say.className='say'+(ef==='Deny'?' deny':'');
+    say.innerHTML=`<b>${ef==='Allow'?'Allow':'Never allow'}</b> this identity to ${what}${COND[cd][1]}.${ef==='Deny'?' Even if another policy says Allow.':''}`;
+    const n=$('#bNote');
+    if(ac==='s3:ListBucket'&&rs==='one'){n.hidden=false;n.textContent='Notice: ListBucket uses the bucket ARN (no /*). GetObject and PutObject use the object ARN (with /*).'}
+    else if(rs==='all'&&ef==='Allow'){n.hidden=false;n.textContent='Careful: "Resource": "*" breaks least privilege. On the exam, the most specific ARN is usually the better answer.'}
+    else n.hidden=true;
+  }
+  ['#bEffect','#bAction','#bRes','#bCond'].forEach(s=>$(s).addEventListener('change',build));
+  build();
+
+  /* ---------- simulator ---------- */
+  const T=[
+    {k:'deny',t:'Is there an explicit Deny in any policy?',o:['No','Yes'],v:'No'},
+    {k:'org',t:'Is the account in AWS Organizations (member account)?',o:['No','Yes'],v:'Yes'},
+    {k:'scp',t:'Do the SCPs allow this action?',o:['Allow','Not allowed'],v:'Allow',dep:'org'},
+    {k:'rbp',t:'Does a resource policy (e.g. bucket policy) allow this user?',o:['Not mentioned','Allows'],v:'Not mentioned'},
+    {k:'idp',t:'Does the identity-based policy allow it?',o:['Allows','Not mentioned'],v:'Allows'},
+    {k:'pbt',t:'Is a permissions boundary attached?',o:['No','Yes'],v:'No'},
+    {k:'pb',t:'Does the boundary allow this action?',o:['Allows','Not mentioned'],v:'Allows',dep:'pbt'},
+    {k:'sst',t:'Is this a role session with a session policy?',o:['No','Yes'],v:'No'},
+    {k:'ss',t:'Does the session policy allow it?',o:['Allows','Not mentioned'],v:'Allows',dep:'sst'}
+  ];
+  const st=Object.fromEntries(T.map(x=>[x.k,x.v]));
+  const tg=$('#toggles');
+  function drawToggles(){
+    tg.innerHTML=T.filter(x=>!x.dep||st[x.dep]==='Yes').map(x=>`<div class="tg"><span class="t">${x.t}</span><div class="seg" data-k="${x.k}">${x.o.map(o=>`<button type="button" aria-pressed="${st[x.k]===o}">${o}</button>`).join('')}</div></div>`).join('');
+  }
+  tg.addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;st[b.parentNode.dataset.k]=b.textContent;drawToggles();evalSim()});
+  const STEPS=[
+    ['Explicit Deny?','Checked first, in every policy type.'],
+    ['SCP allows?','Only for member accounts in an Organization.'],
+    ['Resource policy allows?','A direct Allow here can finish the decision.'],
+    ['Identity policy allows?','No Allow here = implicit deny.'],
+    ['Boundary allows?','Only if a boundary is attached.'],
+    ['Session policy allows?','Only for sessions with a session policy.']
+  ];
+  function evalSim(){
+    const cls=Array(6).fill('skip');let res,why;
+    const done=()=>{};
+    if(st.deny==='Yes'){cls[0]='stop';res='deny';why='An explicit Deny was found. Nothing can override it.'}
+    else{cls[0]='pass';
+      if(st.org==='Yes'&&st.scp!=='Allow'){cls[1]='stop';res='deny';why='The SCP does not allow it. SCPs cap everyone in the account, even admins and root.'}
+      else{cls[1]=st.org==='Yes'?'pass':'skip';
+        if(st.rbp==='Allows'){cls[2]='win';res='allow';why='The resource policy allows this principal directly (same account), so the request is allowed.'}
+        else{cls[2]='pass';
+          if(st.idp!=='Allows'){cls[3]='stop';res='deny';why='No policy allows it. Silence means implicit deny.'}
+          else{cls[3]='pass';
+            if(st.pbt==='Yes'&&st.pb!=='Allows'){cls[4]='stop';res='deny';why='The identity policy allows it, but the permissions boundary does not. Effective rights are the overlap only.'}
+            else{cls[4]=st.pbt==='Yes'?'pass':'skip';
+              if(st.sst==='Yes'&&st.ss!=='Allows'){cls[5]='stop';res='deny';why='The session policy narrows this session and does not include the action.'}
+              else{cls[5]=st.sst==='Yes'?'win':'skip';if(cls[5]==='skip'){ (st.pbt==='Yes'?cls[4]='win':cls[3]='win') }res='allow';why='Every layer that applies says yes, and nothing denies.'}
+            }
+          }
+        }
+      }
+    }
+    $('#flow').innerHTML=STEPS.map((s,i)=>`<li class="${cls[i]}"><div><b>${s[0]}</b><small>${s[1]}</small></div></li>`).join('');
+    const v=$('#verdict');v.className='verdict '+res;
+    v.innerHTML=`<span class="big">${res==='allow'?'ALLOW':'DENY'}</span><span class="why">${why}</span>`;
+  }
+  drawToggles();evalSim();
+
+  /* ---------- roles code ---------- */
+  renderCode($('#trustCode'),['{','  "Version": "2012-10-17",','  "Statement": [{','    "Effect": "Allow",','    "Principal": {','      "Service": "ec2.amazonaws.com"','    },','    "Action": "sts:AssumeRole"','  }]','}']);
+  renderCode($('#permCode'),['{','  "Version": "2012-10-17",','  "Statement": [{','    "Effect": "Allow",','    "Action": "dynamodb:PutItem",','    "Resource":','      "arn:aws:dynamodb:eu-south-1:','       111122223333:table/Orders"','  }]','}']);
+
+  /* ---------- game ---------- */
+  const G=[
+    {f:['Maria is in the "Admins" group with AdministratorAccess.','The S3 bucket policy has <code>"Effect": "Deny"</code> on <code>s3:DeleteObject</code> for Maria.','Maria deletes a file.'],a:false,e:'Explicit Deny wins over any Allow, no matter where the Allow comes from.'},
+    {f:['Luca is an IAM user with no policies at all.','A bucket in the same account has a bucket policy allowing Luca\'s user ARN <code>s3:GetObject</code>.','Luca downloads a file.'],a:true,e:'Same account: a resource policy that names the principal is enough on its own.'},
+    {f:['A developer has AdministratorAccess.','A permissions boundary allows only <code>s3:*</code> and <code>ec2:*</code>.','The developer calls <code>iam:CreateUser</code>.'],a:false,e:'Effective permissions are the overlap of identity policy and boundary. IAM is outside the boundary.'},
+    {f:['A member account sits in an OU with an SCP that denies every action outside <code>eu-west-1</code>.','The account admin launches EC2 in <code>us-east-1</code>.'],a:false,e:'SCPs cap everyone in member accounts, administrators included.'},
+    {f:['User in Account A has an identity policy allowing <code>s3:GetObject</code> on a bucket in Account B.','The bucket policy in Account B does not mention Account A.','The user reads an object.'],a:false,e:'Cross-account needs both sides. Account B never agreed.'},
+    {f:['Same as before, but now the bucket policy in Account B allows Account A <code>s3:GetObject</code>.','The user reads an object.'],a:true,e:'Both sides allow: identity policy in A and resource policy in B.'},
+    {f:['An EC2 instance has a role allowing <code>dynamodb:PutItem</code> on table Orders.','The app uses the AWS SDK with no keys configured.','It writes to Orders.'],a:true,e:'The SDK fetches the role\'s temporary credentials from instance metadata automatically.'},
+    {f:['The root user of a member account tries <code>ec2:TerminateInstances</code>.','An SCP on its OU denies <code>ec2:TerminateInstances</code>.'],a:false,e:'SCPs restrict the root user of member accounts too. IAM policies can\'t, but SCPs can.'},
+    {f:['A user\'s policy allows <code>s3:GetObject</code> on <code>arn:aws:s3:::photos</code>.','The user downloads <code>photos/cat.jpg</code>.'],a:false,e:'Objects need <code>arn:aws:s3:::photos/*</code>. The ARN given is only the bucket.'},
+    {f:['A policy allows <code>ec2:*</code> with condition <code>aws:MultiFactorAuthPresent = true</code>.','The user signed in with a password only, no MFA.','They stop an instance.'],a:false,e:'The condition is not met, so the Allow does not apply. Result: implicit deny.'},
+    {f:['An SCP attached to the organization root denies <code>s3:DeleteBucket</code>.','An admin in the <b>management account</b> deletes a bucket.'],a:true,e:'SCPs never affect the management account. That is why you keep workloads out of it.'},
+    {f:['A user has no policies. They belong to two groups.','Group 1 allows <code>s3:PutObject</code>. Group 2 says nothing about S3.','They upload a file.'],a:true,e:'Permissions from all groups add up. One Allow is enough when nothing denies.'}
+  ];
+  let gi=store.get('gi',0),gr=store.get('gr',[]);
+  const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){
+      const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario"><b>${ok>=10?'Strong.':ok>=7?'Good. Review the ones you missed in Lesson 5.':'Go back to Lesson 5 and play with the switches, then retry.'}</b></p><div class="choices"><button class="btn primary" id="gReset">Play again</button></div>`;
+      $('#gReset').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return;
+    }
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <ul class="facts">${s.f.map(x=>`<li>${x}</li>`).join('')}</ul>
+      <div class="choices"><button class="btn allowb" data-a="1">Allowed</button><button class="btn denyb" data-a="0">Denied</button></div>
+      <div id="gFb"></div>`;
+    game.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
+      const pick=b.dataset.a==='1',ok=pick===s.a;
+      gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('[data-a]').forEach(x=>x.disabled=true);
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Not quite'} · ${s.a?'ALLOWED':'DENIED'}</b>${s.e}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gNext">Next scenario →</button></div>`;
+      $('#gNext').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* ---------- quiz ---------- */
+  const Q=[
+    {q:'An application on EC2 must write items to a DynamoDB table. What is the MOST secure way to give it credentials?',o:['Save an IAM user\'s access keys in the app config file','Attach an IAM role to the instance through an instance profile','Use the root user\'s access keys','Pass access keys in the EC2 user data script'],c:1,e:'Roles give temporary, auto-rotated credentials. Any answer with stored keys is wrong.'},
+    {q:'No one in any member account, including account administrators, may stop CloudTrail logging. What should you use?',o:['An IAM policy attached to every user','A permissions boundary on every role','An SCP that denies cloudtrail:StopLogging and cloudtrail:DeleteTrail','An AWS Config rule'],c:2,e:'"All accounts" + "even administrators" = SCP. Config only detects, it does not prevent.'},
+    {q:'Developers must create IAM roles for their Lambda functions, but those roles must never exceed a set of approved permissions. What is the BEST solution?',o:['Permissions boundaries, and require developers to attach the boundary to new roles','Give developers AdministratorAccess and review CloudTrail weekly','Create the roles centrally and share access keys','Use inline policies only'],c:0,e:'Permissions boundaries are made for safe delegation. A condition on iam:CreateRole can require the boundary.'},
+    {q:'An external auditing company needs read-only access to your AWS account. What is the MOST secure approach?',o:['Create an IAM user and email them the password','Create a role that trusts the auditor\'s AWS account, with an sts:ExternalId condition','Share the root user credentials for the audit period','Create access keys and store them in Secrets Manager for them'],c:1,e:'Third party = cross-account role + ExternalId (prevents the confused deputy problem).'},
+    {q:'300 employees sign in with Microsoft Active Directory. They need console access to 20 AWS accounts with one login. What should you use?',o:['An IAM user per employee in each account','Amazon Cognito user pools','AWS IAM Identity Center connected to the Active Directory','One shared IAM user per team'],c:2,e:'Workforce + many accounts + corporate directory = IAM Identity Center.'},
+    {q:'Users of a mobile app must upload photos directly to S3, each into their own prefix. What is the MOST secure solution?',o:['Embed an IAM user\'s access keys in the app','Make the bucket public-write','Use Amazon Cognito identity pools to give each user temporary credentials','Create an IAM user for every app user'],c:2,e:'App end users = Cognito. Identity pools exchange a login for temporary, scoped AWS credentials.'},
+    {q:'An IAM user has AdministratorAccess. A bucket policy explicitly denies that user s3:DeleteObject. What happens when they delete an object?',o:['Allowed, because AdministratorAccess includes everything','Allowed, because identity policies are checked first','Denied, because an explicit deny always wins','It depends on which policy was created last'],c:2,e:'Explicit Deny overrides every Allow. Order of creation never matters.'},
+    {q:'The security team must find S3 buckets, KMS keys and IAM roles that are shared with principals outside the organization. Which service?',o:['IAM credential report','IAM Access Analyzer','IAM Policy Simulator','Amazon Inspector'],c:1,e:'Access Analyzer reports resources shared outside your zone of trust (account or organization).'},
+    {q:'A user in Account 111 must read objects from a bucket in Account 222. What is required?',o:['Only a bucket policy in Account 222','Only an identity policy in Account 111','An identity policy in Account 111 AND a bucket policy in Account 222 that allows Account 111','An SCP in Account 222'],c:2,e:'Cross-account access needs an Allow on both sides. SCPs never grant.'},
+    {q:'A policy allows s3:GetObject on "arn:aws:s3:::reports". The user gets AccessDenied when reading reports/q3.pdf. Why?',o:['GetObject needs the object ARN: arn:aws:s3:::reports/*','S3 does not support identity policies','The Version must be today\'s date','The policy must include a Principal'],c:0,e:'Bucket ARN for bucket actions (ListBucket). Object ARN with /* for object actions.'},
+    {q:'Which statement about Service Control Policies is TRUE?',o:['They grant permissions to all users in an OU','They apply to the management account too','They set the maximum permissions but never grant any','They replace IAM identity policies'],c:2,e:'SCPs are a ceiling only. Users still need an identity or resource policy Allow.'},
+    {q:'You need a list of all IAM users showing whether they have a password, access keys and MFA enabled. What do you use?',o:['IAM credential report','IAM Access Advisor','AWS CloudTrail','IAM Policy Simulator'],c:0,e:'Credential report = every user + credential status. Access Advisor = last-used services for one identity.'}
+  ];
+  let qi=store.get('qi',0),qr=store.get('qr',[]);
+  const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){
+      const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario"><b>${pct>=80?'Exam-ready on IAM.':pct>=65?'Close. Target is 75–80%. Redo the misses.':'Review Lessons 4–6, then retry.'}</b></p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qReset">Retake quiz</button></div>`;
+      $('#qReset').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return;
+    }
+    const s=Q[qi];
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>
+      <div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;
+      qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qNext">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qNext').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* ---------- cheat sheet ---------- */
+  const C=[
+    ['App on EC2 / Lambda / ECS needs AWS access','IAM role (instance profile / execution role / task role)'],
+    ['Users from another AWS account','Cross-account role, or a resource-based policy'],
+    ['Third-party vendor needs access','Role with sts:ExternalId condition'],
+    ['Block something in all accounts, even for admins','SCP'],
+    ['Let developers create roles without escalating','Permissions boundary'],
+    ['Corporate directory, SSO to many accounts','IAM Identity Center'],
+    ['Mobile or web app users need AWS access','Cognito identity pool'],
+    ['Find resources shared outside the account or org','IAM Access Analyzer'],
+    ['All users + MFA and access key status','Credential report'],
+    ['Remove unused permissions (least privilege)','Access Advisor / Access Analyzer policy generation'],
+    ['Who made this API call?','CloudTrail'],
+    ['Test a policy before using it','IAM Policy Simulator'],
+    ['Require MFA for a sensitive action','Condition aws:MultiFactorAuthPresent'],
+    ['Only allow certain Regions','SCP with aws:RequestedRegion'],
+    ['Only principals from my organization','Resource policy with aws:PrincipalOrgID'],
+    ['Give a role to EC2 or Lambda','You need iam:PassRole']
+  ];
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+
+</body></html>

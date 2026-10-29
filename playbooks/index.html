@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA-C03 Interactive Playbooks</title>
+<meta name="description" content="14 interactive SAA-C03 playbooks: short lessons, simulators, a scenario game and an exam-style quiz per topic. Progress saves in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one 1000px column; a grid of playbook cards grouped by exam domain. Same tokens as the playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --allow:#17734A; --allow-soft:#E1F2E9; --amber:#A86400; --amber-soft:#FBF0DC; --deny:#B42318;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --allow:#4CC38A; --allow-soft:#10301F; --amber:#F0B44C; --amber-soft:#33260F; --deny:#FF7B6F; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --allow:#4CC38A; --allow-soft:#10301F; --amber:#F0B44C; --amber-soft:#33260F; --deny:#FF7B6F; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.15;text-wrap:balance}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{background:var(--surface);border-bottom:1px solid var(--line)}
+.hero{padding-block:26px 22px;display:grid;gap:8px}
+.eyebrow{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.hero h1{font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:800;letter-spacing:-.02em}
+.hero p{color:var(--muted);max-width:64ch}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.btn{border:1px solid var(--line);background:var(--bg);padding:8px 14px;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none;color:inherit}
+.btn:hover{border-color:var(--accent)}
+main{padding-block:24px 64px;display:grid;gap:26px}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.how div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.9rem}
+.how b{display:block;font-family:var(--f-display);font-size:1rem;margin-bottom:2px}
+section h2{font-size:1.25rem;font-weight:800;margin-bottom:10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+section h2 span{font-family:var(--f-mono);font-size:.74rem;font-weight:500;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.pb{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;text-decoration:none;color:inherit;align-content:start}
+.pb:hover{border-color:var(--accent)}
+.pb .t{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.pb b{font-family:var(--f-display);font-size:1.05rem}
+.tag{font-family:var(--f-mono);font-size:.7rem;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pb p{font-size:.84rem;color:var(--muted);margin:0}
+.bar{height:6px;border-radius:4px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.bar.ok i{background:var(--allow)}
+.st{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.st .good{color:var(--allow);font-weight:600}.st .mid{color:var(--amber);font-weight:600}.st .low{color:var(--deny);font-weight:600}
+#groups{display:grid;gap:26px}
+footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head><body>
+<header><div class="wrap hero">
+  <div class="eyebrow">AWS Certified Solutions Architect – Associate</div>
+  <h1>Interactive playbooks</h1>
+  <p>One playbook per topic: short lessons, small simulators you can play with, a scenario game and an exam-style quiz with a keyword cheat sheet. Your progress saves in this browser.</p>
+  <div class="links"><a class="btn" href="../">← Study guide</a><a class="btn" href="../simulator/">Exam simulator</a></div>
+</div></header>
+
+<main class="wrap">
+  <div class="how">
+    <div><b>1 · Read a lesson</b>5–15 minutes each, one idea at a time.</div>
+    <div><b>2 · Play with it</b>Calculators and simulators show why the answer is right.</div>
+    <div><b>3 · Game + quiz</b>16 scenarios, then 12–20 exam-style questions.</div>
+    <div><b>4 · Cheat sheet</b>Keyword → answer pairs to review before the exam.</div>
+  </div>
+  <div id="groups"></div>
+  <footer>Original content, MIT licensed like the rest of this guide. Not affiliated with Amazon Web Services. Progress is stored only in your browser (localStorage) and never leaves it.</footer>
+</main>
+
+<script>
+(function(){
+  const PB=[
+    {id:"fundamentals",t:"AWS Fundamentals",m:"01",p:"fndpb",l:8,q:20,d:"Regions, AZs, edge, service scope, shared responsibility, ARNs, accounts, Well-Architected"},
+    {id:"iam",t:"IAM",m:"02",p:"iampb",l:8,q:12,d:"Identities, policy anatomy, evaluation logic, roles and STS"},
+    {id:"security",t:"Security",m:"07",p:"secpb",l:9,q:17,d:"KMS, encryption, secrets, SG vs NACL, WAF/Shield, S3 lock-down, detection"},
+    {id:"networking",t:"Networking",m:"06",p:"netpb",l:8,q:18,d:"VPC, routing and NAT, peering vs Transit Gateway, VPN/DX, Route 53, CloudFront"},
+    {id:"storage",t:"Storage",m:"04",p:"stopb",l:9,q:20,d:"S3 classes, lifecycle, versioning/replication, EBS, EFS, FSx, transfer"},
+    {id:"ec2",t:"EC2 & scaling",m:"03",p:"ec2pb",l:8,q:20,d:"Instance types, purchase options, placement groups, Auto Scaling, load balancers"},
+    {id:"serverless",t:"Serverless & containers",m:"03",p:"srvpb",l:7,q:20,d:"Lambda limits and concurrency, invocation, ECS/Fargate, EKS, App Runner, Batch"},
+    {id:"database",t:"Database",m:"05",p:"dbpb",l:7,q:20,d:"RDS, Aurora, DynamoDB, ElastiCache, Redshift and purpose-built databases"},
+    {id:"integration",t:"Application Integration",m:"08",p:"intpb",l:8,q:20,d:"SQS, SNS, EventBridge, Step Functions, API Gateway, MQ, AppFlow"},
+    {id:"monitoring",t:"Monitoring",m:"09",p:"monpb",l:7,q:20,d:"CloudWatch metrics, alarms and logs, CloudTrail, Config, X-Ray, Systems Manager"},
+    {id:"migration",t:"Migration & Transfer",m:"10",p:"migpb",l:7,q:20,d:"7 Rs, MGN, DMS + SCT, DataSync, Transfer Family, Storage Gateway, Snow"},
+    {id:"analytics",t:"Analytics",m:"11",p:"anapb",l:6,q:20,d:"Kinesis, MSK, Glue, Athena, Lake Formation, EMR, QuickSight, OpenSearch"},
+    {id:"architecture",t:"Architecture patterns",m:"12",p:"archpb",l:8,q:20,d:"Well-Architected, HA failure simulator, DR strategies, decoupling, caching"},
+    {id:"cost",t:"Cost Optimization",m:"13",p:"costpb",l:7,q:20,d:"Savings Plans vs RIs vs Spot, storage tiers, data transfer, cost tools"}
+  ];
+  const GROUPS=[
+    ["Start here",["fundamentals"]],
+    ["Design secure architectures",["iam","security"]],
+    ["Design resilient architectures",["networking","storage","architecture","integration"]],
+    ["Design high-performing architectures",["ec2","serverless","database","analytics"]],
+    ["Design cost-optimized architectures",["cost","migration","monitoring"]]
+  ];
+  const get=(p,k,d)=>{try{const v=localStorage.getItem(p+":"+k);return v===null?d:JSON.parse(v)}catch(e){return d}};
+  const card=x=>{const seen=get(x.p,"seen",[]).length,qr=get(x.p,"qr",[]),ok=qr.filter(Boolean).length,pct=qr.length?Math.round(ok/qr.length*100):null;
+    const cls=pct===null?"":pct>=80?"good":pct>=65?"mid":"low";
+    return `<a class="pb" href="${x.id}.html"><span class="t"><b>${x.t}</b><span class="tag">Module ${x.m}</span></span><p>${x.d}</p><div class="bar ${seen>=x.l?"ok":""}"><i style="width:${Math.min(100,seen/x.l*100)}%"></i></div><span class="st"><span>${seen}/${x.l} lessons</span><span class="${cls}">${qr.length?`Quiz ${ok}/${qr.length}`:`${x.q}-question quiz`}</span></span></a>`};
+  document.getElementById("groups").innerHTML=GROUPS.map(([g,ids])=>`<section><h2>${g}<span>${ids.length} playbook${ids.length>1?"s":""}</span></h2><div class="grid">${ids.map(id=>card(PB.find(x=>x.id===id))).join("")}</div></section>`).join("");
+})();
+</script>
+</body></html>

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Interactive Playbooks** (`playbooks/`) - 14 self-contained HTML playbooks, one per topic (AWS Fundamentals, IAM, Security, Networking, Storage, EC2 & Scaling, Serverless & Containers, Database, Application Integration, Monitoring, Migration & Transfer, Analytics, Architecture Patterns, Cost Optimization):
+  - Short lessons with comparison tables and exam traps
+  - Interactive simulators and calculators per topic
+  - 16-scenario "pick the service" game and a 12–20 question exam-style quiz (267 questions in total)
+  - Keyword → answer cheat sheet; light/dark mode; progress saved in localStorage
+  - Hub page `playbooks/index.html`, linked from the study site (sidebar, new section, module cards, search)
 - **FLASHCARDS.md** - Enhanced Core Services Overview section (2.1):
   - Added Security & Identity category (IAM, Cognito, Secrets Manager, KMS, WAF, Shield, GuardDuty, Macie)
   - Added Application Integration category (SQS, SNS, EventBridge, Step Functions, AppSync, MQ)

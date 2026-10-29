@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAA Migration Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky lesson rail across the top, one lesson at a time in a reading column; interactive consoles inside lessons. Same system as the other SAA playbooks. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#121A2E; --muted:#58627A; --line:#D9DFEA;
+  --accent:#2446C6; --accent-soft:#E5EAFB; --amber:#A86400; --amber-soft:#FBF0DC;
+  --allow:#17734A; --allow-soft:#E1F2E9; --deny:#B42318; --deny-soft:#FBE6E3;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0C111E; --surface:#141B2C; --ink:#E6EAF3; --muted:#97A1B7; --line:#26304A;
+  --accent:#8299FF; --accent-soft:#1C2647; --amber:#F0B44C; --amber-soft:#33260F;
+  --allow:#4CC38A; --allow-soft:#10301F; --deny:#FF7B6F; --deny-soft:#3B1714; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.86em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:12px 6px;flex-wrap:wrap}
+.brand h1{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand .meta{font-size:.8rem;color:var(--muted)}
+.rail{overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail ol{display:flex;gap:4px;list-style:none;margin:0;padding:0 0 8px;width:max-content}
+.rail button{border:0;background:none;padding:6px 10px;border-radius:999px;font-size:.86rem;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.rail button .n{font-family:var(--f-mono);font-size:.75rem}
+.rail button.seen .n::after{content:" ✓";color:var(--allow)}
+.rail button[aria-selected="true"]{background:var(--accent);color:#fff}
+
+main{padding-block:28px 64px}
+section.lesson{display:grid;gap:22px}
+section.lesson>*{min-width:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lesson h2{font-size:clamp(1.7rem,4.5vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch}
+.prose{max-width:65ch;display:grid;gap:10px}
+h3{font-size:1.2rem;font-weight:700}
+.hint{font-size:.85rem;color:var(--muted)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.box>*{min-width:0}
+.remember{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:14px 16px}
+.remember b{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2>*{min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;align-content:start}
+.c header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.c h3{font-size:1.05rem}
+.c p,.c li{font-size:.9rem}
+.c ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.c .kw{font-size:.82rem;color:var(--accent);font-weight:500}
+.tag{font-size:.72rem;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--allow-soft);color:var(--allow)}
+.tag.amb{background:var(--amber-soft);color:var(--amber)}
+.tag.warn{background:var(--deny-soft);color:var(--deny)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.y{color:var(--allow);font-weight:600} td.n{color:var(--deny);font-weight:600} td.m{color:var(--amber);font-weight:600}
+tr.hi td{background:var(--accent-soft)}
+tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 12px;font-size:.84rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tg{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tg .t{font-size:.88rem;font-weight:500}
+.say{font-size:.95rem;padding:12px 14px;border-radius:8px;background:var(--accent-soft)}
+.say b{font-family:var(--f-display);font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.86rem;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.sliders label{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:500}
+.sliders label span{display:flex;justify-content:space-between;gap:8px}
+.sliders label b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.sliders input{accent-color:var(--accent);width:100%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.8rem;color:var(--muted)}
+.work{font-family:var(--f-mono);font-size:.84rem;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;gap:2px;overflow-x:auto}
+
+/* game + quiz */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+.card .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.scenario{font-size:1.08rem;font-weight:500}
+.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:6px}
+.svc button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;font-size:.86rem;font-weight:500;text-align:left}
+.svc button:hover:not(:disabled){border-color:var(--accent)}
+.svc button.right{border-color:var(--allow);background:var(--allow-soft)}
+.svc button.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.svc button:disabled{cursor:default}
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.feedback{padding:12px 14px;border-radius:8px;font-size:.95rem}
+.feedback.good{background:var(--allow-soft)}
+.feedback.bad{background:var(--deny-soft)}
+.feedback b{display:block;margin-bottom:2px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 14px;font-size:.95rem;display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px}
+.opt .l{font-family:var(--f-mono);color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--allow);background:var(--allow-soft)}
+.opt.wrong{border-color:var(--deny);background:var(--deny-soft)}
+.opt:disabled{cursor:default}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.g{background:var(--allow)} .dots i.b{background:var(--deny)} .dots i.c{outline:2px solid var(--accent);outline-offset:1px}
+.cheat{display:grid;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.cheat div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.9rem}
+.cheat div:last-child{border-bottom:0}
+.cheat div span:first-child{color:var(--muted)}
+.cheat div span:last-child{font-weight:600}
+@media (max-width:520px){.cheat div{grid-template-columns:1fr;gap:2px}}
+.next{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* 7 Rs strip */
+.rs{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.rs div{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:10px 8px;display:grid;gap:4px;align-content:start;transition:border-color .15s,box-shadow .15s}
+.rs div.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.rs b{font-family:var(--f-display);font-size:.98rem}
+.rs span{font-size:.76rem;color:var(--muted);line-height:1.35}
+.rs .eff{font-family:var(--f-mono);font-size:.68rem;color:var(--accent)}
+@media (max-width:760px){.rs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* DMS flow */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.flow .stage{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:12px;display:grid;gap:6px;align-content:start;position:relative}
+.flow .stage:not(:last-child)::after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700}
+.flow .stage .sl{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.flow .stage b{font-family:var(--f-display)}
+.flow .stage span{font-size:.82rem;color:var(--muted)}
+@media (max-width:640px){.flow{grid-template-columns:1fr;gap:18px}.flow .stage:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-19px;transform:translateX(-50%)}}
+/* transfer bars */
+.tbars{display:grid;gap:8px}
+.tbar{display:grid;grid-template-columns:170px minmax(0,1fr) 110px;gap:10px;align-items:center;font-size:.88rem}
+.tbar .track{height:16px;border-radius:4px;background:var(--bg);overflow:hidden;border:1px solid var(--line)}
+.tbar .fill{height:100%;background:var(--accent);border-radius:3px;min-width:2px;transition:width .25s}
+.tbar.best .fill{background:var(--allow)}
+.tbar.best span:first-child{font-weight:600}
+.tbar .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+@media (max-width:520px){.tbar{grid-template-columns:minmax(0,1fr) 100px}.tbar .track{grid-column:1/-1;grid-row:2}}
+
+</style>
+</head><body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Migration & Transfer <span>Playbook</span></h1>
+      <div class="meta"><a href="./" style="color:var(--accent);font-weight:600;text-decoration:none;margin-right:6px">← All playbooks</a> · SAA-C03 · Module 10 · 7 Rs, MGN, DMS, DataSync, Transfer Family, Storage Gateway, Snow</div>
+    </div>
+    <nav class="rail" aria-label="Lessons"><ol id="rail"></ol></nav>
+  </div>
+</header>
+
+<main class="wrap">
+<!-- 1 SEVEN Rs -->
+<section class="lesson" data-id="rs" data-name="The 7 Rs">
+  <div class="eyebrow">Lesson 1 · 10 min</div>
+  <h2>Every migration question starts with a strategy: the 7 Rs</h2>
+  <p class="lede">The question tells you how much change the company accepts. "As quickly as possible, no code changes" is one end; "cloud-native, scale to millions" is the other.</p>
+
+  <div class="rs" id="rsStrip"></div>
+  <h3>Which R is this?</h3>
+  <div class="chips" id="rsQ"></div>
+  <p class="say" id="rsSay">Pick a scenario.</p>
+
+  <h3>Discover and plan before moving</h3>
+  <div class="cards">
+    <div class="c"><header><h3>Application Discovery Service</h3><span class="tag">inventory</span></header><p>Collects server specs, utilization and <b>dependencies</b> from on-prem. Agentless collector (VMware) for inventory and performance; the agent adds running processes and network connections.</p></div>
+    <div class="c"><header><h3>Migration Hub</h3><span class="tag">track</span></header><p>One place to track migration status across tools (MGN, DMS) and group servers into applications.</p></div>
+    <div class="c"><header><h3>Migration Evaluator</h3><span class="tag">business case</span></header><p>Builds a cost / TCO case from on-prem usage: "how much would this cost on AWS?"</p></div>
+  </div>
+  <div class="remember"><b>Keywords:</b> "lift and shift", "minimal changes", "quickly" → <b>Rehost</b> with MGN. "Move the database to a managed service but keep the app" → <b>Replatform</b>. "Replace with SaaS" → <b>Repurchase</b>.</div>
+</section>
+
+<!-- 2 SERVERS -->
+<section class="lesson" data-id="servers" data-name="Servers & VMs">
+  <div class="eyebrow">Lesson 2 · 10 min</div>
+  <h2>Moving servers: Application Migration Service</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>AWS Application Migration Service (MGN)</h3><span class="tag ok">default answer</span></header><ul><li>Agent on each source server does <b>continuous block-level replication</b> to a staging area in AWS</li><li>Launch <b>test instances</b>, then a short <b>cutover</b>: minutes of downtime</li><li>Physical, VMware, Hyper-V, other clouds</li><li>Replaced the old Server Migration Service (SMS) and CloudEndure Migration</li></ul></div>
+    <div class="c"><header><h3>VM Import/Export</h3><span class="tag">images</span></header><p>Import a VM image (OVA, VMDK, VHD) as an AMI, or export an instance back. One-off image conversion, no continuous replication.</p></div>
+    <div class="c"><header><h3>Elastic Disaster Recovery (DRS)</h3><span class="tag amb">DR, not migration</span></header><p>Same replication technology as MGN, but keeps servers replicated <b>for recovery</b>: low RPO (seconds), RTO in minutes, pay for cheap staging until you fail over.</p></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Need</th><th>Answer</th></tr></thead>
+    <tbody>
+      <tr><td>Lift-and-shift 300 VMs with minimal downtime</td><td>MGN</td></tr>
+      <tr><td>Bring one golden VM image into AWS</td><td>VM Import/Export</td></tr>
+      <tr><td>On-prem servers must fail over to AWS if the data center burns</td><td>Elastic Disaster Recovery</td></tr>
+      <tr><td>Know server dependencies before moving</td><td>Application Discovery Service (agent)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 3 DATABASES -->
+<section class="lesson" data-id="db" data-name="DMS & SCT">
+  <div class="eyebrow">Lesson 3 · 14 min · heavily tested</div>
+  <h2>Moving databases: DMS and SCT</h2>
+  <p class="lede">DMS copies the data while the source keeps running. SCT converts the schema when the engine changes.</p>
+
+  <div class="flow">
+    <div class="stage"><span class="sl">Source</span><b>On-prem Oracle / SQL Server / MySQL…</b><span>Stays online during the migration</span></div>
+    <div class="stage"><span class="sl">DMS replication</span><b>Replication instance or DMS Serverless</b><span>Full load, then <b>CDC</b> (change data capture) keeps the target in sync</span></div>
+    <div class="stage"><span class="sl">Target</span><b>RDS, Aurora, Redshift, DynamoDB, S3, Kinesis…</b><span>Cut over when lag is near zero</span></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Migration type</th><th>Example</th><th>Schema conversion?</th><th>Tools</th></tr></thead>
+    <tbody>
+      <tr><td>Homogeneous</td><td>MySQL → RDS for MySQL, Oracle → RDS for Oracle</td><td class="n">No</td><td>DMS (or native dump/restore)</td></tr>
+      <tr class="hi"><td>Heterogeneous</td><td>Oracle → Aurora PostgreSQL, SQL Server → Aurora MySQL</td><td class="y">Yes</td><td><b>SCT</b> (or DMS Schema Conversion) + DMS</td></tr>
+      <tr><td>Into a warehouse</td><td>Oracle DW → Redshift</td><td class="y">Yes</td><td>SCT (with data extraction agents) + DMS</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="c"><h3>Continuous replication</h3><p>DMS with <b>CDC</b> can run for weeks: migrate, then keep syncing until cutover. Also used for ongoing replication into S3 or Kinesis.</p></div>
+    <div class="c"><h3>High availability</h3><p>Multi-AZ replication instance: a standby in another AZ for long-running tasks.</p></div>
+    <div class="c"><h3>Very large databases</h3><p>Slow link + many TB: load the initial copy offline (Snowball Edge), then let DMS CDC catch up.</p></div>
+    <div class="c"><h3>Not for</h3><p>DMS migrates data, not stored procedures logic or app code. SCT flags what needs manual work.</p></div>
+  </div>
+  <div class="remember"><b>Exam trap:</b> Engine changes → SCT + DMS. Same engine → DMS alone. "Minimal downtime" → DMS with CDC, not a dump and restore.</div>
+</section>
+
+<!-- 4 ONLINE TRANSFER -->
+<section class="lesson" data-id="online" data-name="Online transfer">
+  <div class="eyebrow">Lesson 4 · 15 min · heavily tested</div>
+  <h2>Moving files over the network</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>DataSync</h3><span class="tag ok">bulk copy, scheduled</span></header><ul><li>Agent on-prem reads <b>NFS, SMB, HDFS</b>, object storage, other clouds</li><li>Writes to <b>S3 (any class), EFS, FSx</b>; also copies between AWS storage services</li><li>Encryption in transit, integrity checks, keeps metadata and permissions</li><li>Scheduling, bandwidth throttling, incremental runs</li></ul><p class="kw">"migrate NFS share to EFS", "move file data to S3 on a schedule" → DataSync</p></div>
+    <div class="c"><header><h3>Transfer Family</h3><span class="tag">SFTP / FTPS / FTP / AS2</span></header><p>Managed endpoint in front of S3 or EFS. Partners keep using their SFTP clients and scripts; you stop running FTP servers.</p><p class="kw">"partners upload via SFTP" → Transfer Family</p></div>
+    <div class="c"><header><h3>Storage Gateway</h3><span class="tag amb">hybrid, ongoing</span></header><ul><li><b>S3 File Gateway</b>: NFS/SMB share, files stored as S3 objects, local cache</li><li><b>Volume Gateway</b>: iSCSI. <i>Cached</i>: primary data in AWS. <i>Stored</i>: primary local, backed up to AWS as EBS snapshots</li><li><b>Tape Gateway</b>: virtual tape library for existing backup software → S3 / Glacier</li></ul></div>
+    <div class="c"><header><h3>S3 Transfer Acceleration</h3><span class="tag">long distance</span></header><p>Uploads enter the nearest edge location and ride the AWS backbone to the bucket. Users far from the bucket's Region.</p></div>
+    <div class="c"><header><h3>Direct Connect</h3><span class="tag">private link</span></header><p>Consistent bandwidth and lower egress price. Takes <b>weeks</b> to provision, so not for an urgent one-time move. Not encrypted by itself: add a VPN or MACsec.</p></div>
+  </div>
+
+  <div class="remember"><b>DataSync vs Storage Gateway:</b> DataSync <i>moves</i> data (migration, periodic copies). Storage Gateway <i>keeps on-prem apps working</i> against cloud storage long term.</div>
+
+  <h3>Network or truck? Transfer-time calculator</h3>
+  <div class="box">
+    <div class="sliders">
+      <label for="tTb"><span>Data to move <b id="tTbV"></b></span><input type="range" id="tTb" min="1" max="1000" value="100"></label>
+      <label for="tBw"><span>Link bandwidth <b id="tBwV"></b></span><input type="range" id="tBw" min="0" max="7" value="3"></label>
+      <label for="tUt"><span>Share of link you can use <b id="tUtV"></b></span><input type="range" id="tUt" min="10" max="100" step="5" value="70"></label>
+    </div>
+    <div class="tbars" id="tBars"></div>
+    <p class="say" id="tSay"></p>
+    <p class="hint">Network time = data × 8 ÷ (bandwidth × share used). Snowball Edge time is a rough end-to-end figure (order, ship, copy, return, import) of about a week; devices work in parallel.</p>
+  </div>
+</section>
+
+<!-- 5 SNOW -->
+<section class="lesson" data-id="snow" data-name="Snow family">
+  <div class="eyebrow">Lesson 5 · 8 min</div>
+  <h2>Offline transfer and the edge: Snow family</h2>
+
+  <div class="cards">
+    <div class="c"><header><h3>Snowball Edge Storage Optimized</h3><span class="tag ok">TB → PB</span></header><p>Rugged device shipped to you. Tens to 200+ TB per device; order several in parallel for petabytes. Data encrypted with KMS keys.</p></div>
+    <div class="c"><header><h3>Snowball Edge Compute Optimized</h3><span class="tag">edge compute</span></header><p>More vCPUs (optional GPU) to run EC2 instances or Lambda functions at disconnected sites: ships, mines, field labs.</p></div>
+    <div class="c"><header><h3>Older names you may see</h3><span class="tag amb">exam history</span></header><p><b>Snowcone</b>: small (8–14 TB) device with a DataSync agent. <b>Snowmobile</b>: a truck for exabytes. AWS has stopped offering both to new customers, but older questions still use them.</p></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Fact</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td>Snowball imports into <b>S3</b></td><td>Want Glacier? Import to S3, then a lifecycle rule moves it.</td></tr>
+      <tr><td>Use when the network would take more than ~a week</td><td>Or bandwidth is shared with production, expensive, or unavailable.</td></tr>
+      <tr><td>Manage with AWS OpsHub</td><td>GUI to unlock, copy and monitor the device.</td></tr>
+      <tr><td>Disconnected / limited connectivity site</td><td>Edge compute on Snowball Edge.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><b>Decision:</b> small or ongoing → DataSync over internet/DX. Huge one-time and slow link → Snowball Edge. Ongoing hybrid access → Storage Gateway. SFTP partners → Transfer Family.</div>
+</section>
+
+<!-- 6 GAME -->
+<section class="lesson" data-id="practice" data-name="Pick the service">
+  <div class="eyebrow">Lesson 6 · game</div>
+  <h2>Pick the migration service</h2>
+  <p class="lede">16 scenarios. Ask: servers, database, files, or offline?</p>
+  <div class="card" id="game"></div>
+</section>
+
+<!-- 7 QUIZ -->
+<section class="lesson" data-id="quiz" data-name="Exam quiz">
+  <div class="eyebrow">Lesson 7 · exam style</div>
+  <h2>SAA-style migration questions</h2>
+  <p class="lede">20 questions in the style of the real exam.</p>
+  <div class="card" id="quizBox"></div>
+  <h3>Keyword → answer cheat sheet</h3>
+  <div class="cheat" id="cheat"></div>
+</section>
+
+<nav class="next" id="nextNav" aria-label="Lesson navigation"></nav>
+</main>
+
+<script>
+(function(){
+  const store={
+    get(k,d){try{const v=localStorage.getItem('migpb:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem('migpb:'+k,JSON.stringify(v))}catch(e){}}
+  };
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const seg=(el,opts,cur)=>{el.innerHTML=opts.map(o=>`<button type="button" aria-pressed="${o===cur}">${o}</button>`).join('')};
+  const onSeg=(el,fn)=>el.addEventListener('click',e=>{const b=e.target.closest('button');if(b)fn(b.textContent)});
+
+  /* tabs */
+  const lessons=[...document.querySelectorAll('section.lesson')];
+  const rail=$('#rail');let seen=store.get('seen',[]);
+  lessons.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<button type="button" role="tab" data-id="${s.dataset.id}"><span class="n">${i+1}</span>${s.dataset.name}</button>`;rail.appendChild(li)});
+  function show(id,scroll){
+    const idx=Math.max(0,lessons.findIndex(s=>s.dataset.id===id));
+    lessons.forEach((s,i)=>s.hidden=i!==idx);
+    const cur=lessons[idx].dataset.id;
+    if(!seen.includes(cur)){seen.push(cur);store.set('seen',seen)}
+    rail.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.id===cur);b.classList.toggle('seen',seen.includes(b.dataset.id)&&b.dataset.id!==cur)});
+    const btn=rail.querySelector(`[data-id="${cur}"]`);btn&&btn.scrollIntoView({inline:'center',block:'nearest'});
+    const prev=lessons[idx-1],next=lessons[idx+1];
+    $('#nextNav').innerHTML=(prev?`<button class="btn" data-go="${prev.dataset.id}">← ${prev.dataset.name}</button>`:'<span></span>')+(next?`<button class="btn primary" data-go="${next.dataset.id}">Next: ${next.dataset.name} →</button>`:'');
+    store.set('tab',cur);try{history.replaceState(null,'','#'+cur)}catch(e){}
+    if(scroll)window.scrollTo({top:0});
+  }
+  rail.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id,true)});
+  $('#nextNav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go,true)});
+  const h=(location.hash||'').slice(1);
+  show(lessons.some(s=>s.dataset.id===h)?h:store.get('tab',lessons[0].dataset.id));
+
+  /* ---------- playbook widgets + data ---------- */
+  /* 1 seven Rs */
+  const RS=[
+    ['Retire','Turn it off','none'],['Retain','Keep on-prem for now','none'],['Rehost','Lift and shift','MGN'],
+    ['Relocate','Move the hypervisor','VMware Cloud on AWS'],['Replatform','Lift, tinker, shift','RDS, Beanstalk'],
+    ['Repurchase','Drop and shop','SaaS'],['Refactor','Re-architect cloud-native','Lambda, DynamoDB']
+  ];
+  const RQ=[
+    ['Move 200 VMs fast, no code changes.',2,'No changes + speed = Rehost with Application Migration Service.'],
+    ['Keep the app on EC2 but move its MySQL database to RDS.',4,'Small optimization without rewriting = Replatform.'],
+    ['Replace the self-hosted CRM with Salesforce.',5,'Buying a SaaS product = Repurchase.'],
+    ['An old reporting server nobody has used in a year.',0,'Decommission it = Retire.'],
+    ['A mainframe app that must stay on-prem due to a contract until 2028.',1,'Revisit later = Retain.'],
+    ['Rebuild the monolith as microservices on Lambda to scale globally.',6,'New architecture = Refactor.'],
+    ['Move the whole vSphere environment as-is, keeping VMware tooling.',3,'Hypervisor-level move = Relocate.']
+  ];
+  let rI=-1;
+  function rsDraw(){
+    $('#rsStrip').innerHTML=RS.map((r,i)=>`<div class="${rI>=0&&RQ[rI][1]===i?'on':''}"><b>${r[0]}</b><span>${r[1]}</span><span class="eff">${r[2]}</span></div>`).join('');
+  }
+  $('#rsQ').innerHTML=RQ.map((r,i)=>`<button type="button" class="chip" data-i="${i}">${r[0]}</button>`).join('');
+  $('#rsQ').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;rI=+b.dataset.i;
+    $('#rsQ').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===rI));
+    $('#rsSay').innerHTML='<b>'+RS[RQ[rI][1]][0]+'.</b> '+RQ[rI][2];rsDraw()});
+  rsDraw();
+
+  /* 4 transfer calculator */
+  const BW=[[50,'50 Mbps'],[100,'100 Mbps'],[500,'500 Mbps'],[1000,'1 Gbps'],[2000,'2 Gbps'],[5000,'5 Gbps'],[10000,'10 Gbps'],[100000,'100 Gbps']];
+  function dur(days){if(days<1/24)return fmt(days*1440,0)+' min';if(days<1)return fmt(days*24,1)+' h';if(days<60)return fmt(days,1)+' days';return fmt(days/30.4,1)+' months'}
+  function transfer(){
+    const tb=+$('#tTb').value,bw=BW[+$('#tBw').value],ut=+$('#tUt').value/100;
+    $('#tTbV').textContent=tb>=1000?'1 PB':tb+' TB';$('#tBwV').textContent=bw[1];$('#tUtV').textContent=Math.round(ut*100)+'%';
+    const netDays=tb*8e12/(bw[0]*1e6*ut)/86400;
+    const dev=Math.ceil(tb/210),snowDays=7+(dev>10?3:0);
+    const rows=[['Network ('+bw[1]+')',netDays],['Snowball Edge ×'+dev,snowDays]];
+    const max=Math.max(...rows.map(r=>r[1]));const best=netDays<=snowDays?0:1;
+    $('#tBars').innerHTML=rows.map((r,i)=>`<div class="tbar ${i===best?'best':''}"><span>${r[0]}</span><div class="track"><div class="fill" style="width:${Math.max(1,r[1]/max*100)}%"></div></div><span class="val">${dur(r[1])}</span></div>`).join('');
+    let say;
+    if(netDays<=2)say=`<b>Use the network.</b> ${dur(netDays)} with DataSync (or S3 Transfer Acceleration for far-away users). A device would be slower.`;
+    else if(netDays<=snowDays)say=`<b>Network still wins</b> (${dur(netDays)}), but it saturates the link for days. If the link is shared with production, throttle DataSync or consider Snowball.`;
+    else say=`<b>Ship it.</b> The network needs ${dur(netDays)}. ${dev} Snowball Edge device${dev>1?'s':''} in parallel take about ${snowDays} days. Then keep new changes in sync with DataSync (files) or DMS CDC (databases).`;
+    $('#tSay').innerHTML=say;
+  }
+  ['#tTb','#tBw','#tUt'].forEach(id=>$(id).addEventListener('input',transfer));transfer();
+
+  /* game data */
+  const SVC=['Application Migration Service','VM Import/Export','Elastic Disaster Recovery','Application Discovery Service','Migration Evaluator','DMS','SCT + DMS','DataSync','Transfer Family','S3 File Gateway','Volume Gateway','Tape Gateway','S3 Transfer Acceleration','Snowball Edge','Direct Connect','Retire'];
+  const G=[
+    ['Lift-and-shift 400 on-prem VMs with cutover downtime of minutes.','Application Migration Service','Continuous block replication + cutover.'],
+    ['Convert one VMware image into an AMI.','VM Import/Export','One-off image import.'],
+    ['Replicate on-prem servers to AWS so they can be recovered within minutes after a disaster.','Elastic Disaster Recovery','DR, not migration.'],
+    ['Map which on-prem servers talk to each other before migrating.','Application Discovery Service','Agent collects network connections.'],
+    ['Build a business case comparing on-prem cost to AWS.','Migration Evaluator','TCO / cost projection.'],
+    ['Move a 2 TB MySQL database to RDS for MySQL with minimal downtime.','DMS','Same engine; full load + CDC.'],
+    ['Migrate Oracle to Aurora PostgreSQL.','SCT + DMS','Engine change needs schema conversion.'],
+    ['Copy 40 TB from an NFS share to Amazon EFS, then sync changes nightly.','DataSync','Bulk + scheduled incremental copies.'],
+    ['Partners must keep uploading files with their existing SFTP scripts, into S3.','Transfer Family','Managed SFTP endpoint.'],
+    ['On-prem apps write files to an SMB share that should store everything in S3 with a local cache.','S3 File Gateway','Hybrid file access.'],
+    ['Backup software writes to tape; replace the tape library without changing the software.','Tape Gateway','Virtual tape library.'],
+    ['iSCSI block storage on-prem, primary data in AWS with frequently used data cached locally.','Volume Gateway','Cached volumes.'],
+    ['Users worldwide upload large videos to one S3 bucket in us-east-1 too slowly.','S3 Transfer Acceleration','Edge entry + AWS backbone.'],
+    ['Move 500 TB over a 100 Mbps link within 3 weeks.','Snowball Edge','Network would take over a year.'],
+    ['Need consistent, private, high-bandwidth connectivity for ongoing hybrid workloads.','Direct Connect','Dedicated private link.'],
+    ['A legacy server has had no users for a year.','Retire','Turn it off. Cheapest migration.']
+  ];
+
+  /* quiz */
+  const Q=[
+    {q:'A company must migrate hundreds of on-premises VMs to AWS as quickly as possible with minimal changes and minimal cutover downtime.',o:['AWS Application Migration Service','AWS DataSync','AWS Database Migration Service','Rebuild the apps on Lambda'],c:0,e:'Rehost with MGN: continuous replication, short cutover.'},
+    {q:'A company is migrating an on-premises Oracle database to Amazon Aurora PostgreSQL. What should it use?',o:['DMS only','AWS SCT to convert the schema and DMS to migrate the data','DataSync','Snowball Edge'],c:1,e:'Heterogeneous migration needs schema conversion.'},
+    {q:'A MySQL database must move to RDS for MySQL while staying online; the cutover window is 10 minutes.',o:['mysqldump and restore','DMS full load with ongoing replication (CDC)','Snowball Edge','VM Import/Export'],c:1,e:'CDC keeps the target in sync until cutover.'},
+    {q:'A company must copy 50 TB from an on-premises NFS server to Amazon EFS and keep it in sync weekly until cutover.',o:['AWS DataSync','S3 Transfer Acceleration','Storage Gateway Tape Gateway','AWS Transfer Family'],c:0,e:'DataSync handles NFS → EFS with scheduled incremental runs.'},
+    {q:'Business partners upload files via SFTP to an on-prem server. The company wants to store the files in S3 without changing the partners\' process.',o:['AWS Transfer Family SFTP endpoint backed by S3','S3 File Gateway','DataSync','CloudFront signed URLs'],c:0,e:'Managed SFTP in front of S3.'},
+    {q:'A company has 600 TB to move to S3. Its 1 Gbps internet link is shared with production. The move must finish within a month.',o:['DataSync over the internet','Several Snowball Edge devices','S3 Transfer Acceleration','A new Direct Connect connection'],c:1,e:'Network would take months at a fraction of 1 Gbps; DX takes weeks to provision.'},
+    {q:'On-premises applications need low-latency access to files that are stored durably in S3, through an SMB share.',o:['S3 File Gateway','Volume Gateway stored mode','Snowball Edge','Transfer Family'],c:0,e:'File Gateway exposes S3 as NFS/SMB with a local cache.'},
+    {q:'A company wants to replace physical tapes for its backup software and keep backups in S3 Glacier Deep Archive.',o:['Tape Gateway','DataSync','S3 File Gateway','EBS snapshots'],c:0,e:'Virtual tape library; archived tapes go to Glacier/Deep Archive.'},
+    {q:'A company wants block storage on-prem with all data kept locally and asynchronous backups to AWS.',o:['Volume Gateway stored volumes','Volume Gateway cached volumes','S3 File Gateway','EFS'],c:0,e:'Stored mode: primary data local, snapshots in AWS.'},
+    {q:'Mobile users around the world upload large files to an S3 bucket in one Region and complain about slow uploads.',o:['S3 Transfer Acceleration','S3 Cross-Region Replication','A bigger bucket','Snowball'],c:0,e:'Edge locations + backbone speed long-distance uploads.'},
+    {q:'Data imported with Snowball Edge must end up in S3 Glacier Deep Archive.',o:['Import to S3 and use a lifecycle rule to transition it','Ask AWS to import directly to Glacier','Use Tape Gateway','Use DataSync from the device to Glacier vault'],c:0,e:'Snowball imports into S3; lifecycle moves it.'},
+    {q:'A research vessel with no internet must run analytics on collected data and later bring it to AWS.',o:['Snowball Edge Compute Optimized','Direct Connect','Transfer Family','Storage Gateway'],c:0,e:'Edge compute in disconnected locations.'},
+    {q:'Before migrating, a company must identify running processes and network dependencies of its on-prem servers.',o:['Application Discovery Service with the discovery agent','Migration Evaluator','Trusted Advisor','AWS Config'],c:0,e:'The agent collects processes and connections.'},
+    {q:'A company wants on-prem servers continuously replicated to AWS so they can recover in minutes after a site failure, with low cost while idle.',o:['AWS Elastic Disaster Recovery','Pilot light with manual AMIs','AWS Backup only','MGN cutover'],c:0,e:'DRS keeps cheap staging and launches on failover.'},
+    {q:'A company must move a 30 TB Oracle data warehouse to Amazon Redshift.',o:['SCT with data extraction agents, then load to Redshift','DMS to DynamoDB','DataSync to Redshift','VM Import/Export'],c:0,e:'SCT handles warehouse conversion and extraction.'},
+    {q:'Which statement about AWS Direct Connect is correct for a migration starting next week?',o:['It is the fastest way to start','It can take weeks to provision, so it is a poor fit for urgent one-time moves','It encrypts data by default','It replaces Snowball for any size'],c:1,e:'DX lead time is weeks; traffic is not encrypted by default.'},
+    {q:'A company wants to keep using its database engine and only offload operations by moving to RDS, without rewriting the app.',o:['Rehost','Replatform','Refactor','Repurchase'],c:1,e:'Lift-tinker-shift.'},
+    {q:'A company wants to replace a self-hosted email system with a SaaS product.',o:['Repurchase','Retain','Rehost','Relocate'],c:0,e:'Drop and shop.'},
+    {q:'A file copy job between two S3 buckets and an FSx for Windows file system must run every hour with integrity verification.',o:['AWS DataSync','S3 Batch Replication only','Storage Gateway','Transfer Family'],c:0,e:'DataSync also copies between AWS storage services.'},
+    {q:'The initial load of a 20 TB database over a slow link would take too long, but ongoing changes are small.',o:['Ship the initial copy on Snowball Edge, then use DMS CDC for changes','Use only DMS full load over the link','Use Transfer Acceleration','Use VM Import/Export'],c:0,e:'Offline seed + online change capture.'}
+  ];
+
+  const C=[
+    ['Lift and shift, minimal changes','Rehost → Application Migration Service'],['Move DB to managed, keep app','Replatform'],['Replace with SaaS','Repurchase'],['Turn it off','Retire'],['Keep on-prem for now','Retain'],['Rebuild cloud-native','Refactor'],
+    ['Server dependencies','Application Discovery Service (agent)'],['Business case / TCO','Migration Evaluator'],['Track migration','Migration Hub'],['One VM image → AMI','VM Import/Export'],['Server DR to AWS','Elastic Disaster Recovery'],
+    ['Same DB engine, low downtime','DMS + CDC'],['Different DB engine','SCT + DMS'],['DW → Redshift','SCT + extraction agents'],['Huge DB, slow link','Snowball seed + DMS CDC'],
+    ['NFS/SMB/HDFS → S3/EFS/FSx','DataSync'],['Scheduled file sync with integrity checks','DataSync'],['Partners use SFTP','Transfer Family'],['On-prem file share backed by S3','S3 File Gateway'],['iSCSI, cached in AWS','Volume Gateway cached'],['iSCSI, primary local','Volume Gateway stored'],['Replace tape library','Tape Gateway'],
+    ['Far users upload to S3','S3 Transfer Acceleration'],['Network > ~1 week','Snowball Edge'],['Snowball to Glacier','Import to S3 + lifecycle'],['Compute at disconnected site','Snowball Edge Compute'],['Consistent private bandwidth','Direct Connect (weeks to set up)']
+  ];
+
+
+  /* game */
+  let gi=store.get('gi',0),gr=store.get('gr',[]);const game=$('#game');
+  function drawGame(){
+    if(gi>=G.length){const ok=gr.filter(Boolean).length;
+      game.innerHTML=`<div class="top"><span>Finished</span><span>${ok} / ${G.length}</span></div><p class="scenario">${ok>=Math.ceil(G.length*0.8)?'Strong. You can map each scenario to its service.':'Review the lessons for the ones you missed, then play again.'}</p><div class="dots">${gr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="gR">Play again</button></div>`;
+      $('#gR').onclick=()=>{gi=0;gr=[];store.set('gi',0);store.set('gr',[]);drawGame()};return}
+    const s=G[gi];
+    game.innerHTML=`<div class="top"><span>Scenario ${gi+1} of ${G.length}</span><span>Score ${gr.filter(Boolean).length}</span></div>
+      <div class="dots">${G.map((_,i)=>`<i class="${i<gr.length?(gr[i]?'g':'b'):''}${i===gi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${s[0]}</p><div class="svc">${SVC.map(v=>`<button type="button">${v}</button>`).join('')}</div><div id="gFb"></div>`;
+    game.querySelectorAll('.svc button').forEach(b=>b.onclick=()=>{
+      const ok=b.textContent===s[1];gr[gi]=ok;store.set('gr',gr);
+      game.querySelectorAll('.svc button').forEach(x=>{x.disabled=true;if(x.textContent===s[1])x.classList.add('right');else if(x===b)x.classList.add('wrong')});
+      $('#gFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+s[1]}</b>${s[2]}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="gN">Next →</button></div>`;
+      $('#gN').onclick=()=>{gi++;store.set('gi',gi);drawGame()};
+    });
+  }
+  drawGame();
+
+  /* quiz */
+  let qi=store.get('qi',0),qr=store.get('qr',[]);const qb=$('#quizBox');
+  function drawQuiz(){
+    if(qi>=Q.length){const ok=qr.filter(Boolean).length,pct=Math.round(ok/Q.length*100);
+      qb.innerHTML=`<div class="top"><span>Done</span><span>${ok} / ${Q.length} · ${pct}%</span></div><p class="scenario">${pct>=80?'Exam-ready on this module.':pct>=65?'Close. Target 75–80%. Redo the misses.':'Review the lessons, then retake.'}</p><div class="dots">${qr.map(r=>`<i class="${r?'g':'b'}"></i>`).join('')}</div><div class="choices"><button class="btn primary" id="qR">Retake quiz</button></div>`;
+      $('#qR').onclick=()=>{qi=0;qr=[];store.set('qi',0);store.set('qr',[]);drawQuiz()};return}
+    const s0=Q[qi],n=s0.o.length,rot=(qi*3)%n,s={q:s0.q,e:s0.e,o:s0.o.map((_,j)=>s0.o[(j+rot)%n]),c:(s0.c-rot+n)%n};
+    qb.innerHTML=`<div class="top"><span>Question ${qi+1} of ${Q.length}</span><span>Score ${qr.filter(Boolean).length}</span></div>
+      <div class="dots">${Q.map((_,i)=>`<i class="${i<qr.length?(qr[i]?'g':'b'):''}${i===qi?' c':''}"></i>`).join('')}</div>
+      <p class="scenario">${esc(s.q)}</p>
+      <div class="opts">${s.o.map((o,i)=>`<button class="opt" data-i="${i}"><span class="l">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="qFb"></div>`;
+    qb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===s.c;qr[qi]=ok;store.set('qr',qr);
+      qb.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(j===s.c)x.classList.add('right');else if(j===i)x.classList.add('wrong')});
+      $('#qFb').innerHTML=`<div class="feedback ${ok?'good':'bad'}"><b>${ok?'Correct':'Answer: '+'ABCD'[s.c]}</b>${esc(s.e)}</div><div class="choices" style="margin-top:10px"><button class="btn primary" id="qN">${qi+1<Q.length?'Next question →':'See result'}</button></div>`;
+      $('#qN').onclick=()=>{qi++;store.set('qi',qi);drawQuiz()};
+    });
+  }
+  drawQuiz();
+
+  /* cheat */
+  $('#cheat').innerHTML=C.map(c=>`<div><span>${c[0]}</span><span>${c[1]}</span></div>`).join('');
+})();
+</script>
+</body></html>

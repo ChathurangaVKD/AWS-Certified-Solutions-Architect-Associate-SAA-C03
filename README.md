@@ -32,6 +32,14 @@
 
 ---
 
+### 🎮 Interactive Playbooks
+
+> 14 topic playbooks, one per study area: short lessons, hands-on simulators (IAM policy evaluator, CIDR calculator, alarm M-of-N simulator, Savings Plan/Spot cost blender, DR strategy picker…), a 16-scenario "pick the service" game and a 12–20 question exam-style quiz with a keyword cheat sheet. Progress saves in your browser.
+>
+> **👉 [Open the Playbooks →](https://chathurangavkd.github.io/AWS-Certified-Solutions-Architect-Associate-SAA-C03/playbooks/)** · [source](playbooks/)
+
+---
+
 ### 🎯 Exam Day Cheat Sheet
 
 > Save this for your final 30-minute review before the exam:
